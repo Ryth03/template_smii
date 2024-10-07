@@ -377,22 +377,35 @@ class ProductionController extends Controller
         $sumHeight= 0; 
         $maxHeight = 0;
         foreach ($barData as $dataBar){
-            $index = $count % 5;
-            if($index==0){
+            if(in_array(strtoupper($dataBar->Line), $temp)){
+                $index = $count % 5;
+                if($index==0){
+                    $sumHeight = 0;
+                }
+
+                // Jika ada yang terskip akan diisi 0
+                if($temp[$index] != strtoupper($dataBar->Line)){
+                    $index2 = $count % 5;
+                    while($temp[$index2] != strtoupper($dataBar->Line)){
+                        $hashMap[$temp[$index2]][] = 0;
+                        $count+=1;
+                        $index2 = $count % 5;
+                        if($index2==0){
+                            $sumHeight = 0;
+                        }
+                    }
+                }
+                
+                // Menyimpan nilai qty kedalam hashmap
+                $hashMap[strtoupper($dataBar->Line)][] = $dataBar->total_qty;
+                $sumHeight += $dataBar->total_qty;
                 $maxHeight = max($sumHeight,$maxHeight);
-                $sumHeight = 0;
-            }
-            if($temp[$index] != strtoupper($dataBar->Line)){
-                $hashMap[$temp[$index]][] = 0;
                 $count+=1;
             }
-            
-            $hashMap[strtoupper($dataBar->Line)][] = $dataBar->total_qty;
-            $sumHeight += $dataBar->total_qty;
-            $count+=1;
         }
+        
         // Mengubah hashmap menjadi 2d array sesuai urutan
-        $hashMap2 = [$hashMap['A'],$hashMap['B'],$hashMap['C'],$hashMap['D'],$hashMap['E']];
+        $hashMap2 =  array_values($hashMap);
 
         return response()->json([
             'actual_height' => $maxHeight,

@@ -12,11 +12,11 @@
         <div class="box-body h-36"> <!-- Adjust height as needed -->
             <div class="flex justify-between items-center">
                 <div class="bs-5 ps-10 border-info">
-                    <p class="text-fade mb-10">Weight Last Month</p>
+                    <p class="text-fade mb-10">Total Production Last Month</p>
                     <h2 id="weightLastMonth" class="my-0 fw-700 text-3xl"></h2>
                 </div>
                 <div class="icon">
-                    <i class="fa-solid fa-hand-holding-dollar bg-info-light me-0 fs-24 rounded-3"></i>
+                    <i class="fa-solid fa-box bg-info-light me-0 fs-24 rounded-3"></i>
                 </div>
             </div>
             <p id="weightComparison" class="text-danger mb-0 mt-10"><i class="fa-solid fa-arrow-down"></i></p>
@@ -31,7 +31,7 @@
                     <h2 id="qtyLastMonth" class="my-0 fw-700 text-3xl"></h2>
                 </div>
                 <div class="icon">
-                    <i class="fa-solid fa-hand-holding-dollar bg-info-light me-0 fs-24 rounded-3"></i>
+                    <i class="fa-solid fa-boxes-stacked bg-info-light me-0 fs-24 rounded-3"></i>
                 </div>
             </div>
             <p id="qtyComparison" class="text-danger mb-0 mt-10"><i class="fa-solid fa-arrow-down"></i> </p>
@@ -120,31 +120,31 @@
     <!-- Line A -->
     <div class="card rounded-2xl pull-up" style="border:2px solid rgb(96 165 250)">
         <div class="box-header flex justify-start items-center">
-            <h3 class="box-title m-0 text-3xl">Liquid</h3>
+            <h3 class="box-title m-0 text-3xl">A</h3>
         </div>
         <div id="lineAChart" style="height:350px;" class=""></div>
     </div>
     <div class="card rounded-2xl pull-up" style="border:2px solid rgb(248 113 113)">
         <div class="box-header flex justify-start items-center">
-            <h3 class="box-title m-0 text-3xl">Pastry</h3>
+            <h3 class="box-title m-0 text-3xl">B</h3>
         </div>
         <div id="lineBChart" style="height:350px;" class="m-0 p-0"></div>
     </div>
     <div class="card rounded-2xl pull-up" style="border:2px solid rgb(216 180 254)">
         <div class="box-header flex justify-start items-center">
-            <h3 class="box-title m-0 text-3xl">P1</h3>
+            <h3 class="box-title m-0 text-3xl">C</h3>
         </div>
         <div id="lineCChart" style="height:350px;" class="m-0 p-0"></div>
     </div>
     <div class="card rounded-2xl pull-up" style="border:2px solid rgb(134 239 172)">
         <div class="box-header flex justify-start items-center">
-            <h3 class="box-title m-0 text-3xl">P2</h3>
+            <h3 class="box-title m-0 text-3xl">D</h3>
         </div>
         <div id="lineDChart" style="height:350px;" class="m-0 p-0"></div>
     </div>
     <div class="card rounded-2xl pull-up" style="border:2px solid rgb(253 186 116)">
         <div class="box-header flex justify-start items-center">
-            <h3 class="box-title m-0 text-3xl">P3</h3>
+            <h3 class="box-title m-0 text-3xl">E</h3>
         </div>
         <div id="lineEChart" style="height:350px;" class="m-0 p-0"></div>
     </div>
@@ -167,6 +167,9 @@ var barChart = echarts.init(document.getElementById('barChart'));
 var doughnutData;
 const myCharts = {};
 
+// Line A, B, C, D, E
+const lines = ['A', 'B', 'C', 'D', 'E'];
+
 document.addEventListener('DOMContentLoaded', function() {
     fetchDashboardData();
     updateBarChart();
@@ -176,8 +179,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function createInterval() {
     setInterval(() => {
+        updateBarChart();
         updateFilterDropdown();
-        console.log('Sudah 5 detik.')
     }, 5000);
 }
 
@@ -203,9 +206,8 @@ function fetchDashboardData() {
 }
 
 function createGaugeChart(){
+
     // Gauge Charts for Lines A, B, C, D, E
-    const lines = ['A', 'B', 'C', 'D', 'E'];
-    
     lines.forEach(line => {
         const ctx = document.getElementById(`line${line}Chart`);
         myCharts[line] = echarts.init(ctx);
@@ -337,7 +339,7 @@ function setBarChartOption(label, actualData, standardData, actualHeight) {
     top: 50,
     bottom: 50
     };
-    const series = ['Liquid', 'Pastry', 'P1', 'P2', 'P3'].map((name, sid) => {
+    const series = ['A', 'B', 'C', 'D', 'E'].map((name, sid) => {
     return {
         name,
         type: 'bar',
@@ -355,7 +357,8 @@ function setBarChartOption(label, actualData, standardData, actualHeight) {
                         formatter: function(params) {
                             return params.value.toLocaleString('id-ID'); // Memformat angka ribuan dengan koma
                         },
-                        color: '#73757D'
+                        color: '#73757D',
+                        fontSize: 20 // Tambahkan properti fontSize di sini
                     }
                 }
             ],
@@ -408,8 +411,7 @@ document.getElementById('yearFilterBar').addEventListener('change', updateBarCha
 function updateBarChart() {
     const month = document.getElementById('monthFilterBar').value;
     const year = document.getElementById('yearFilterBar').value;
-    console.log('month, year');
-    console.log(month, year);
+    
     // Fetch dan update data bar chart berdasarkan bulan dan minggu yang dipilih
     fetch(`/bar-data?month=${month}&year=${year}`)
         .then(response => response.json())
@@ -481,33 +483,35 @@ function updateFilterDropdown(){
 
                 // Menampilkan data ke dalam tabel
                 for (const line in totals) {
-                    const shifts = totals[line];
-                    const totalWeight = shifts.shift1 + shifts.shift2 + shifts.shift3;
 
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="pt-0 px-0 b-0">
-                            <div class="flex items-center">
-                                <div class="w-10 h-50 rounded ${line == 'A' ? 'bg-blue-400' : (line == 'B' ? 'bg-red-400' : (line == 'C' ? 'bg-purple-300' : (line == 'D' ? 'bg-green-300' : 'bg-orange-300')))}"></div>
-                                        <span class="text-fade text-3xl ml-2 font-semibold">${line == 'A' ? 'Liquid' : (line == 'B' ? 'Pastry' : (line == 'C' ? 'P1' : (line == 'D' ? 'P2' : (line == 'E' ? 'P3' : 'Lainnya'))))}</span>
-                            </div>
-                        </td>
-                        <td class="text-center b-0 pt-0 px-0">
-                            <span class="text-fade text-4xl">${shifts.shift1.toLocaleString('id-ID')} KG</span>
-                        </td>
-                        <td class="text-center b-0 pt-0 px-0">
-                            <span class="text-fade text-4xl">${shifts.shift2.toLocaleString('id-ID')} KG</span>
-                        </td>
-                        <td class="text-center b-0 pt-0 px-0">
-                            <span class="text-fade text-4xl">${shifts.shift3.toLocaleString('id-ID')} KG</span>
-                        </td>
-                        <td class="text-center b-0 pt-0 px-0">
-                            <span class="text-fade text-4xl">${totalWeight.toLocaleString('id-ID')} KG</span>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
+                    // cek apakah line adalah A/B/C/D/E
+                    if (lines.includes(line)){
+                        const shifts = totals[line];
+                        const totalWeight = shifts.shift1 + shifts.shift2 + shifts.shift3;
 
-                    if (myCharts[line]){
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="pt-0 px-0 b-0">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-50 rounded ${line == 'A' ? 'bg-blue-400' : (line == 'B' ? 'bg-red-400' : (line == 'C' ? 'bg-purple-300' : (line == 'D' ? 'bg-green-300' : 'bg-orange-300')))}"></div>
+                                            <span class="text-fade text-3xl ml-2 font-semibold">${line == 'A' ? 'A' : (line == 'B' ? 'B' : (line == 'C' ? 'C' : (line == 'D' ? 'D' : (line == 'E' ? 'E' : ''))))}</span>
+                                </div>
+                            </td>
+                            <td class="text-right b-0 pt-0 px-0">
+                                <span class="text-fade text-4xl">${shifts.shift1.toLocaleString('id-ID')} KG</span>
+                            </td>
+                            <td class="text-right b-0 pt-0 px-0">
+                                <span class="text-fade text-4xl">${shifts.shift2.toLocaleString('id-ID')} KG</span>
+                            </td>
+                            <td class="text-right b-0 pt-0 px-0">
+                                <span class="text-fade text-4xl">${shifts.shift3.toLocaleString('id-ID')} KG</span>
+                            </td>
+                            <td class="text-right b-0 pt-0 px-0">
+                                <span class="text-fade text-4xl">${totalWeight.toLocaleString('id-ID')} KG</span>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+
                         // Gauge Chart set new Option
                         myCharts[line].setOption({
                             series: [
@@ -546,7 +550,7 @@ function updateFilterDropdown(){
                             }]
                         });
                     }else{
-                        console.log('tidak ada line ', line);
+                        console.log("tidak ada line '",line,"'");
                     }
                 }
 

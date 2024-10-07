@@ -29,14 +29,14 @@
         <div class="card border-2 border-success rounded-2xl ">
             <div class="box-header flex justify-center items-center relative">
                 <h3 class="text-3xl font-medium">Finished Goods / Outward Warehouse</h3>
-                <div class="absolute right-0">
-                    <!-- Button Pilih Tanggal -->
+                <!-- Button Pilih Tanggal -->
+                <!-- <div class="absolute right-0">
                     <div class="flex justify-center items-center mr-5">
                         <ul class="m-0" style="list-style: none;">
                             <li class="dropdown">
                                 <button id="dateDisplay" class="waves-effect waves-light btn btn-outline dropdown-toggle btn-md"
                                     data-bs-toggle="dropdown" href="#" aria-expanded="false">
-                                    <span class="text-3xl">{{ date('d F Y') }} <!-- Menampilkan tanggal hari ini --></span>
+                                    <span class="text-3xl">{{ date('d F Y') }} </span>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end" style="will-change: transform;">
                                     <div class="px-3 py-2">
@@ -49,7 +49,7 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="box-body grid grid-cols-5" style="column-gap: 0.75rem /* 12px */;">
                 <div class="">
@@ -209,6 +209,7 @@
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script>
 
@@ -312,7 +313,7 @@ function createGaugeChart(){
             }
             } 
         ];
-        if (temp !== "G3Ambient") {
+        if (temp !== "G3Ambient" && temp !== "G1Ambient") {
             gaugeData.push(data2); // Pastikan data2 didefinisikan
         }
         option = {
@@ -497,6 +498,21 @@ function setDailyChartOption(label, ton) {
                 },
                 gridLines: {
                 color: "rgba(0, 0, 0, .125)",
+                }
+            }]
+        },
+        annotation: {
+            annotations: [{
+                type: 'line',
+                mode: 'horizontal',
+                scaleID: 'y-axis-0',
+                value: Math.max(...ton), // nilai threshold
+                borderColor: 'red',
+                borderWidth: 1,
+                label: {
+                    enabled: true,
+                    content: 'Threshold',
+                    position: 'center'
                 }
             }]
         },
