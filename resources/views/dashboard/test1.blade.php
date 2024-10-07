@@ -1,12 +1,10 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard HSE') }}
-        </h2>
-    </x-slot>
     @push('css')
     <style>
-        [type="checkbox"]+label {
+        [type="checkbox"]+label{
+            color: unset;
+        }
+        [type="radio"]:not(:checked)+label, [type="radio"]:checked+label{
             color: unset;
         }
         .dark-skin .form-control, .dark-skin .form-select{
@@ -26,6 +24,27 @@
             .md\:row-end-4 {
                 grid-row-end: 4;
             }
+            .md\:grid-cols-5 {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
+            .md\:grid-cols-16 {
+                grid-template-columns: repeat(16, minmax(0, 1fr));
+            }
+            .md\:col-span-15 {
+                grid-column: span 15 / span 15;
+            }
+            .md\:grid-rows-2 {
+                grid-template-rows: repeat(2, minmax(0, 1fr));
+            }
+            .md\:grid-flow-col {
+                grid-auto-flow: column;
+            }
+            .md\:justify-center {
+                justify-content: center
+            }
+            .md\:col-span-3 {
+                grid-column: span 3/span 3
+            }
         }
         .justify-self-end{
             justify-self: end;
@@ -37,181 +56,95 @@
     <form id="form" name="form" method="POST" class="validation-hse wizard-circle card p-10">
         @csrf
         <!-- Step 1 -->
-        <h6 class="text-md font-semibold mb-4">Ijin Kerja Di Ketinggian</h6>
+        <h6 class="text-md font-semibold mb-4">Form - HSE Dept</h6>
         <section>
-            <div id="perlindunganRuangTerbatas">
-                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
-                    <span class="text-lg text-white">A. Perlindungan Di Ruang Terbatas</span>
-                </div>
-                <div class="" id="perlindunganRuangTerbatasContent">
-                    @php 
-                        $workTitle = [
-                            "1. Pekerja dilengkapi oleh SCBA (Self Contain Breathing Apparatus) dan / atau APD yang sesuai",
-                            "2. Pekerja diijinkan bekerja di ruang terbatas jika kadar oksigen di ruang terbatas min 19% dan max 23%",
-                            "3. Pekerja tidak diijinkan bekerja di ruang terbatas jika bahan mudah terbakar di dalam ruang terbatas nilainya 5% di atas LEL (Low Explosive Limit)",
-                            "4. Pekerjaan di ruang terbatas harus di sertakan Watch men yang terlatih untuk mengawasi pekerjaan yang dilakukan"
-                            ];
-                    @endphp
-                    @foreach($workTitle as $index => $title)
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="perlindunganRuangTerbatas{{$index}}">
-                        <label class="block text-md font-medium" for="perlindunganRuangTerbatas{{$index}}">
-                            {{$title}}
-                        </label>
-                    </div>
-                    @endforeach
+            <div id="tenagaKerja">
+                <!-- <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
+                    <span class="text-lg text-white">Informasi</span>
+                </div> -->
 
-                    <div class=" flex justify-end">
-                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" name="selanjutnya" id="selanjutnya"onClick="nextClass('perlindunganRuangTerbatasContent', 'pengendalianRuangTerbatasContent')">
+                <div class="" id="tenagaKerjaContent">
+                    <div class="border rounded-lg p-3">
+                        <div id="tenagaKerjaGrid" class="grid gap-y-3">
+                            <div class="grid md:grid-cols-16">
+                                <div>
+                                    <div class="flex md:justify-center">
+                                        <label for="" class="block text-md font-medium">No. 1</label>
+                                    </div>
+                                </div>
+                                <div class="md:col-span-15 grid md:grid-cols-4 gap-x-4">
+                                    <div class="flex md:justify-center">
+                                        <label for="namaTenagaKerja1" class="font-medium">Nama Tenaga Kerja :</label>
+                                    </div>
+                                    <div class="col-span-3">
+                                        <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja1" class="form-control rounded-lg w-full" placeholder="Input data">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Button  -->
+                        <div class="flex mt-2">
+                            <div id="addButtonTenagaKerja" class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn flex flex-row">
+                                <i class="fas fa-plus">
+                                </i>
+                                Tambah
+                            </div>
+                            <div id="removeButtonTenagaKerja" class="mx-2 px-4 py-2  text-white rounded-lg hover:bg-red-600 btn bg-red-500 ml-4 btn flex flex-row" >
+                                <i class="fas fa-times">
+                                </i>
+                                Hapus Baris Terakhir
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-5">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="nextClass('tenagaKerjaContent', 'validasiPekerjaanContent')">
                             Lanjut
                         </div>
                     </div>
+
                 </div>
             </div>
 
-            <div id="pengendalianRuangTerbatas">
-                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
-                    <span class="text-lg text-white">B. Pengendalian Resiko di Ruang Terbatas</span>
-                </div>
-                <div class="hidden" id="pengendalianRuangTerbatasContent">
-                    <div>
-                        @php 
-                        $workTitle = [
-                            "5. Sebelum memasuki atau memulai pekerjaan di ruang tertutup, Work Permit ditempel / diletakan di tempat",
-                            "6. Memastikan pengujian atmosfer di ruang terbatas sudah sesuai dan hasilnya tertulis di izin sebelum memasuki ruang terbatas",
-                            "7. Ventilasi yang memadai harus dilakukan sebelum masuk atau mulai pekerjaan, minimal sudah dilakukan blowing 1 x 24 jam sebelum pekerjaan dimulai",
-                            "8. Semua alat las dan mesin potong yang mengeluarkan panas / api yang akan digunakan dalam ruang terbatas harus dipastikan dalam kondisi baik",
-                            "9. Personil yang akan bekerja di ruang terbatas sudah menerima training terkait termasuk training penyelamatan darurat (emergency rescue)",
-                            "10. Pekerjaan lain di daerah dekat pekerjaan ruang terbatas harus ditunda jika menimbulkan resiko atau menambah resiko bagi pekera di dalam ruang terbatas",
-                            "11. Pencahayaan yang memadai harus disediakan di ruang terbatas"
-                            ];
-                        @endphp
-                        @foreach($workTitle as $index => $title)
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="pengendalianRuangTerbatas{{$index}}">
-                            <label class="block text-md font-medium" for="pengendalianRuangTerbatas{{$index}}">
-                                {{$title}}
-                            </label>
-                        </div>
-                        @endforeach
-                    </div>
-                    
-                    <div class=" flex justify-end mt-5">
-                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('pengendalianRuangTerbatasContent', 'perlindunganRuangTerbatasContent')">
-                            Kembali
-                        </div>
-                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" name="selanjutnya" id="selanjutnya"onClick="nextClass('pengendalianRuangTerbatasContent', 'hasilTestContent')">
-                            Lanjut
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div id="hasilTest" >
+            <div id="validasiPekerjaan">
                 <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
-                    <span class="text-lg text-white">C. Hasil Test</span>
+                    <span class="text-lg text-white">Validasi Pekerjaan</span>
                 </div>
-                <div class="hidden" id="hasilTestContent">
-                    <div>
-                        <table class="table table-bordered text-xs" style="width:100%; table-layout: fixed;">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2">Parameter</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                </tr>
-                                <tr>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Kadar LEL</td>
-                                </tr>
-                                <tr>
-                                    <td>Kadar O₂</td>
-                                </tr>
-                                <tr>
-                                    <td>Kadar H₂S</td>
-                                </tr>
-                                <tr>
-                                    <td>Kadar CO</td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                <div class="hidden" id="validasiPekerjaanContent">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3">
+                        <div>
+                            <div class="font-medium"><i>Apakah Mematuhi Persyaratan K3 & Lingkungan yang telah disetujui selama pekerjaan?</i></div>
+                            <div class="my-3">
+                                <div class="flex flex-col">
+                                    <input class="form-check-input" type="radio" value="ya" id="validasiPekerjaanYa" name="validasiPekerjaanRadio" required>
+                                    <label for="validasiPekerjaanYa" style="padding-left:25px;">YA</label>
+                                </div>
+                                <div class="flex">
+                                    <input class="form-check-input" type="radio" value="tidak" id="validasiPekerjaanTidak" name="validasiPekerjaanRadio">
+                                    <label for="validasiPekerjaanTidak" style="padding-left:25px;">TIDAK</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-medium"><i>Jelaskan hal yang tidak dipenuhi :</i></div>
+                            <div class="w-full my-3">
+                                <textarea id="message" class="w-full" style="resize: none;" name="message" rows="4" cols="50" placeholder="Jelaskan..."></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <table class="text-xs" style="width:100%; table-layout: fixed;">
-                            <thead>
-                                <tr>
-                                    <th rowspan="4">Tanggal</th></tr>
-                                    <th colspan="8">
-                                        <div  class="flex justify-center">
-                                            Parameter
-                                        </div>
-                                    </th>
-                                <tr>
-                                    <th colspan="2">Kadar LEL</th>
-                                    <th colspan="2">Kadar O₂</th>
-                                    <th colspan="2">Kadar H₂S</th>
-                                    <th colspan="2">Kadar CO</th>
-                                </tr>
-                                <tr>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class=" flex justify-end mt-5">
-                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('hasilTestContent', 'pengendalianRuangTerbatasContent')">
+
+                    <div class="flex justify-end mt-5">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('validasiPekerjaanContent', 'tenagaKerjaContent')">
                             Kembali
                         </div>
                     </div>
                 </div>
             </div>
+            
+            
         </section>
         <!-- <section>
             <div id="pelaksanaPekerjaan">
@@ -544,8 +477,8 @@ $(".validation-hse").steps({
         return form.validate().settings.ignore = ":disabled", form.valid()
     }
     , onFinished: function (event, currentIndex) {
-        swal("Success", "Your PR Submitted!.");
-        $("#form").submit();
+        swal("Success", "Your Form Submitted!.");
+        // $("#form").submit();
     }
 }), $(".validation-hse").validate({
     ignore: "input[type=hidden]"
@@ -651,7 +584,7 @@ function nextClass(currContent,nextContent) {
 
     const inputs = document.querySelectorAll(`#${currContent} input[required]`); 
     inputs.forEach(input => {
-        
+        console.log('ini submit');
         const tempElement = document.getElementById(input.id + '-error');
         // Kondisi ketika element yang required tidak diisi
         if (input.value.trim() == '') {
@@ -659,17 +592,19 @@ function nextClass(currContent,nextContent) {
             console.log(input);
             // Membuat label baru untuk error
             if(tempElement){
-                tempElement.removeAttribute('style');
+                console.log('ada nih:');
+                tempElement.style.display='none';
             }else{
                 const newLabel = document.createElement('label');
                 newLabel.id = input.id + '-error'; // Set ID
+                newLabel.setAttribute('for', input.id);
                 newLabel.textContent = 'This field is required'; // Isi teks
                 newLabel.classList.add('text-danger'); 
                 input.parentNode.insertBefore(newLabel, input.nextSibling);
             }
         }else{
             if(tempElement){
-                tempElement.style.display='none';
+                tempElement.remove();
             }
         }
     });
@@ -726,9 +661,182 @@ function previousClass(currContent,previousContent) {
 $(".validation-hse h6").on("click", function(e) {
     e.preventDefault();
 });
+
+// Checklist Scaffolding
+function checklistScaffolding(button){
+    var currDiv = document.getElementById('perlindunganKetinggian');
+    var parentDiv = currDiv.parentNode;
+    var currButton = document.getElementById('selanjutnyaScaffolding');
+
+    if (button.checked){
+        currButton.classList.remove('hidden'); // Menghapus class 'hidden'
+
+        var newDiv = document.createElement('div');
+        newDiv.id = 'pengendalianRisikoScaffolding'
+        newDiv.innerHTML = `
+        <div id="pengendalianRisikoScaffolding">
+                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
+                    <span class="text-lg text-white">Pengendalian risiko untuk Scaffolding</span>
+                </div>
+
+                <div class="hidden" id="pengendalianRisikoScaffoldingContent">
+                    <div class="p-1.5 pl-3"><i>Scaffolding</i></div>
+                    <div>
+                        @php 
+                        $workTitle = [
+                            "1. Struktur Scaffolding / Perancah dalam keadaan baik (tidak retak, kropos, dan bengkok)",
+                            "2. Dipasang Safety Line / Barrier & Signs",
+                            "3. Underneath area is cleared / Area di bawahnya harus bersih (kosong)",
+                            "4. Base plat dan ground harus kuat, rata, dan tidak bergelombang",
+                            "5. Terpasang railing dan mengikat pada struktur yang kuat dan stabil",
+                            "6. Scaffolding / Perancah didirikan dan dibongkar oleh Petugas kompeten",
+                            "7. Terdapat anchor points untuk personal fall arrest sudah ada dan kuat",
+                            "8. Rope examined / Tali Pengaman dalam keadaan baik",
+                            "9. Peralatan penghubung yang digunakan untuk menghubungkan Anchorage Connector dengan body harness dalam keadaan baik"
+                            ];
+                        @endphp
+                        @foreach($workTitle as $index => $title)
+                        <div class="form-check my-3">
+                            <input class="form-check-input" type="checkbox" value="" id="scaffolding{{$index}}">
+                            <label class="block text-md font-medium" for="scaffolding{{$index}}">
+                                {{$title}}
+                            </label>
+                        </div>
+                        @endforeach
+                        <div class="form-check my-3">
+                            <input class="form-check-input" type="checkbox" value="" id="extraScaffolding">
+                            <label class="form-check-label block text-md font-medium" for="extraScaffolding">
+                                10. <input type="text" id="extraTool" name="extraScaffolding" class="form-control rounded-lg w-3/4" style="height:100%;" placeholder="Lainnya...">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="p-1.5 pl-3"><i>Penyimpanan</i></div>
+                    <div class="grid md:grid-cols-4">
+                        @php 
+                            $workTitle = [
+                                "1. Bracing tidak bengkok / retak / karat",
+                                "2. Kondisi frame tidak bengkok / retak / karat",
+                                "3. Kondisi Cat Walk atau Plank tidak bengkok / retak / karat",
+                                "4. Kondisi join pin tidak bengkok / retak / karat",
+                                "5. Tidak terdapat material / cairan di dekat tempat penyimpanan yang berpotensi mengakibatkan karat pada frame / bagian lain",
+                                "6. Penyimpanan scaffolding tidak terpapar langsung dengan hujan / panas secara terus menerus",
+                                "7. Tumpukan frame / bagian lain saat disimpan tidak mengakibatkan kerusakan / perubahaan bentuk"
+                                ];
+                        @endphp
+                        @foreach($workTitle as $index => $title)
+                        <div class="form-check my-3 md:col-span-3">
+                            <label class="block text-md font-medium" for="penyimpanan{{$index}}">
+                                {{$title}}
+                            </label>
+                        </div>
+                        <div class="mt-1 grid grid-cols-3">
+                            <div class="flex relative">
+                                <input class="form-check-input" type="radio" value="ya" id="penyimpanan{{$index}}ya" name="penyimpanan{{$index}}" required>
+                                <label for="penyimpanan{{$index}}ya" class="md:hidden" style="padding-left:25px;">Ya</label>
+                            </div>
+                            <div class="flex relative">
+                                <input class="form-check-input" type="radio" value="tidak" id="penyimpanan{{$index}}tidak" name="penyimpanan{{$index}}">
+                                <label for="penyimpanan{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                            </div>
+                            <div class="flex relative">
+                                <input class="form-check-input" type="radio" value="n/a" id="penyimpanan{{$index}}n/a" name="penyimpanan{{$index}}">
+                                <label for="penyimpanan{{$index}}n/a" style="padding-left:25px;">N/A</label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    <div class="p-1.5 pl-3"><i>Operasional / Penggunaan</i></div>
+                    <div class="grid md:grid-cols-4">
+                        @php 
+                            $workTitle = [
+                                "1. Bracing terpasang pada frame",
+                                "2. Koneksi bracing dengan frame dalam kondisi aman / terkunci",
+                                "3. Semua bagian frame terkunci seluruhnya dengan join pin",
+                                "4. Cat Walk / Plank terpasang pada frame",
+                                "5. Scaffolding didirikan oleh petugas yang berkompeten",
+                                "6. Minimal 2 tumpuk frame harus menggunakan railing atau pekerja menggunakan Safety body harness",
+                                "7. Pada saat bekerja harus menggunakan barikade, untuk mencegah orang melewati kolong frame",
+                                "8. Frame harus terikat di srtuktur yang kuat",
+                                "9. Kaki frame tidak boleh berada pada struktur yang tidak stabil / lembek / mudah patah / pecah"
+                                ];
+                        @endphp
+                        @foreach($workTitle as $index => $title)
+                        <div class="form-check my-3 md:col-span-3">
+                            <label class="block text-md font-medium" for="operasional{{$index}}">
+                                {{$title}}
+                            </label>
+                        </div>
+                        <div class="mt-1 grid grid-cols-3">
+                            <div class="flex relative">
+                                <input class="form-check-input" type="radio" value="ya" id="operasional{{$index}}ya" name="operasional{{$index}}" required>
+                                <label for="operasional{{$index}}ya" class="md:hidden" style="padding-left:25px;">Ya</label>
+                            </div>
+                            <div class="flex relative">
+                                <input class="form-check-input" type="radio" value="tidak" id="operasional{{$index}}tidak" name="operasional{{$index}}">
+                                <label for="operasional{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                            </div>
+                            <div class="flex relative">
+                                <input class="form-check-input" type="radio" value="n/a" id="operasional{{$index}}n/a" name="operasional{{$index}}">
+                                <label for="operasional{{$index}}n/a" style="padding-left:25px;">N/A</label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    
+                    <div class="flex justify-end mt-5" id="pengendalianRisikoButton">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('pengendalianRisikoScaffoldingContent', 'pengendalianRisikoTanggaContent')">
+                            Kembali
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        parentDiv.appendChild(newDiv);
+        
+    }else{
+        currButton.classList.add('hidden'); // Menambahkan class 'hidden'
+        parentDiv.removeChild(parentDiv.lastChild);
+    }
+}
+
+
+// Function untuk Step 2
+const gridTenagaKerja = document.getElementById('tenagaKerjaGrid');
+const removeButtonTenagaKerja= document.getElementById('removeButtonTenagaKerja');
+const addButtonTenagaKerja = document.getElementById('addButtonTenagaKerja');
+let rowCountTenagaKerjaGrid = 1;
+addButtonTenagaKerja.addEventListener('click', () => {
+
+    const newRow = document.createElement('div');
+    rowCountTenagaKerjaGrid++;
+
+    newRow.classList.add('grid', 'md:grid-cols-16');
+    newRow.innerHTML = `
+    <div>
+        <div class="flex md:justify-center">
+            <label for="" class="block text-md font-medium">No. ${rowCountTenagaKerjaGrid}</label>
+        </div>
+    </div>
+    <div class="md:col-span-15 grid md:grid-cols-4 gap-x-4">
+        <div class="flex md:justify-center">
+            <label for="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="font-medium">Nama Tenaga Kerja :</label>
+        </div>
+        <div class="col-span-3">
+            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="form-control rounded-lg w-full" placeholder="Input data">
+        </div>
+    </div>
+    `;
+
+    gridTenagaKerja.appendChild(newRow);
+});
+removeButtonTenagaKerja.addEventListener('click', () => {
+    if (rowCountTenagaKerjaGrid > 1) {
+        gridTenagaKerja.removeChild(gridTenagaKerja.lastChild);
+        rowCountTenagaKerjaGrid--;
+    }
+});
+
 </script>
-
-
 @endpush
 
 </x-app-layout>

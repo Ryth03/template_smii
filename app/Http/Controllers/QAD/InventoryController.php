@@ -175,25 +175,6 @@ class InventoryController extends Controller
          return redirect()->back();
      }
 
-     public function dashboardWarehouse()
-     {
-        // $existingItem = Inventory::where('ld_part', $ld_part)->first();
-        $warehouses = DB::table('standard_warehouse_productions')
-               ->leftJoin('inventories', 'standard_warehouse_productions.rack', '=', DB::raw('LEFT(inventories.ld_loc, 3)'))
-               ->select('standard_warehouse_productions.temperature as temperature', DB::raw('SUM(DISTINCT standard_warehouse_productions.pallet_rack) as pallet'), DB::raw('sum(ld_qty_oh) as quantity'), DB::raw('format(sum(ld_qty_oh)/sum(DISTINCT standard_warehouse_productions.pallet_rack)*100, 3)as percentage'))
-               ->groupBy('standard_warehouse_productions.temperature')
-               ->orderByRaw("
-                    CASE
-                        WHEN standard_warehouse_productions.temperature = 'Ambient' THEN 1
-                        WHEN standard_warehouse_productions.temperature = '25 Degree' THEN 2
-                        WHEN standard_warehouse_productions.temperature = '16 Degree' THEN 3
-                        ELSE 4
-                    END
-                ")
-               ->get();
-         return \view('dashboard.dashboardWarehouse',['warehouses' => $warehouses]);
-     }
-
      public function warehouseFilterData(Request $request){
         $date = $request->input('date');
 
@@ -278,21 +259,22 @@ class InventoryController extends Controller
         }
 
         $daily = DB::table('standard_shipments')
-            ->select(DB::raw("FORMAT(sum(ton), 3, 'id_ID') AS tons"))
+            ->select(DB::raw("FORMAT(sum(ton), 1, 'id_ID') AS tons"))
             ->whereDate('date_shipment', $date)
             ->groupBy('date_shipment')
             ->get();
 
         $monthly = DB::table('standard_shipments')
-            ->select(DB::raw("FORMAT(sum(ton), 3, 'id_ID') AS tons"))
+            ->select(DB::raw("FORMAT(sum(ton), 1, 'id_ID') AS tons"))
             ->whereMonth('date_shipment', $month)
             ->whereYear('date_shipment', $year)
+            ->groupBy(DB::raw("month('date_shipment')"))
             ->get();
 
         // Kembalikan data sebagai array
         return response()->json([
             'daily' =>  $daily,
-            'monthly' => $monthly
+            'monthly' => $monthly 
         ]);
     }
 }

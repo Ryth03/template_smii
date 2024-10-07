@@ -6,7 +6,7 @@
     </x-slot>
     @push('css')
     <style>
-        [type="checkbox"]+label {
+        [type="checkbox"]+label, [type="radio"]:not(:checked)+label, [type="radio"]:checked+label {
             color: unset;
         }
         .dark-skin .form-control, .dark-skin .form-select{
@@ -26,9 +26,33 @@
             .md\:row-end-4 {
                 grid-row-end: 4;
             }
+            .md\:grid-cols-5 {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
+            .md\:grid-cols-16 {
+                grid-template-columns: repeat(16, minmax(0, 1fr));
+            }
+            .md\:col-span-15 {
+                grid-column: span 15 / span 15;
+            }
+            .md\:grid-rows-2 {
+                grid-template-rows: repeat(2, minmax(0, 1fr));
+            }
+            .md\:grid-flow-col {
+                grid-auto-flow: column;
+            }
+            .md\:justify-center {
+                justify-content: center
+            }
+            .md\:col-span-3 {
+                grid-column: span 3/span 3
+            }
         }
         .justify-self-end{
             justify-self: end;
+        }
+        .steps { /* Mematikan navigasi lewat header di jquery steps */
+            pointer-events: none;
         }
     </style>
     @endpush
@@ -38,7 +62,7 @@
         @csrf
         <!-- Step 1 -->
         <h6 class="text-md font-semibold mb-4">Ijin Kerja 1</h6>
-        <section>
+        <section id="ijinKerja1">
             <div id="pelaksanaPekerjaan">
                 <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
                     <span class="text-lg text-white">Pelaksana Pekerjaan</span>
@@ -46,7 +70,7 @@
                 <div class="" id="pelaksanaPekerjaanContent">
                     <div class="grid flex justify-center md:grid-cols-4 sm:grid-cols-2">
                         @php 
-                            $workTitle = ["Nama Perusahaan / Dept","Jenis Pekerjaan","Waktu Pelaksanaan","No Telp","Penanggung Jawab Lapangan","Lokasi Pekerjaan","Jam Kerja","Jumlah Tenaga Kerja"];
+                            $workTitle = ["Nama Perusahaan / Dept","Penjelasan Pekerjaan","Waktu Pelaksanaan","No Telp","Penanggung Jawab Lapangan","Lokasi Pekerjaan","Jam Kerja","Jumlah Tenaga Kerja", "Tanggal"];
                         @endphp
                         @foreach($workTitle as $title)
                         <div class="form-group flex flex-col">
@@ -212,18 +236,26 @@
                 <div class="hidden" id="daftarPeralatanContent">
                     <div class="grid flex justify-center md:grid-cols-4 sm:grid-cols-2">
                         @php 
-                            $workTitle = ["Power Tools", "Tangga (Ladder)" , "Bahan Kimia", "Hand Tools", "Stagger (Scaffolds)", "Tabung Gas & Fittings", "Welding Set", "Alat Angkat", "Air Compressor"];
+                            $workTitle = ["Power Tools", "Tangga (Ladder)" , "Bahan Kimia", "Hand Tools", "Stagger (Scaffolds)", "Tabung Gas & Fittings", "Welding Set", "Alat angkat & Angkut", "Air Compressor", "Gerinda / Cutting Tools"];
                         @endphp
                         @foreach($workTitle as $title)
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="{{$title}}">
-                            <label class="block text-md font-medium" for="{{$title}}">
-                                {{$title}}
-                            </label>
+                            @if($title == "Alat angkat & Angkut")
+                                <input class="form-check-input" type="checkbox" value="" id="{{$title}}" onClick="sioSilo(this)">
+                                <label class="block text-md font-medium" for="{{$title}}">
+                                    {{$title}} </br> (Forklift, Crane, Hoise, Boomlift)
+                                </label>
+                                    
+                            @else
+                                <input class="form-check-input" type="checkbox" value="" id="{{$title}}">
+                                <label class="block text-md font-medium" for="{{$title}}">
+                                    {{$title}}
+                                </label>
+                            @endif
                         </div>
                         @endforeach
 
-                        <div class="form-check flex items-center md:row-span-4 md:col-start-4 md:row-start-1 md:row-end-4">
+                        <div class="form-check"> <!-- md:row-span-3 md:col-start-4 md:row-start-2 md:row-end-4 -->
                             <input class="form-check-input" type="checkbox" value="" id="extraTool">
                             <label class="form-check-label block text-md font-medium" for="extraTool">
                                 <input type="text" id="extraTool" name="extraTool" class="form-control rounded-lg w-3/4" style="height:100%;">
@@ -241,6 +273,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
             <div id="ijinKerjaTambahan">
                 <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
@@ -329,19 +362,229 @@
             </div>
 
         </section>
+
+
         <!-- Step 2 -->
-        <h6 class="text-md font-semibold mb-4">Step 2 </h6>
-        <section>
-            <div class="form-group">
-                <label for="data" class="block text-md font-medium">Data ke 2</label>
-                <input type="text" id="data" name="data" class="form-control w-full" required>
+        <h6 class="text-md font-semibold mb-4">Ijin Kerja 2</h6>
+        <section id="ijinKerja2">
+            <div id="tenagaKerja">
+                <!-- <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
+                    <span class="text-lg text-white">Informasi</span>
+                </div> -->
+
+                <div class="" id="tenagaKerjaContent">
+                    <div class="border rounded-lg p-3">
+                        <div id="tenagaKerjaGrid" class="grid gap-y-3">
+                            <div class="grid md:grid-cols-16">
+                                <div>
+                                    <div class="flex md:justify-center">
+                                        <label for="" class="block text-md font-medium">No. 1</label>
+                                    </div>
+                                </div>
+                                <div class="md:col-span-15 grid md:grid-cols-4 gap-x-4">
+                                    <div class="flex md:justify-center">
+                                        <label for="namaTenagaKerja1" class="font-medium">Nama Tenaga Kerja :</label>
+                                    </div>
+                                    <div class="col-span-3">
+                                        <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja1" class="form-control rounded-lg w-full" placeholder="Input data">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Button  -->
+                        <div class="flex mt-2">
+                            <div id="addButtonTenagaKerja" class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
+                                <i class="fas fa-plus">
+                                </i>
+                                Tambah
+                            </div>
+                            <div id="removeButtonTenagaKerja" class="mx-2 px-4 py-2  text-white rounded-lg hover:bg-red-600 btn bg-red-500 ml-4 btn" >
+                                <i class="fas fa-times">
+                                </i>
+                                Hapus Baris Terakhir
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-5">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="nextClass('tenagaKerjaContent', 'validasiPekerjaanContent')">
+                            Lanjut
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="validasiPekerjaan">
+                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
+                    <span class="text-lg text-white">Validasi Pekerjaan</span>
+                </div>
+
+                <div class="hidden" id="validasiPekerjaanContent">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3">
+                        <div>
+                            <div class="font-medium"><i>Apakah Mematuhi Persyaratan K3 & Lingkungan yang telah disetujui selama pekerjaan?</i></div>
+                            <div class="my-3">
+                                <div class="flex flex-col">
+                                    <input class="form-check-input" type="radio" value="ya" id="validasiPekerjaanYa" name="validasiPekerjaanRadio" required>
+                                    <label for="validasiPekerjaanYa" style="padding-left:25px;">YA</label>
+                                </div>
+                                <div class="flex">
+                                    <input class="form-check-input" type="radio" value="tidak" id="validasiPekerjaanTidak" name="validasiPekerjaanRadio">
+                                    <label for="validasiPekerjaanTidak" style="padding-left:25px;">TIDAK</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-medium"><i>Jelaskan hal yang tidak dipenuhi :</i></div>
+                            <div class="w-full my-3">
+                                <textarea id="message" class="w-full" style="resize: none;" name="message" rows="4" cols="50" placeholder="Jelaskan..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-5">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('validasiPekerjaanContent', 'tenagaKerjaContent')">
+                            Kembali
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
-        <h6>Confirmation</h6>
-        <section>
-            <div class="form-group">
-                <label for="data" class="block text-md font-medium">Data ke 3</label>
-                <input type="text" id="data" name="data" class="form-control w-full" required>
+
+
+        <!-- Step 3 -->
+        <h6>Formulir Analisis Keamanan Pekerjaan (JSA)</h6>
+        <section id="formJSA">
+            <div id="informasi">
+                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
+                    <span class="text-lg text-white">Informasi</span>
+                </div>
+
+                <div class="" id="informasiContent">
+                    <div class="grid flex justify-center md:grid-cols-4 sm:grid-cols-2">
+                        @php 
+                            $workTitle = ["JSA dilakukan oleh","Lokasi","Tanggal","Penjelasan Pekerjaan"];
+                        @endphp
+                        @foreach($workTitle as $title)
+                        <div class="form-group flex flex-col">
+                            <label for="department" class="block text-md font-medium">{{$title}}</label>
+                            <input type="text" id="{{$title}}1" name="{{$title}}1" class="form-control rounded-lg w-3/4" placeholder="Input data">
+                        </div>
+                        @endforeach
+                    </div>
+                    <div class="border rounded-lg p-3">
+                        <div id="potentialDangerGrid" class="grid gap-y-3">
+                            <div class="grid md:grid-cols-16">
+                                <div>
+                                    <div class="flex md:justify-center">
+                                        <label for="bahayaPotensial" class="block text-md font-medium">No. 1</label>
+                                    </div>
+                                </div>
+                                <div class="md:col-span-15 grid md:grid-cols-4 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
+                                    <div>
+                                        <div><label for="bahayaPotensial1" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="bahayaPotensial1" class="form-control rounded-lg w-full" placeholder="Input data">
+                                    </div>
+                                    <div>
+                                        <div><label for="scoreBahayaSebelum1" class="block text-md font-medium">Score Bahaya (Sebelum)</label></div>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="scoreBahayaSebelum1" class="form-control rounded-lg w-full" placeholder="Input data">
+                                    </div>
+                                    <div>
+                                        <div><label for="pengendalianBahayaHirarki1" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="pengendalianBahayaHirarki1" class="form-control rounded-lg w-full" placeholder="Input data">
+                                    </div>
+                                    <div>
+                                        <div><label for="scoreBahayaSesudah1" class="block text-md font-medium">Score Bahaya (Sesudah)</label></div>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="scoreBahayaSesudah1" class="form-control rounded-lg w-full" placeholder="Input data">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Button  -->
+                        <div class="flex mt-2">
+                            <div id="addButtonPotentialDanger" class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
+                                <i class="fas fa-plus">
+                                </i>
+                                Tambah
+                            </div>
+                            <div id="removeButtonPotentialDanger" class="mx-2 px-4 py-2 text-white rounded-lg hover:bg-red-600 btn bg-red-500 ml-4 btn" >
+                                <i class="fas fa-times">
+                                </i>
+                                Hapus Baris Terakhir
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    
+
+                    <div class="grid sm:grid-cols-2">
+                        @php 
+                            $tempData = [
+                                "Mesin dan Peralatan - Memerlukan Inspeksi dan Perawatan", 
+                                "Memerlukan Ijin, Sertifikat dari Otoritas Tertentu",
+                                "Memerlukan SOP?",
+                                "Memerlukan Skill dan Pelatihan",
+                                "Berkaitan dengan standard, kode, peraturan?",
+                                "Masuk ke dalam Jadwal Preventive Maintenance?"
+                            ]
+                        @endphp
+                        @foreach($tempData as $data)
+                        <div>
+                            <div class="my-10">
+                                <div class="font-medium">{{$data}}</div>
+                            </div>
+                            <div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <span class="ms-3 text-sm font-medium mr-3">Tidak</span>
+                                    <input type="checkbox" value="" class="sr-only peer">
+                                    <div class="relative w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span class="ms-3 text-sm font-medium ">Ya</span>
+                                </label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Step 4 -->
+        <h6>Agreement</h6>
+        <section id="terms">
+            <div id="agreement">
+                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
+                    <span class="text-lg text-white">Agreement</span>
+                </div>
+                <div class="" id="agreementContent">
+                    @php 
+                        $agreements = [
+                            "Ijin kerja dikeluarkan berdasarkan inspeksi perlatan dan keselamatan kerja selama pekerjaan berlangsung.", 
+                            "Saya telah mengetahui & mengerti lingkup pekerjaan dan persyaratan HSE yang harus dipenuhi.",
+                            "Saya atau perwakilan saya akan mematuhi Peraturan K3 & Lingkungan"
+                            ];
+                    @endphp
+                    @foreach($agreements as $index => $agreement)
+                    <div class="form-check my-3">
+                        <input class="form-check-input" type="checkbox" id="agreement{{$index}}" name="agreement{{$index}}" required>
+                        <label class="block text-md font-medium" for="agreement{{$index}}">
+                            {{$agreement}}
+                        </label>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </section>
     </form>
@@ -351,6 +594,9 @@
 @push('scripts')
 <script>
 var form = $(".validation-hse").show();
+var lastCurrSection;
+var childCurrDiv;
+
 
 $(".validation-hse").steps({
     headerTag: "h6"
@@ -366,12 +612,28 @@ $(".validation-hse").steps({
     , onStepChanging: function (event, currentIndex, newIndex) {
         return currentIndex > newIndex || !(3 === newIndex && Number($("#age-2").val()) < 18) && (currentIndex < newIndex && (form.find(".body:eq(" + newIndex + ") label.error").remove(), form.find(".body:eq(" + newIndex + ") .error").removeClass("error")), form.validate().settings.ignore = ":disabled,:hidden", form.valid())
     }
+    ,onStepChanged: function(event, currentIndex) {
+        lastCurrSection = $(".validation-hse section").eq(currentIndex).children("div").last();
+        childCurrDiv = lastCurrSection.children("div").last();
+        console.log("parent",lastCurrSection);
+        console.log("child",childCurrDiv);
+        if (childCurrDiv.hasClass("hidden")) {
+            // Lakukan sesuatu jika div terakhir memiliki kelas 'hidden'
+            console.log("Div terakhir di section ini tersembunyi!");
+            
+            $("a[href$='next']").hide();
+            $("a[href$='previous']").hide();
+        }else{
+            $("a[href$='next']").show();
+            $("a[href$='previous']").show();
+        }
+    }
     , onFinishing: function (event, currentIndex) {
         return form.validate().settings.ignore = ":disabled", form.valid()
     }
     , onFinished: function (event, currentIndex) {
-        swal("Success", "Your PR Submitted!.");
-        $("#form").submit();
+        swal("Success", "Your Form Submitted!.");
+        // $("#form").submit();
     }
 }), $(".validation-hse").validate({
     ignore: "input[type=hidden]"
@@ -384,7 +646,10 @@ $(".validation-hse").steps({
         $(element).removeClass(errorClass)
     }
     , errorPlacement: function (error, element) {
-        error.insertAfter(element)
+        // Mengambil elemen induk
+        var parent = element.parent();
+        // Menambahkan pesan kesalahan ke dalam elemen induk
+        parent.append(error);
     }
     , rules: {
         email: {
@@ -394,10 +659,119 @@ $(".validation-hse").steps({
 });
 
 
+$("a[href$='next']").hide();
+$("a[href$='previous']").hide()
 
-function hotWorkPermit(panas){
+function nextClass(currContent,nextContent) {
+
+    let allFilled = true;
+
+    const inputs = document.querySelectorAll(`#${currContent} input[required]`); 
+    inputs.forEach(input => {
+    
+    const tempElement = document.getElementById(input.id + '-error');
+    // Kondisi ketika element yang required tidak diisi
+    if (input.value.trim() == '') {
+        allFilled = false;
+        // Membuat label baru untuk error
+        if(tempElement){
+            tempElement.removeAttribute('style');
+        }else{
+            const newLabel = document.createElement('label');
+            newLabel.id = input.id + '-error'; // Set ID
+            newLabel.textContent = 'This field is required'; // Isi teks
+            newLabel.classList.add('text-danger'); 
+            input.parentNode.appendChild(newLabel);
+        }
+        }else{
+            if(tempElement){
+                tempElement.style.display='none';
+            }
+        }
+    });
+
+    if(allFilled){
+        const currElement = document.getElementById(currContent);
+        currElement.classList.add('hidden'); // Menambahkan class 'hidden'
+        const nextElement = document.getElementById(nextContent);
+        nextElement.classList.remove('hidden'); // Menghapus class 'hidden'
+        
+        // Mengarahkan tampilan ke bagian selanjutnya
+        const tujuan = document.getElementById(nextContent.replace("Content", ''));
+        const headerHeight = document.querySelector('header').offsetHeight;
+        const elementPosition = tujuan.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - 120;
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth' 
+        });
+        
+        // Jika berada pada bagian terakhir, akan ditampilkan tombol next
+        if (nextContent === "pengendaliBahayaContent"){
+            $("a[href$='next']").show();
+            $("a[href$='previous']").show();
+        }else if(childCurrDiv){
+            if(nextContent === childCurrDiv.attr("id") ){
+                $("a[href$='next']").show();
+                $("a[href$='previous']").show();
+            }
+        }
+    }
+}
+
+function previousClass(currContent,previousContent) {
+
+    const currElement = document.getElementById(currContent);
+    currElement.classList.add('hidden'); // Menambahkan class 'hidden'
+    const previousElement = document.getElementById(previousContent);
+    previousElement.classList.remove('hidden'); // Menghapus class 'hidden'
+
+    // Mengarahkan tampilan ke bagian selanjutnya
+    const dest = document.getElementById(previousContent.replace("Content", ''));
+    const headerHeight = document.querySelector('header').offsetHeight;
+    const elementPosition = dest.getBoundingClientRect().top + window.scrollY;
+    const offsetPosition = elementPosition - 120;
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth' 
+    });
+
+    // Jika berada pada bagian terakhir, akan ditampilkan tombol next
+    if (currContent === "pengendaliBahayaContent"){
+        $("a[href$='next']").hide();
+        $("a[href$='previous']").hide()
+    }else if(childCurrDiv){
+        if(currContent === childCurrDiv.attr("id") ){
+            $("a[href$='next']").hide();
+            $("a[href$='previous']").hide()
+        }
+    }
+}
+
+function sioSilo(button){
+    var parentDiv = document.getElementById('daftarPeralatanContent');
+    var firstChild = parentDiv.firstElementChild;
+    if (button.checked){
+        var newDiv = document.createElement('div');
+        newDiv.innerHTML = 
+        `<div class="form-check">
+            <label for="sio">SIO</label>
+            <input type="file" name="sio" class="form-control w-3/4" required>
+        </div>
+        <div class="form-check">
+            <label for="silo">SILO</label>
+            <input type="file" name="silo" class="form-control w-3/4" required>
+        </div>`;
+        firstChild.appendChild(newDiv);
+        
+    }else{
+        firstChild.removeChild(firstChild.lastChild);
+    }
+}
+
+function hotWorkPermit(button){
     var titles = "Ijin Kerja Pekerjaan Dengan Api"; 
-    if (panas.checked){
+    if (button.checked){
         $(".validation-hse").steps('insert', 1, { title: titles, content: 
             `<div id="perlindunganKebakaran">
                 <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
@@ -414,7 +788,7 @@ function hotWorkPermit(panas){
                             ];
                     @endphp
                     @foreach($workTitle as $index => $title)
-                    <div class="form-check">
+                    <div class="form-check my-3">
                         <input class="form-check-input" type="checkbox" value="" id="perlindunganKebakaran{{$index}}">
                         <label class="block text-md font-medium" for="perlindunganKebakaran{{$index}}">
                             {{$title}}
@@ -449,7 +823,7 @@ function hotWorkPermit(panas){
                             ];
                         @endphp
                         @foreach($workTitle as $index => $title)
-                        <div class="form-check">
+                        <div class="form-check my-3">
                             <input class="form-check-input" type="checkbox" value="" id="tangga{{$index}}">
                             <label class="block text-md font-medium" for="tangga{{$index}}">
                                 {{$title}}
@@ -484,9 +858,9 @@ function hotWorkPermit(panas){
     }
 }
 
-function confinedSpacePermit(panas){
+function confinedSpacePermit(button){
     var titles = "Ijin Kerja Ruang Terbatas"; 
-    if (panas.checked){
+    if (button.checked){
         var judul = "test content";
         var isi = "test isi";
         $(".validation-hse").steps('insert', 1, { title: titles, content: 
@@ -504,7 +878,7 @@ function confinedSpacePermit(panas){
                             ];
                     @endphp
                     @foreach($workTitle as $index => $title)
-                    <div class="form-check">
+                    <div class="form-check my-3">
                         <input class="form-check-input" type="checkbox" value="" id="perlindunganRuangTerbatas{{$index}}">
                         <label class="block text-md font-medium" for="perlindunganRuangTerbatas{{$index}}">
                             {{$title}}
@@ -538,7 +912,7 @@ function confinedSpacePermit(panas){
                             ];
                         @endphp
                         @foreach($workTitle as $index => $title)
-                        <div class="form-check">
+                        <div class="form-check my-3">
                             <input class="form-check-input" type="checkbox" value="" id="pengendalianRuangTerbatas{{$index}}">
                             <label class="block text-md font-medium" for="pengendalianRuangTerbatas{{$index}}">
                                 {{$title}}
@@ -558,96 +932,66 @@ function confinedSpacePermit(panas){
                 </div>
             </div>
 
-            <div id="hasilTest">
+            <div id="hasilTest" >
                 <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
                     <span class="text-lg text-white">C. Hasil Test</span>
                 </div>
                 <div class="hidden" id="hasilTestContent">
-                    <div>
-                        <table class="table table-bordered" style="width:100%; table-layout: fixed;">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2">Parameter</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                    <th colspan="2">Tgl.</th>
-                                </tr>
-                                <tr>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Kadar LEL</td>
-                                </tr>
-                                <tr>
-                                    <td>Kadar O₂</td>
-                                </tr>
-                                <tr>
-                                    <td>Kadar H₂S</td>
-                                </tr>
-                                <tr>
-                                    <td>Kadar CO</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                        <table class="table table-bordered " style="width:100%; table-layout: fixed;">
-                            <thead>
-                                <tr>
-                                    <th rowspan="4">Tanggal</th></tr>
-                                    <th colspan="8">
-                                        <div  class="flex justify-center">
-                                            Parameter
+                    <div class="flex flex-col justify-center">
+
+                        <div class="flex items-center flex-wrap">
+                            <div class="p-1.5 pl-3 font-medium"><i>Kadar</i></div>
+                            <ul class="m-0" style="list-style: none;">
+                                <li class="dropdown">
+                                    <button id="dateDisplay" class="waves-effect waves-light btn btn-outline dropdown-toggle btn-md font-medium"
+                                        data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                                        {{ date('d F Y') }}
+                                    </button>
+                                    <div class="dropdown-menu" style="will-change: transform;">
+                                        <div class="px-3 py-2">
+                                            <input type="date" id="dateFilterDropdown" class="bg-gray-200 text-black" value="{{ date('Y-m-d') }}">
+                                            <div class="flex">
+                                                <div id="applyDateFilterDropdown" class="bg-blue-500 text-white px-2 py-1 mt-2 btn" onClick="changeDate()">
+                                                    Terapkan
+                                                </div>
+                                            </div>
                                         </div>
-                                    </th>
-                                <tr>
-                                    <th colspan="2" class="flex">Kadar LEL</th>
-                                    <th colspan="2">Kadar O₂</th>
-                                    <th colspan="2">Kadar H₂S</th>
-                                    <th colspan="2">Kadar CO</th>
-                                </tr>
-                                <tr>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                    <th>I</th>
-                                    <th>II</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                                <tr>
-                                    <td>Tgl.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="flex">
+                            <div class="grid grid-cols-1 md:grid-cols-2">
+                                <div class="form-group flex items-center">
+                                    <label for="LEL" class="block text-md font-medium">Kadar Low Explosive Level (LEL)</label>
+                                </div>
+                                <div class="form-group flex items-center">
+                                    <input type="number" id="LEL" name="LEL" class="form-control rounded-lg w-3/4">
+                                    <label for="LEL" class="block text-md font-medium ml-2">%</label>
+                                </div>
+                                <div class="form-group flex items-center">
+                                    <label for="CO" class="block text-md font-medium">Kadar Carbon Monoxide (CO)</label>
+                                </div>
+                                <div class="form-group flex items-center">
+                                    <input type="number" id="CO" name="CO" class="form-control rounded-lg w-3/4">
+                                    <label for="CO" class="block text-md font-medium ml-2">ppm</label>
+                                </div>
+                                <div class="form-group flex items-center">
+                                    <label for="O2" class="block text-md font-medium">Kadar Oxygen (O₂)</label>
+                                </div>
+                                <div class="form-group flex items-center">
+                                    <input type="number" id="O2" name="O2" class="form-control rounded-lg w-3/4">
+                                    <label for="O2" class="block text-md font-medium ml-2">%</label>
+                                </div>
+                                <div class="form-group flex items-center">
+                                    <label for="H2S" class="block text-md font-medium">Kadar Hydrogen Sulfide (H₂S)</label>
+                                </div>
+                                <div class="form-group flex items-center">
+                                    <input type="number" id="H2S" name="H2S" class="form-control rounded-lg w-3/4">
+                                    <label for="H2S" class="block text-md font-medium ml-2">ppm</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class=" flex justify-end mt-5">
@@ -676,9 +1020,9 @@ function confinedSpacePermit(panas){
     }
 }
 
-function heightWorkPermit(panas){
+function heightWorkPermit(button){
     var titles = "Ijin Kerja Di Ketinggian"; 
-    if (panas.checked){
+    if (button.checked){
         $(".validation-hse").steps('insert', 1, { title: titles, content: 
             `<div id="perlindunganKetinggian">
                 <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
@@ -696,7 +1040,7 @@ function heightWorkPermit(panas){
                             ];
                     @endphp
                     @foreach($workTitle as $index => $title)
-                    <div class="form-check">
+                    <div class="form-check my-3">
                         <input class="form-check-input" type="checkbox" value="" id="perlindunganKetinggian{{$index}}">
                         <label class="block text-md font-medium" for="perlindunganKetinggian{{$index}}">
                             {{$title}}
@@ -705,20 +1049,19 @@ function heightWorkPermit(panas){
                     @endforeach
 
                     <div class=" flex justify-end">
-                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" name="selanjutnya" id="selanjutnya"onClick="nextClass('perlindunganKetinggianContent', 'pengendalianRisikoContent')">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" name="selanjutnya" id="selanjutnya"onClick="nextClass('perlindunganKetinggianContent', 'pengendalianRisikoTanggaContent')">
                             Lanjut
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="pengendalianRisiko">
+            <div id="pengendalianRisikoTangga">
                 <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
-                    <span class="text-lg text-white">Pengendalian risiko untuk Tangga / Scaffolding</span>
+                    <span class="text-lg text-white">Pengendalian risiko untuk Tangga</span>
                 </div>
-                <div class="hidden" id="pengendalianRisikoContent">
+                <div class="hidden" id="pengendalianRisikoTanggaContent">
                     <div>
-                        <div class="p-1.5 pl-3"><i>Tangga</i></div>
                         @php 
                         $workTitle = [
                             "1. Struktur Ladder / Tangga dalam keadaan baik (tidak retak, kropos, dan bengkok)",
@@ -728,7 +1071,7 @@ function heightWorkPermit(panas){
                             ];
                         @endphp
                         @foreach($workTitle as $index => $title)
-                        <div class="form-check">
+                        <div class="form-check my-3">
                             <input class="form-check-input" type="checkbox" value="" id="tangga{{$index}}">
                             <label class="block text-md font-medium" for="tangga{{$index}}">
                                 {{$title}}
@@ -736,45 +1079,27 @@ function heightWorkPermit(panas){
                         </div>
                         @endforeach
                     </div>
-                    <div>
-                        <div class="p-1.5 pl-3"><i>Scaffolding</i></div>
-                        @php 
-                        $workTitle = [
-                            "1. Struktur Scaffolding / Perancah dalam keadaan baik (tidak retak, kropos, dan bengkok)",
-                            "2. Dipasang Safety Line / Barrier & Signs",
-                            "3. Underneath area is cleared / Area di bawahnya harus bersih (kosong)",
-                            "4. Base plat dan ground harus kuat, rata, dan tidak bergelombang",
-                            "5. Terpasang railing dan mengikat pada struktur yang kuat dan stabil",
-                            "6. Scaffolding / Perancah didirikan dan dibongkar oleh Petugas kompeten",
-                            "7. Terdapat anchor points untuk personal fall arrest sudah ada dan kuat",
-                            "8. Rope examined / Tali Pengaman dalam keadaan baik",
-                            "9. Peralatan penghubung yang digunakan untuk menghubungkan Anchorage Connector dengan body harness dalam keadaan baik"
-                            ];
-                        @endphp
-                        @foreach($workTitle as $index => $title)
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="scaffolding{{$index}}">
-                            <label class="block text-md font-medium" for="scaffolding{{$index}}">
-                                {{$title}}
-                            </label>
-                        </div>
-                        @endforeach
-                        <div class="form-check flex items-center md:row-span-4 md:col-start-4 md:row-start-1 md:row-end-4">
-                            <input class="form-check-input" type="checkbox" value="" id="extraScaffolding">
-                            <label class="form-check-label block text-md font-medium" for="extraScaffolding">
-                                10. <input type="text" id="extraTool" name="extraScaffolding" class="form-control rounded-lg w-3/4" style="height:100%;" placeholder="Lainnya...">
-                            </label>
-                        </div>
+                    
+                    
+                    <div class="form-check my-6">
+                        <input class="form-check-input" type="checkbox" value="" id="checkScaffolding" onclick="checklistScaffolding(this)">
+                        <label class="block text-md font-medium" for="checkScaffolding">
+                            Apakah menggunakan scaffolding?
+                        </label>
                     </div>
                     
-                    <div class=" flex justify-end mt-5">
-                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('pengendalianRisikoContent', 'perlindunganKetinggianContent')">
+                    <div class="flex justify-end mt-5" id="pengendalianRisikoButton">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('pengendalianRisikoTanggaContent', 'perlindunganKetinggianContent')">
                             Kembali
+                        </div>
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn hidden" name="selanjutnyaScaffolding" id="selanjutnyaScaffolding" onClick="nextClass('pengendalianRisikoTanggaContent', 'pengendalianRisikoScaffoldingContent')">
+                            Lanjut
                         </div>
                     </div>
                 </div>
-            </div>`
-         });
+            </div>
+
+        `});
     }else{
         var steps = 4;
         for (var i = 0; i < steps; i++) {
@@ -791,94 +1116,329 @@ function heightWorkPermit(panas){
     }
 }
 
+// Checklist Scaffolding
+function checklistScaffolding(button){
+    var currDiv = document.getElementById('perlindunganKetinggian');
+    var parentDiv = currDiv.parentNode;
+    var currButton = document.getElementById('selanjutnyaScaffolding');
 
-$("a[href$='next']").hide();
-$("a[href$='previous']").hide()
+    if (button.checked){
+        currButton.classList.remove('hidden'); // Menghapus class 'hidden'
 
-function nextClass(currContent,nextContent) {
+        var newDiv = document.createElement('div');
+        newDiv.id = 'pengendalianRisikoScaffolding'
+        newDiv.innerHTML = `
+        <div id="pengendalianRisikoScaffolding">
+                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
+                    <span class="text-lg text-white">Pengendalian risiko untuk Scaffolding</span>
+                </div>
 
-    let allFilled = true;
-
-    const inputs = document.querySelectorAll(`#${currContent} input[required]`); 
-    inputs.forEach(input => {
+                <div class="hidden" id="pengendalianRisikoScaffoldingContent">
+                    <div class="p-1.5 pl-3"><i>Scaffolding</i></div>
+                    <div>
+                        @php 
+                        $workTitle = [
+                            "1. Struktur Scaffolding / Perancah dalam keadaan baik (tidak retak, kropos, dan bengkok)",
+                            "2. Dipasang Safety Line / Barrier & Signs",
+                            "3. Underneath area is cleared / Area di bawahnya harus bersih (kosong)",
+                            "4. Base plat dan ground harus kuat, rata, dan tidak bergelombang",
+                            "5. Terpasang railing dan mengikat pada struktur yang kuat dan stabil",
+                            "6. Scaffolding / Perancah didirikan dan dibongkar oleh Petugas kompeten",
+                            "7. Terdapat anchor points untuk personal fall arrest sudah ada dan kuat",
+                            "8. Rope examined / Tali Pengaman dalam keadaan baik",
+                            "9. Peralatan penghubung yang digunakan untuk menghubungkan Anchorage Connector dengan body harness dalam keadaan baik"
+                            ];
+                        @endphp
+                        @foreach($workTitle as $index => $title)
+                        <div class="form-check my-3">
+                            <input class="form-check-input" type="checkbox" value="" id="scaffolding{{$index}}">
+                            <label class="block text-md font-medium" for="scaffolding{{$index}}">
+                                {{$title}}
+                            </label>
+                        </div>
+                        @endforeach
+                        <div class="form-check my-3">
+                            <input class="form-check-input" type="checkbox" value="" id="extraScaffolding">
+                            <label class="form-check-label block text-md font-medium" for="extraScaffolding">
+                                10. <input type="text" id="extraTool" name="extraScaffolding" class="form-control rounded-lg w-3/4" style="height:100%;" placeholder="Lainnya...">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="p-1.5 pl-3"><i>Penyimpanan</i></div>
+                    <div class="grid md:grid-cols-4">
+                        @php 
+                            $workTitle = [
+                                "1. Bracing tidak bengkok / retak / karat",
+                                "2. Kondisi frame tidak bengkok / retak / karat",
+                                "3. Kondisi Cat Walk atau Plank tidak bengkok / retak / karat",
+                                "4. Kondisi join pin tidak bengkok / retak / karat",
+                                "5. Tidak terdapat material / cairan di dekat tempat penyimpanan yang berpotensi mengakibatkan karat pada frame / bagian lain",
+                                "6. Penyimpanan scaffolding tidak terpapar langsung dengan hujan / panas secara terus menerus",
+                                "7. Tumpukan frame / bagian lain saat disimpan tidak mengakibatkan kerusakan / perubahaan bentuk"
+                                ];
+                        @endphp
+                        @foreach($workTitle as $index => $title)
+                        <div class="form-check my-3 md:col-span-3">
+                            <label class="block text-md font-medium">
+                                {{$title}}
+                            </label>
+                        </div>
+                        <div class="mt-1 grid grid-cols-3">
+                            <div class="flex flex-col">
+                                <input class="form-check-input" type="radio" value="ya" id="penyimpanan{{$index}}ya" name="penyimpanan{{$index}}" required>
+                                <label for="penyimpanan{{$index}}ya" style="padding-left:25px;">Ya</label>
+                            </div>
+                            <div class="flex">
+                                <input class="form-check-input" type="radio" value="tidak" id="penyimpanan{{$index}}tidak" name="penyimpanan{{$index}}">
+                                <label for="penyimpanan{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                            </div>
+                            <div class="flex">
+                                <input class="form-check-input" type="radio" value="n/a" id="penyimpanan{{$index}}n/a" name="penyimpanan{{$index}}">
+                                <label for="penyimpanan{{$index}}n/a" style="padding-left:25px;">N/A</label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    <div class="p-1.5 pl-3"><i>Operasional / Penggunaan</i></div>
+                    <div class="grid md:grid-cols-4">
+                        @php 
+                            $workTitle = [
+                                "1. Bracing terpasang pada frame",
+                                "2. Koneksi bracing dengan frame dalam kondisi aman / terkunci",
+                                "3. Semua bagian frame terkunci seluruhnya dengan join pin",
+                                "4. Cat Walk / Plank terpasang pada frame",
+                                "5. Scaffolding didirikan oleh petugas yang berkompeten",
+                                "6. Minimal 2 tumpuk frame harus menggunakan railing atau pekerja menggunakan Safety body harness",
+                                "7. Pada saat bekerja harus menggunakan barikade, untuk mencegah orang melewati kolong frame",
+                                "8. Frame harus terikat di srtuktur yang kuat",
+                                "9. Kaki frame tidak boleh berada pada struktur yang tidak stabil / lembek / mudah patah / pecah"
+                                ];
+                        @endphp
+                        @foreach($workTitle as $index => $title)
+                        <div class="form-check my-3 md:col-span-3">
+                            <label class="block text-md font-medium" for="operasional{{$index}}">
+                                {{$title}}
+                            </label>
+                        </div>
+                        <div class="mt-1 grid grid-cols-3">
+                            <div class="flex flex-col">
+                                <input class="form-check-input" type="radio" value="ya" id="operasional{{$index}}ya" name="operasional{{$index}}" required>
+                                <label for="operasional{{$index}}ya" style="padding-left:25px;">Ya</label>
+                            </div>
+                            <div class="flex">
+                                <input class="form-check-input" type="radio" value="tidak" id="operasional{{$index}}tidak" name="operasional{{$index}}">
+                                <label for="operasional{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                            </div>
+                            <div class="flex">
+                                <input class="form-check-input" type="radio" value="n/a" id="operasional{{$index}}n/a" name="operasional{{$index}}">
+                                <label for="operasional{{$index}}n/a" style="padding-left:25px;">N/A</label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    
+                    <div class="flex justify-end mt-5" id="pengendalianRisikoButton">
+                        <div class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onClick="previousClass('pengendalianRisikoScaffoldingContent', 'pengendalianRisikoTanggaContent')">
+                            Kembali
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        parentDiv.appendChild(newDiv);
         
-        const tempElement = document.getElementById(input.id + '-error');
-        // Kondisi ketika element yang required tidak diisi
-        if (input.value.trim() == '') {
-            allFilled = false;
-            console.log(input);
-            // Membuat label baru untuk error
-            if(tempElement){
-                tempElement.removeAttribute('style');
-            }else{
-                const newLabel = document.createElement('label');
-                newLabel.id = input.id + '-error'; // Set ID
-                newLabel.textContent = 'This field is required'; // Isi teks
-                newLabel.classList.add('text-danger'); 
-                input.parentNode.insertBefore(newLabel, input.nextSibling);
-            }
-        }else{
-            if(tempElement){
-                tempElement.style.display='none';
-            }
-        }
-    });
-
-    if(allFilled){
-        const currElement = document.getElementById(currContent);
-        currElement.classList.add('hidden'); // Menambahkan class 'hidden'
-        const nextElement = document.getElementById(nextContent);
-        nextElement.classList.remove('hidden'); // Menghapus class 'hidden'
-        
-        // Mengarahkan tampilan ke bagian selanjutnya
-        const tujuan = document.getElementById(nextContent.replace("Content", ''));
-        const headerHeight = document.querySelector('header').offsetHeight;
-        const elementPosition = tujuan.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - 120;
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth' 
-        });
-        
-        // Jika berada pada bagian terakhir, akan ditampilkan tombol next
-        if (nextContent === "pengendaliBahayaContent"){
-            $("a[href$='next']").show();
-            $("a[href$='previous']").show()
-        }
+    }else{
+        currButton.classList.add('hidden'); // Menambahkan class 'hidden'
+        parentDiv.removeChild(parentDiv.lastChild);
     }
 }
 
-function previousClass(currContent,previousContent) {
-    
-    const currElement = document.getElementById(currContent);
-    currElement.classList.add('hidden'); // Menambahkan class 'hidden'
-    const previousElement = document.getElementById(previousContent);
-    previousElement.classList.remove('hidden'); // Menghapus class 'hidden'
 
-    // Mengarahkan tampilan ke bagian selanjutnya
-    const dest = document.getElementById(previousContent.replace("Content", ''));
-    const headerHeight = document.querySelector('header').offsetHeight;
-    const elementPosition = dest.getBoundingClientRect().top + window.scrollY;
-    const offsetPosition = elementPosition - 120;
-    window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth' 
+function changeDate() {
+    const selectedDate = document.getElementById('dateFilterDropdown').value;
+    // Mengubah teks tombol untuk menampilkan tanggal yang dipilih
+    const formattedDate = new Date(selectedDate).toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
     });
-    
-    // Jika berada pada bagian terakhir, akan ditampilkan tombol next
-    if (currContent === "pengendaliBahayaContent"){
-        $("a[href$='next']").hide();
-        $("a[href$='previous']").hide()
+    const fomattedMonth = new Date(selectedDate).toLocaleDateString('id-ID', {
+        month: 'numeric'
+    });
+    const fomattedYear= new Date(selectedDate).toLocaleDateString('id-ID', {
+        year: 'numeric'
+    });
+    document.getElementById('dateDisplay').innerText = formattedDate;
+};
+
+
+// Function untuk Ijin Kerja 2
+const gridTenagaKerja = document.getElementById('tenagaKerjaGrid');
+const removeButtonTenagaKerja= document.getElementById('removeButtonTenagaKerja');
+const addButtonTenagaKerja = document.getElementById('addButtonTenagaKerja');
+let rowCountTenagaKerjaGrid = 1;
+addButtonTenagaKerja.addEventListener('click', () => {
+
+    const newRow = document.createElement('div');
+    rowCountTenagaKerjaGrid++;
+
+    newRow.classList.add('grid', 'md:grid-cols-16');
+    newRow.innerHTML = `
+    <div>
+        <div class="flex md:justify-center">
+            <label for="" class="block text-md font-medium">No. ${rowCountTenagaKerjaGrid}</label>
+        </div>
+    </div>
+    <div class="md:col-span-15 grid md:grid-cols-4 gap-x-4">
+        <div class="flex md:justify-center">
+            <label for="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="font-medium">Nama Tenaga Kerja :</label>
+        </div>
+        <div class="col-span-3">
+            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="form-control rounded-lg w-full" placeholder="Input data">
+        </div>
+    </div>
+    `;
+
+    gridTenagaKerja.appendChild(newRow);
+});
+removeButtonTenagaKerja.addEventListener('click', () => {
+    if (rowCountTenagaKerjaGrid > 1) {
+        gridTenagaKerja.removeChild(gridTenagaKerja.lastChild);
+        rowCountTenagaKerjaGrid--;
     }
-}
+});
 
 
-$(".validation-hse h6").on("click", function(e) {
-    e.preventDefault();
+// Function untuk JSA Form
+const grid = document.getElementById('potentialDangerGrid');
+const removeButtonPotentialDanger = document.getElementById('removeButtonPotentialDanger');
+const addButtonPotentialDanger = document.getElementById('addButtonPotentialDanger');
+let rowCountPotentialDanger = 1;
+addButtonPotentialDanger.addEventListener('click', () => {
+    const newRow = document.createElement('div');
+    const newRow2 = document.createElement('div');
+    
+    rowCountPotentialDanger++;
+
+    newRow.classList.add('grid', 'md:grid-cols-16');
+    newRow.innerHTML = `
+    <div class="flex md:justify-center">
+        <label for="bahayaPotensial" class="block text-md font-medium">No. ${rowCountPotentialDanger}</label>
+    </div> 
+    <div class="md:col-span-15 grid md:grid-cols-4 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
+        <div>
+            <div><label for="bahayaPotensial${rowCountPotentialDanger}" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
+        </div>
+        <div>
+            <input type="text" id="bahayaPotensial${rowCountPotentialDanger}" class="form-control rounded-lg w-full" placeholder="Input data">
+        </div>
+        <div>
+            <div><label for="scoreBahayaSebelum${rowCountPotentialDanger}" class="block text-md font-medium">Score Bahaya (Sebelum)</label></div>
+        </div>
+        <div>
+            <input type="text" id="scoreBahayaSebelum${rowCountPotentialDanger}" class="form-control rounded-lg w-full" placeholder="Input data">
+        </div>
+        <div>
+            <div><label for="pengendalianBahayaHirarki${rowCountPotentialDanger}" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+        </div>
+        <div>
+            <input type="text" id="pengendalianBahayaHirarki${rowCountPotentialDanger}" class="form-control rounded-lg w-full" placeholder="Input data">
+        </div>
+        <div>
+            <div><label for="scoreBahayaSesudah${rowCountPotentialDanger}" class="block text-md font-medium">Score Bahaya (Sesudah)</label></div>
+        </div>
+        <div>
+            <input type="text" id="scoreBahayaSesudah${rowCountPotentialDanger}" class="form-control rounded-lg w-full" placeholder="Input data">
+        </div>
+    </div>        
+    `;
+
+    grid.appendChild(newRow);
+});
+removeButtonPotentialDanger.addEventListener('click', () => {
+    if (rowCountPotentialDanger > 1) {
+        grid.removeChild(grid.lastChild);
+        rowCountPotentialDanger--;
+    }
+});
+
+document.getElementById('Penanggung Jawab Lapangan').addEventListener('input', function() {
+    var textbox1Value = this.value; // Ambil nilai dari textbox1
+    document.getElementById('JSA dilakukan oleh1').value = textbox1Value; // Set nilai ke textbox2
+});
+
+document.getElementById('Penjelasan Pekerjaan').addEventListener('input', function() {
+    var textbox1Value = this.value; // Ambil nilai dari textbox1
+    document.getElementById('Penjelasan Pekerjaan1').value = textbox1Value; // Set nilai ke textbox2
+});
+
+document.getElementById('Lokasi Pekerjaan').addEventListener('input', function() {
+    var textbox1Value = this.value; // Ambil nilai dari textbox1
+    document.getElementById('Lokasi1').value = textbox1Value; // Set nilai ke textbox2
+});
+
+document.getElementById('Tanggal').addEventListener('input', function() {
+    var textbox1Value = this.value; // Ambil nilai dari textbox1
+    document.getElementById('Tanggal1').value = textbox1Value; // Set nilai ke textbox2
 });
 </script>
 
+<!-- <div id="wizard">
+    <h3>Main Step 1</h3>
+    <section>
+        <p>Content for Main Step 1</p>
+        <button id="showSubStep1">Go to Sub Step 1</button>
+        <div class="sub-step" id="subStep1">
+            <h4>Sub Step 1.1</h4>
+            <p>Details for Sub Step 1.1</p>
+            <button class="nextSubStep">Next</button>
+            <button class="backSubStep">Back</button>
+        </div>
+        <div class="sub-step" id="subStep2">
+            <h4>Sub Step 1.2</h4>
+            <p>Details for Sub Step 1.2</p>
+            <button class="nextSubStep">Next</button>
+            <button class="backSubStep">Back</button>
+        </div>
+    </section>
+    
+    <h3>Main Step 2</h3>
+    <section>
+        <p>Content for Main Step 2</p>
+        <button id="showSubStep2">Go to Sub Step 2</button>
+        <div class="sub-step" id="subStep3">
+            <h4>Sub Step 2.1</h4>
+            <p>Details for Sub Step 2.1</p>
+            <button class="nextSubStep">Next</button>
+            <button class="backSubStep">Back</button>
+        </div>
+    </section>
+</div> -->
+<!-- <script>
+    $(document).ready(function() {
+        $("#wizard").steps({
+            // Konfigurasi langkah di sini
+        });
 
+        // Navigasi untuk Sub Step 1
+        $("#showSubStep1").click(function() {
+            $("#subStep1").show().siblings('.sub-step').hide(); // Tampilkan sub step 1
+        });
+
+        $(".nextSubStep").click(function() {
+            $(this).closest('.sub-step').hide().next('.sub-step').show(); // Pindah ke sub step berikutnya
+        });
+
+        $(".backSubStep").click(function() {
+            $(this).closest('.sub-step').hide().prev('.sub-step').show(); // Kembali ke sub step sebelumnya
+        });
+
+        // Navigasi untuk Sub Step 2
+        $("#showSubStep2").click(function() {
+            $("#subStep3").show().siblings('.sub-step').hide(); // Tampilkan sub step 2
+        });
+    });
+</script> -->
 @endpush
 
 </x-app-layout>

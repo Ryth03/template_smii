@@ -148,15 +148,21 @@ Route::middleware('auth')->group(function () {
     Route::get('dashboard/inventory', [InventoryController::class, 'index'])->name('dashboard.inventory');
 
     /*Dashboard Warehouse*/
-    Route::get('dashboard/dashboard-warehouse', [InventoryController::class, 'dashboardWarehouse'])->name('dashboard.dashboardWarehouse');
+    Route::get('dashboard/dashboard-warehouse', function(){
+        return view("dashboard.dashboardWarehouse");
+    })->name('dashboard.dashboardWarehouse');
     /*Dashboard Sales*/
     Route::get('dashboard/dashboard-sales', [SalesController::class, 'dashboardSales'])->name('dashboard.dashboardSales');
     /*Dashboard Production*/
-    Route::get('dashboard/dashboard-production', [ProductionController::class, 'dashboardProduction'])->name('dashboard.dashboardProduction');
+    Route::get('dashboard/dashboard-production', function(){
+        return view("dashboard.dashboardProduction");
+    })->name('dashboard.dashboardProduction');
+    // Route::get('dashboard/dashboard-production', [ProductionController::class, 'dashboardProduction'])
     /*Dashboard Inventory*/
     Route::get('dashboard/dashboard-inventory', [InventoryController::class, 'dashboardInventory'])->name('dashboard.dashboardInventory');
 
     /*Dashboard Route Get Filter*/
+    Route::get('/get-dashboard-production', [ProductionController::class, 'dashboardProduction']);
     Route::get('/bar-data', [ProductionController::class, 'getBarData']);
     Route::get('/data-filter', [ProductionController::class, 'filterData']);
     /* Dashboard Route Get Filter Warehouse */

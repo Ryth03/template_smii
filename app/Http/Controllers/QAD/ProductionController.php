@@ -283,25 +283,14 @@ class ProductionController extends Controller
 
     public function dashboardProduction(Request $request)
     {
-        // Data untuk doughnut charts
-        $doughnutData = [
-            'A' => $this->getLineData('A'),
-            'B' => $this->getLineData('B'),
-            'C' => $this->getLineData('C'),
-            'D' => $this->getLineData('D'),
-            'E' => $this->getLineData('E')
+        // Data untuk standar production gauge chart
+        $gaugeStandarData = [
+            'A' => StandardProduction::where('line', 'A')->sum('total'),
+            'B' => StandardProduction::where('line', 'B')->sum('total'),
+            'C' => StandardProduction::where('line', 'C')->sum('total'),
+            'D' => StandardProduction::where('line', 'D')->sum('total'),
+            'E' => StandardProduction::where('line', 'E')->sum('total')
         ];
-
-        // Data untuk bar chart
-        $barData = Production::whereDate('tr_effdate', Carbon::today())
-            ->select('Line', DB::raw('SUM(tr_qty_loc) as total_qty'))
-            ->groupBy('Line')
-            ->get();
-
-        // Data untuk standard production
-        $standardData = StandardProduction::select('line as Line', DB::raw('SUM(total) as total'))
-            ->groupBy('line')
-            ->get();
 
         // Data untuk weight comparison
         $weightLastMonth = Production::whereMonth('tr_effdate', now()->subMonth()->month)->whereYear('tr_effdate', now()->year)->sum('Weight_in_KG');
@@ -313,73 +302,18 @@ class ProductionController extends Controller
         $qtyThisMonth = Production::whereMonth('tr_effdate', now()->month)->whereYear('tr_effdate', now()->year)->sum('tr_qty_loc');
         $qtyComparison = $this->getComparison($qtyLastMonth, $qtyThisMonth);
 
-        // Data untuk select options
-        $months = Production::select(DB::raw('DISTINCT MONTH(created_at) as month'))->pluck('month');
-
-        // Ambil data filter berdasarkan tanggal yang dipilih (misalnya dari query string)
-        $filterData = $this->filterData($request); // Memanggil filterData
-
-        // Mengambil data dari filterData
-        $data = $filterData['data'];
-        $grandTotal = $filterData['grandTotal'];
-
-        // Mengolah shiftData
-        $shifts = ['Shift 1', 'Shift 2', 'Shift 3'];
-        $shiftData = [];
-
-        foreach ($doughnutData as $line => $data) {
-            foreach ($shifts as $shift) {
-                $shiftData[$line][$shift] = $this->getShiftData($line, $shift);
-            }
-            $shiftData[$line]['total'] = $shiftData[$line]['Shift 1'] + $shiftData[$line]['Shift 2'] + $shiftData[$line]['Shift 3'];
-        }
-
-        // Grand total
-        $grandTotalShift = array_sum(array_column($shiftData, 'total'));
-
-        // Misalkan $data adalah hasil dari query yang Anda lakukan
-        $data = [
-            'data' => [
-                // Data yang Anda tunjukkan sebelumnya
-            ],
-            'grandTotal' => 168174.7
-        ];
-
-        return view('dashboard.dashboardProduction', [
-            'doughnutData' => $doughnutData,
-            'barData' => $barData,
-            'standardData' => $standardData,
-            'weightLastMonth' => number_format($weightLastMonth, 2, ',', '.'),
-            'weightThisMonth' => $weightThisMonth,
-            'weightComparison' => $weightComparison,
-            'qtyLastMonth' => number_format($qtyLastMonth, 0, ',', '.'),
-            'qtyThisMonth' => $qtyThisMonth,
-            'qtyComparison' => $qtyComparison,
-            'months' => $months,
-            'shiftData' => $shiftData,
-            'data' => $data['data'], // Mengambil array dari 'data'
-            'grandTotal' => $data['grandTotal'], // Mengambil grandTotal
-            'grandTotalShift' => $grandTotalShift // Menambahkan grand total dari shift
-        ]);
+        $weightLastMonth = number_format($weightLastMonth, 0, ',', '.');
+        $qtyLastMonth = number_format($qtyLastMonth, 0, ',', '.');
+        return response()->json(compact(
+        'gaugeStandarData', 'weightLastMonth',
+        'weightThisMonth', 'weightComparison', 'qtyLastMonth', 'qtyThisMonth',
+        'qtyComparison'
+        ));
     }
 
     private function getLineData($line)
     {
-        $actual = Production::where('Line', $line)->sum('tr_qty_loc');
-        $standard = StandardProduction::where('line', $line)->sum('total');
-
-        // Mengambil data untuk setiap shift
-        $shift1 = $this->getShiftData($line, 'shift1');
-        $shift2 = $this->getShiftData($line, 'shift2');
-        $shift3 = $this->getShiftData($line, 'shift3');
-
-        return (object) [
-            'actual' => $actual,
-            'standard' => $standard,
-            'shift1' => $shift1,
-            'shift2' => $shift2,
-            'shift3' => $shift3
-        ];
+        
     }
 
     private function getComparison($lastMonth, $thisMonth)
@@ -517,7 +451,7 @@ class ProductionController extends Controller
         }
 
         $data = Production::whereDate('tr_effdate', $date)
-            ->select('line', 'shift', DB::raw('SUM(Weight_in_KG) as total_weight'))
+            ->select(DB::raw('upper(line) as line'), 'shift', DB::raw('SUM(Weight_in_KG) as total_weight'))
             ->groupBy('line', 'shift')
             ->get(); // Pastikan ini mengembalikan koleksi
 

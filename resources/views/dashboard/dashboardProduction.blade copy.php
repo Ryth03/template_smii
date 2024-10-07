@@ -41,13 +41,6 @@
     </div>
 </div>
 
-<!-- <select id="monthFilterBar" class="mr-2 bg-green-500 text-white">
-    <option value="">Select Month</option>
-    @for ($i = 1; $i <= 12; $i++)
-        <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
-    @endfor
-</select> -->
-
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 mb-4">
     <!-- Bar Chart -->
@@ -55,21 +48,21 @@
         <div class="box">
             <div class="box-body analytics-info">
                 <div class="flex justify-between">
-                    <div class="text-xl font-medium">Production Period</div>
+                    <div class="text-2xl font-medium">Production Period</div>
                     <div class="flex">
                         <!-- Daftar Tahun -->
-                        <select id="yearFilterBar" class="mr-2 bg-gray-500 text-1xl rounded text-black">
-                            <option value="" class="">Select Year</option>
+                        <select id="yearFilterBar" class="mr-2 bg-gray-500 text-xl rounded text-black">
                             @php
                                 $currentYear = date('Y'); // Mengambil tahun saat ini
                             @endphp
+                            <option value="" class="" disabled selected hidden>{{$currentYear}}</option>
                             @for ($i = $currentYear; $i >= $currentYear - 10; $i--)
                                 <option value="{{ $i }}">{{ $i }}</option>
                             @endfor
                         </select>
                         <!-- Daftar bulan -->
-                        <select id="monthFilterBar" class="mr-2 bg-gray-500 text-1xl rounded text-black">
-                            <option value="" class="">Select Month</option>
+                        <select id="monthFilterBar" class="mr-2 bg-gray-500 text-xl rounded text-black">
+                            <option value="" class="" disabled selected hidden>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
                             @for ($i = 1; $i <= 12; $i++)
                                 <option value="{{ $i }}" >{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
                             @endfor
@@ -87,13 +80,13 @@
                 <h4 class="box-title text-2xl">Line</h4>
                 <ul class="m-0" style="list-style: none;">
                     <li class="dropdown">
-                        <button id="dateDisplay" class="waves-effect waves-light btn btn-outline dropdown-toggle btn-md"
+                        <button id="dateDisplay" class="waves-effect waves-light btn btn-outline dropdown-toggle btn-md text-xl"
                             data-bs-toggle="dropdown" href="#" aria-expanded="false">
                             {{ date('d F Y') }} <!-- Menampilkan tanggal hari ini -->
                         </button>
                         <div class="dropdown-menu dropdown-menu-end" style="will-change: transform;">
                             <div class="px-3 py-2">
-                                <input type="date" id="dateFilterDropdown" class="bg-gray-200 text-black"
+                                <input type="date" id="dateFilterDropdown" class="bg-gray-200 text-black text-xl"
                                     value="{{ date('Y-m-d') }}">
                                 <button id="applyDateFilterDropdown"
                                     class="bg-blue-500 text-white px-2 py-1 mt-2">Terapkan</button>
@@ -107,11 +100,11 @@
                 <table class="table mb-0 w-full">
                     <thead>
                         <tr>
-                            <th>Line</th>
-                            <th class="text-center">Shift 1</th>
-                            <th class="text-center">Shift 2</th>
-                            <th class="text-center">Shift 3</th>
-                            <th class="text-center">Total</th>
+                            <th class="text-xl">Line</th>
+                            <th class="text-center text-xl">Shift 1</th>
+                            <th class="text-center text-xl">Shift 2</th>
+                            <th class="text-center text-xl">Shift 3</th>
+                            <th class="text-center text-xl">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -137,29 +130,29 @@
                                 <tr>
                                     <td class="pt-0 px-0 b-0">
                                         <div class="flex items-center">
-                                            <div class="w-10 h-50 rounded {{ $line == 'A' ? 'bg-primary' : ($line == 'B' ? 'bg-success' : ($line == 'C' ? 'bg-info' : ($line == 'D' ? 'bg-danger' : 'bg-warning'))) }}">
+                                            <div class="w-10 h-50 rounded {{ $line == 'A' ? 'bg-blue-400' : ($line == 'B' ? 'bg-red-400' : ($line == 'C' ? 'bg-purple-300' : ($line == 'D' ? 'bg-green-300' : 'bg-orange-300'))) }}">
                                             </div>
-                                            <span class="text-fade text-lg ml-2 font-bold">{{ $line == 'A' ? 'Liquid' : ($line == 'B' ? 'Pastry' : ($line == 'C' ? 'P1' : ($line == 'D' ? 'P2' : ($line == 'E' ? 'P3' : 'Lainnya')))) }}</span>
+                                            <span class="text-fade text-xl ml-2 font-bold">{{ $line == 'A' ? 'Liquid' : ($line == 'B' ? 'Pastry' : ($line == 'C' ? 'P1' : ($line == 'D' ? 'P2' : ($line == 'E' ? 'P3' : 'Lainnya')))) }}</span>
                                         </div>
                                     </td>
                                     <td class="text-center b-0 pt-0 px-0">
-                                        <span class="text-fade text-md">{{ number_format($shifts['shift1'] ?? 0, 2, '.', ',') }} KG</span>
+                                        <span class="text-fade text-xl">{{ number_format($shifts['shift1'] ?? 0, 2, '.', ',') }} KG</span>
                                     </td>
                                     <td class="text-center b-0 pt-0 px-0">
-                                        <span class="text-fade text-md">{{ number_format($shifts['shift2'] ?? 0, 2, '.', ',') }} KG</span>
+                                        <span class="text-fade text-xl">{{ number_format($shifts['shift2'] ?? 0, 2, '.', ',') }} KG</span>
                                     </td>
                                     <td class="text-center b-0 pt-0 px-0">
-                                        <span class="text-fade text-md">{{ number_format($shifts['shift3'] ?? 0, 2, '.', ',') }} KG</span>
+                                        <span class="text-fade text-xl">{{ number_format($shifts['shift3'] ?? 0, 2, '.', ',') }} KG</span>
                                     </td>
                                     <td class="text-center b-0 pt-0 px-0">
-                                        <span class="text-fade text-md">{{ number_format(($shifts['shift1'] ?? 0) + ($shifts['shift2'] ?? 0) + ($shifts['shift3'] ?? 0), 2, '.', ',') }} KG</span>
+                                        <span class="text-fade text-xl">{{ number_format(($shifts['shift1'] ?? 0) + ($shifts['shift2'] ?? 0) + ($shifts['shift3'] ?? 0), 2, '.', ',') }} KG</span>
                                     </td>
                                 </tr>
                             @endforeach
 
                             <tr>
-                                <td class="text-right text-xl" colspan="4"><strong>Grand Total</strong></td>
-                                <td class="text-center text-xl"><strong>{{ number_format(array_sum(array_column($totals, 'shift1')) + array_sum(array_column($totals, 'shift2')) + array_sum(array_column($totals, 'shift3')), 2, '.', ',') }}</strong></td>
+                                <td class="text-right text-2xl" colspan="4"><strong>Grand Total</strong></td>
+                                <td class="text-center text-2xl"><strong>{{ number_format(array_sum(array_column($totals, 'shift1')) + array_sum(array_column($totals, 'shift2')) + array_sum(array_column($totals, 'shift3')), 2, '.', ',') }}</strong></td>
                             </tr>
                         @else
                             <tr>
@@ -176,31 +169,31 @@
 
 <div id="gaugeChart" class="grid grid-cols-5 gap-x-4 mb-4">
     <!-- Line A -->
-    <div class="card border-2 border-danger rounded-2xl pull-up">
+    <div class="card rounded-2xl pull-up" style="border:2px solid rgb(96 165 250)">
         <div class="box-header flex justify-start items-center">
             <h3 class="box-title m-0 text-2xl">Liquid</h3>
         </div>
         <div id="lineAChart" style="height:350px;" class=""></div>
     </div>
-    <div class="card border border-warning rounded-2xl pull-up">
+    <div class="card rounded-2xl pull-up" style="border:2px solid rgb(248 113 113)">
         <div class="box-header flex justify-start items-center">
             <h3 class="box-title m-0 text-2xl">Pastry</h3>
         </div>
         <div id="lineBChart" style="height:350px;" class="m-0 p-0"></div>
     </div>
-    <div class="card border border-primary rounded-2xl pull-up">
+    <div class="card rounded-2xl pull-up" style="border:2px solid rgb(216 180 254)">
         <div class="box-header flex justify-start items-center">
             <h3 class="box-title m-0 text-2xl">P1</h3>
         </div>
         <div id="lineCChart" style="height:350px;" class="m-0 p-0"></div>
     </div>
-    <div class="card border border-info rounded-2xl pull-up">
+    <div class="card rounded-2xl pull-up" style="border:2px solid rgb(134 239 172)">
         <div class="box-header flex justify-start items-center">
             <h3 class="box-title m-0 text-2xl">P2</h3>
         </div>
         <div id="lineDChart" style="height:350px;" class="m-0 p-0"></div>
     </div>
-    <div class="card border border-success rounded-2xl pull-up">
+    <div class="card rounded-2xl pull-up" style="border:2px solid rgb(253 186 116)">
         <div class="box-header flex justify-start items-center">
             <h3 class="box-title m-0 text-2xl">P3</h3>
         </div>
@@ -218,9 +211,10 @@
     // Doughnut Charts for Lines A, B, C, D, E
     const doughnutData = @json($doughnutData);
     const lines = ['A', 'B', 'C', 'D', 'E'];
+    const myCharts = {};
     lines.forEach(line => {
         const ctx = document.getElementById(`line${line}Chart`);
-        var myChart = echarts.init(ctx);
+        myCharts[line] = echarts.init(ctx);
         var option;
         option = {
         series: [
@@ -229,7 +223,7 @@
             startAngle: 180,
             endAngle: 0,
             min: 0,
-            max: 100000,
+            max: Math.round(Math.max(doughnutData[line].actual, doughnutData[line].standard*1.3)),
             splitNumber: 2,
             itemStyle: {
                 color: '#58D9F9',
@@ -281,14 +275,14 @@
                 backgroundColor: '#fff',
                 borderColor: '#999',
                 borderWidth: 2,
-                width: '60%',
+                width: '70%',
                 lineHeight: 25,
                 height: 20,
                 borderRadius: 8,
                 offsetCenter: [0, '35%'],
                 valueAnimation: true,
                 formatter: function (value) {
-                return '{value|' + value.toFixed(0) + '}';
+                    return '{value|' + value.toLocaleString('id-ID') + '}';
                 },
                 rich: {
                 value: {
@@ -307,7 +301,8 @@
                 },
                 detail: {
                     offsetCenter: ['-65%', '35%']
-                }
+                },
+                
                 },
                 {
                 value: doughnutData[line].standard,
@@ -331,7 +326,7 @@
         ]
         };
 
-        option && myChart.setOption(option);
+        option && myCharts[line].setOption(option);
     });
 
     // Inisialisasi ECharts
@@ -364,7 +359,7 @@
                         yAxis: standardData[0], // Tambahkan threshold di sumbu Y
                         label: {
                             formatter: function(params) {
-                                return params.value.toLocaleString('en-US'); // Memformat angka ribuan dengan koma
+                                return params.value.toLocaleString('id-ID'); // Memformat angka ribuan dengan koma
                             },
                             color: '#73757D'
                         }
@@ -378,18 +373,32 @@
         };
         });
         option = {
+            color: ['#609CFA', '#F87171', '#D8B4FE', '#86EFAC', '#FDBA74'],
             legend: {
-                selectedMode: false
+                // data: ['P3', 'P2', 'P1', 'Liquid', 'Pastry'],
+                selectedMode: false,
+                textStyle: {
+                    fontSize: 20, // Sesuaikan ukuran font di sini
+                }
             },
             grid,
             yAxis: {
                 type: 'value',
                 min: 0,
-                max: Math.round(Math.max(actualHeight, standardData) * 1.03) // Menentukan tinggi maksimum berdasarkan data yang lebih tinggi
+                max: Math.round(Math.max(actualHeight, standardData) * 1.03), // Menentukan tinggi maksimum berdasarkan data yang lebih tinggi
+                axisLabel:{
+                    fontSize: 17,
+                    formatter: function(value) {
+                        return value.toLocaleString('id-ID'); // Memformat angka dengan titik
+                    }
+                }
             },
             xAxis: {
                 type: 'category',
-                data: label
+                data: label,
+                axisLabel:{
+                    fontSize: 15
+                }
             },
             series
         };
@@ -482,32 +491,73 @@
                         row.innerHTML = `
                             <td class="pt-0 px-0 b-0">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-50 rounded ${line == 'A' ? 'bg-primary' : (line == 'B' ? 'bg-success' : (line == 'C' ? 'bg-info' : (line == 'D' ? 'bg-danger' : 'bg-warning')))}"></div>
-                                            <span class="text-fade text-lg ml-2 font-semibold">${line == 'A' ? 'Liquid' : (line == 'B' ? 'Pastry' : (line == 'C' ? 'P1' : (line == 'D' ? 'P2' : (line == 'E' ? 'P3' : 'Lainnya'))))}</span>
+                                    <div class="w-10 h-50 rounded ${line == 'A' ? 'bg-blue-400' : (line == 'B' ? 'bg-red-400' : (line == 'C' ? 'bg-purple-300' : (line == 'D' ? 'bg-green-300' : 'bg-orange-300')))}"></div>
+                                            <span class="text-fade text-xl ml-2 font-semibold">${line == 'A' ? 'Liquid' : (line == 'B' ? 'Pastry' : (line == 'C' ? 'P1' : (line == 'D' ? 'P2' : (line == 'E' ? 'P3' : 'Lainnya'))))}</span>
                                 </div>
                             </td>
                             <td class="text-center b-0 pt-0 px-0">
-                                <span class="text-fade text-lg">${shifts.shift1.toFixed(2)} KG</span>
+                                <span class="text-fade text-xl">${shifts.shift1.toLocaleString('id-ID')} KG</span>
                             </td>
                             <td class="text-center b-0 pt-0 px-0">
-                                <span class="text-fade text-lg">${shifts.shift2.toFixed(2)} KG</span>
+                                <span class="text-fade text-xl">${shifts.shift2.toLocaleString('id-ID')} KG</span>
                             </td>
                             <td class="text-center b-0 pt-0 px-0">
-                                <span class="text-fade text-lg">${shifts.shift3.toFixed(2)} KG</span>
+                                <span class="text-fade text-xl">${shifts.shift3.toLocaleString('id-ID')} KG</span>
                             </td>
                             <td class="text-center b-0 pt-0 px-0">
-                                <span class="text-fade text-lg">${totalWeight.toFixed(2)} KG</span>
+                                <span class="text-fade text-xl">${totalWeight.toLocaleString('id-ID')} KG</span>
                             </td>
                         `;
                         tbody.appendChild(row);
+
+                        // Gauge Chart
+                        // const ctx = document.getElementById(`line${line}Chart`);
+                        // var myChart = echarts.init(ctx);
+                        myCharts[line].setOption({
+                            series: [
+                            {
+                                max: Math.round(Math.max(totalWeight.toFixed(2), doughnutData[line].standard*1.3)),
+                                data: [
+                                    {
+                                        value: doughnutData[line].standard,
+                                        name: 'Standard Data',
+                                        itemStyle: {
+                                            color: 'red',
+                                            shadowColor: 'rgba(0,138,255,0.45)',
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 2,
+                                            shadowOffsetY: 2
+                                        },
+                                        title: {
+                                            offsetCenter: ['65%', '70%']
+                                        },
+                                        detail: {
+                                            offsetCenter: ['65%', '35%']
+                                        }
+                                    },
+                                    {
+                                        value: totalWeight.toFixed(2),
+                                        name: 'Actual Data',
+                                        title: {
+                                            offsetCenter: ['-65%', '70%']
+                                        },
+                                        detail: {
+                                            offsetCenter: ['-65%', '35%']
+                                        }
+                                    }
+                                    
+                                ]
+                            }]
+                        });
+
                     }
 
                     // Tambahkan baris untuk grand total jika diperlukan
                     const grandTotalRow = document.createElement('tr');
                     const grandTotal = Object.values(totals).reduce((acc, curr) => acc + curr.shift1 + curr.shift2 + curr.shift3, 0);
                     grandTotalRow.innerHTML = `
-                        <td class="text-right text-xl" colspan="4"><strong>Grand Total</strong></td>
-                        <td class="text-left text-2xl"><strong>${grandTotal.toFixed(2)} KG</strong></td>
+                        <td class="text-right text-2xl" colspan="4"><strong>Grand Total</strong></td>
+                        <td class="text-left text-2xl"><strong>${grandTotal.toLocaleString('id-ID')} KG</strong></td>
                     `;
                     tbody.appendChild(grandTotalRow);
                 } else {
