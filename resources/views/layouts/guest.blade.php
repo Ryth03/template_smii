@@ -45,6 +45,7 @@
 
 	<!-- Vendor JS -->
 	<script src="{{ asset('assets') }}/src/js/vendors.min.js"></script>
+    <script src="{{ asset('assets') }}/src/js/tailwind.min.js"></script>
 
 </body>
 

@@ -70,6 +70,9 @@ Route::get('/', function () {
 Route::get('/hse', function () {
     return view('hse.workPermit1.permitForm');
 });
+Route::get('/review', function () {
+    return view('hse.review.reviewForm');
+});
 Route::get('/test1', function () {
     return view('dashboard.test1');
 });
