@@ -76,28 +76,6 @@ Register
                             <label for="termsAgreement" class="text-gray-900 dark:text-white">Saya setuju dengan Perjanjian Kerja Kontraktor</label>
                         </div>
 
-                        <!-- dropdown -->
-                        <div class="relative inline-block text-left">
-                            <div>
-                                <button type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
-                                Options
-                                <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
-                                </button>
-                            </div>
-                            <div id="dropdown-menu" class="hidden absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-                                <div class="py-1" role="none">
-                                <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">1</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-1">2</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2">3</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2">4</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2">5</a>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="form-group mt-5">
                             <div class="text-end mt-6" >
                                 <button class="btn btn-primary btn-block rounded-md text-white w-full"
@@ -225,26 +203,6 @@ Register
                 toggleIcon.classList.add('fa-eye');
             }
         }
-        document.addEventListener('DOMContentLoaded', () => {
-            const dropdownButton = document.getElementById('menu-button');
-            const dropdownMenu = document.getElementById('dropdown-menu');
-
-            // Toggle dropdown visibility
-            dropdownButton.addEventListener('click', () => {
-                dropdownMenu.classList.toggle('hidden');
-            });
-
-            // Close dropdown when clicking outside
-            
-        });
-        
-        window.addEventListener('click', (event) => {
-                // if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-                //     dropdownMenu.classList.add('hidden');
-                // }
-                console.log("test");
-            });
-
         function validateForm(event) {
             const checkbox = document.getElementById('termsAgreement');
             if (!checkbox.checked) {

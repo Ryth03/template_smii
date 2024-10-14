@@ -67,12 +67,34 @@ Route::get('/', function () {
     SEOMeta::setTitle('Intra SMII - Dashboard');
     return view('welcome');
 });
+
 Route::get('/hse', function () {
-    return view('hse.workPermit1.permitForm');
-});
+    return view('hse.guest.permitForm');
+})->name('permit.form');
+
+Route::get('/review-table', function () {
+    return view('hse.admin.table.reviewTable');
+})->name('review.table');
+Route::get('/approve-table', function () {
+    return view('hse.admin.table.approveTable');
+})->name('approve.table');
+Route::get('/viewAll-table', function () {
+    return view('hse.admin.table.viewAllTable');
+})->name('viewAll.table');
+Route::get('/security-table', function () {
+    return view('hse.admin.table.securityPostTable');
+})->name('securityPost.table');
+
 Route::get('/review', function () {
-    return view('hse.review.reviewForm');
-});
+    return view('hse.admin.form.reviewForm');
+})->name('review.form');
+Route::get('/approve', function () {
+    return view('hse.admin.form.approveForm');
+})->name('approve.form');
+
+Route::get('/register2', function () {
+    return view('hse.register.registerForm');
+})->name('register.hse');
 Route::get('/test1', function () {
     return view('dashboard.test1');
 });

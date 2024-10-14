@@ -18,8 +18,8 @@ Register
                 <div class="login-main" style="background: rgba(255, 255, 255, 0.527); backdrop-filter: blur(10px); border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); max-width: 450px; width:100%;">
                     <form class="theme-form" method="POST" action="" >
                         @csrf
-                        <h3 class="font-bold text-4xl text-center" style="color:#c0a01f">Intra SMII</h3>
-                        <p class="mt-10 text-center" style="color: #141412">Register to continue to Intra SMII.</p>
+                        <h3 class="font-bold text-4xl text-center" style="color:#c0a01f">Register HSE</h3>
+                        <p class="mt-10 text-center" style="color: #141412">Register to continue to HSE Form.</p>
                         <div class="relative w-full mt-4">
                             <label for="input-label" class="block text-sm font-medium mb-2 text-gray-700">Nama</label>
                             <input type="text" name="nama" id="input-label"
@@ -32,6 +32,14 @@ Register
                             <input type="text" name="company/department" id="compDept"
                                 class="border-1 py-2 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:focus:ring-gray-600"
                                 placeholder="Masukan Perusahaan / Departemen">
+                        </div>
+
+                        
+                        <div class="relative w-full mt-4">
+                            <label for="email" class="block text-sm font-medium mb-2 text-gray-700">E-mail</label>
+                            <input type="text" name="email" id="email"
+                                class="border-1 py-2 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:focus:ring-gray-600"
+                                placeholder="Masukan E-mail">
                         </div>
 
                         <label class="font-medium block mb-1 mt-4 text-gray-700" for="password">
@@ -203,7 +211,6 @@ Register
                 toggleIcon.classList.add('fa-eye');
             }
         }
-        
         function validateForm(event) {
             const checkbox = document.getElementById('termsAgreement');
             if (!checkbox.checked) {

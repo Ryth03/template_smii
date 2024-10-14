@@ -91,5 +91,41 @@
                         
                 </ul>
             </li>
+            <li
+                class="{{ request()->is('users*') || request()->is('department*') || request()->is('position*') || request()->is('level*') || request()->is('roles*') || request()->is('permissions*') || request()->is('get.master*') ? 'current' : '' }}">
+                <a href="#" style="font-size: 18px;">
+                    <i data-feather="users" style="width: 18px; height: 18px;"></i>
+                    HSE Management
+                </a>
+                <ul>
+
+                    <li><a href="{{ route('permit.form') }}" class="{{ request()->is('users*') ? 'current' : '' }}"><i
+                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Permit Form</a>
+                    </li>
+
+
+                    <li><a href="{{ route('review.table') }}"
+                            class="{{ request()->is('department*') ? 'current' : '' }}"><i class="icon-Commit"><span
+                                    class="path1"></span><span class="path2"></span></i>Review Table</a></li>
+
+
+                    <li><a href="{{ route('approve.table') }}" class="{{ request()->is('position*') ? 'current' : '' }}"><i
+                                class="icon-Commit"><span class="path1"></span><span
+                                    class="path2"></span></i>Approve Table</a></li>
+
+                    <li><a href="{{ route('securityPost.table') }}" class="{{ request()->is('level*') ? 'current' : '' }}"><i
+                        class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Security Post Table</a>
+                    </li>
+
+                    <li><a href="{{ route('viewAll.table') }}" class="{{ request()->is('level*') ? 'current' : '' }}"><i
+                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All Table</a>
+                    </li>
+
+                    <li><a href="{{ route('register.hse') }}" class="{{ request()->is('level*') ? 'current' : '' }}"><i
+                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Register Form</a>
+                    </li>
+                        
+                </ul>
+            </li>
     </ul>
 </nav>
