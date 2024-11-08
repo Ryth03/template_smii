@@ -119,7 +119,6 @@
 
     <script src="{{ asset('assets') }}/src/js/pages/toastr.js"></script>
     <script src="{{ asset('assets') }}/src/js/pages/notification.js"></script>
-
 @stack('scripts')
 
 

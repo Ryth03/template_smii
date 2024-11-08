@@ -87,7 +87,11 @@
                                         class="path1"></span><span class="path2"></span></i>Permission</a></li>
                         <li><a href="{{ route('get.master') }}" class="{{ request()->is('get.master*') ? 'current' : '' }}"><i
                                     class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Get Data
-                                Master </a></li>
+                                Master </a>
+                        </li>
+                        <li><a href="{{ route('location.hse') }}" class="{{ request()->is('get.master*') ? 'current' : '' }}"><i
+                            class="icon-Commit"><span class="path1"></span><span class="path2"></span></i> HSE Location </a>
+                        </li>
                         
                 </ul>
             </li>
@@ -98,33 +102,41 @@
                     HSE Management
                 </a>
                 <ul>
-
+                    @can('view user dashboard hse')
+                    <li><a href="{{ route('hse.dashboard') }}" class="{{ request()->is('users*') ? 'current' : '' }}"><i
+                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Dashboard HSE</a>
+                    </li>
+                    @endcan
+                    @can('create form hse')
                     <li><a href="{{ route('permit.form') }}" class="{{ request()->is('users*') ? 'current' : '' }}"><i
                                 class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Permit Form</a>
                     </li>
-
-
+                    @endcan
+                    @can('review form hse')
                     <li><a href="{{ route('review.table') }}"
                             class="{{ request()->is('department*') ? 'current' : '' }}"><i class="icon-Commit"><span
-                                    class="path1"></span><span class="path2"></span></i>Review Table</a></li>
-
-
-                    <li><a href="{{ route('approve.table') }}" class="{{ request()->is('position*') ? 'current' : '' }}"><i
+                                    class="path1"></span><span class="path2"></span></i>Pending Review</a></li>
+                    @endcan
+                    @can('approve form hse')
+                    <li><a href="{{ route('approval.table') }}" class="{{ request()->is('position*') ? 'current' : '' }}"><i
                                 class="icon-Commit"><span class="path1"></span><span
-                                    class="path2"></span></i>Approve Table</a></li>
-
+                                    class="path2"></span></i>Pending Approval</a></li>
+                    @endcan
+                    @can('view security dashboard hse')
                     <li><a href="{{ route('securityPost.table') }}" class="{{ request()->is('level*') ? 'current' : '' }}"><i
                         class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Security Post Table</a>
                     </li>
-
+                    @endcan
+                    @can('view all form hse')
                     <li><a href="{{ route('viewAll.table') }}" class="{{ request()->is('level*') ? 'current' : '' }}"><i
-                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All Table</a>
+                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All Form</a>
                     </li>
-
+                    @endcan
+                    @can('view register form')
                     <li><a href="{{ route('register.hse') }}" class="{{ request()->is('level*') ? 'current' : '' }}"><i
                                 class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Register Form</a>
                     </li>
-                        
+                    @endcan
                 </ul>
             </li>
     </ul>

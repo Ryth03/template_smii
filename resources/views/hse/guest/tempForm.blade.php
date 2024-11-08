@@ -118,23 +118,23 @@
                             @elseif($title == "Tanggal Mulai Pelaksanaan")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="date" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4"  onchange="ubahTanggal()" required>
+                                <input type="date" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4"  onchange="ubahTanggal()">
 
                             </div>
                             @elseif($title == "Tanggal Berakhir Pelaksanaan")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="date" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4" readonly required>
+                                <input type="date" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4" readonly>
                             </div>
                             @elseif($title == "Jam Mulai Kerja" || $title == "Jam Berakhir Kerja")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="time" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4" required>                                    
+                                <input type="time" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4">                                    
                             </div>
                             @elseif($title == "Penjelasan Pekerjaan")
                             <div class="form-group flex flex-col md:col-span-3">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <textarea name="{{$title}}" id="{{$title}}" class="form-control w-3/4" style="resize: none;" rows="4" placeholder="Penjelasaan..." required></textarea>
+                                <textarea name="{{$title}}" id="{{$title}}" class="form-control w-3/4" style="resize: none;" rows="4" placeholder="Penjelasaan..."></textarea>
                             </div>
                             @elseif($title == "Jumlah Tenaga Kerja")
                             <div class="form-group flex flex-col">
@@ -143,16 +143,6 @@
                                     <input type="number" id="{{$title}}" name="{{$title}}" class="form-control rounded-lg w-3/4" placeholder="Input data" required>
                                     <label for="{{$title}}" class="p-2">orang</label>
                                 </div>
-                            </div>
-                            @elseif($title == "Lokasi Pekerjaan")
-                            <div class="form-group flex flex-col">
-                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <select name="{{$title}}" id="{{$title}}" class="form-select rounded-lg w-3/4" required>
-                                    <option value="" disabled selected>Pilih Lokasi</option>
-                                    @foreach($locations as $location)
-                                    <option value="{{$location}}" class="w-3/4">{{$location}}</option>
-                                    @endforeach
-                                </select>
                             </div>
                             @else
                             <div class="form-group flex flex-col">
@@ -692,15 +682,8 @@
                     
                 </div>
             </div>
-        
-            <!-- Tombol Simpan sebagai Draft -->
-            <div class="flex justify-end mt-5">
-                <button type="submit" id="saveDraftButton" name="action" value="draft" class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
-                    Simpan sebagai Draft
-                </button>
-            </div>
-        </section>
 
+        </section>
     </form>
 </div>
 
@@ -811,7 +794,7 @@ function nextClass(currContent,nextContent) {
 
     let allFilled = true;
 
-    const inputs = document.querySelectorAll(`#${currContent} input[required]:not([type="checkbox"]), #${currContent} textarea[required], #${currContent} select[required]`); 
+    const inputs = document.querySelectorAll(`#${currContent} input[required]:not([type="checkbox"]`); 
     const inputsCheckbox = document.querySelectorAll(`#${currContent} input[type="checkbox"][required]`); 
     inputs.forEach(input => {
     
@@ -852,10 +835,10 @@ function nextClass(currContent,nextContent) {
                 newLabel.classList.add('text-danger'); 
                 input.parentNode.appendChild(newLabel);
             }
-        }else{
-            if(tempElement){
-                tempElement.style.display='none';
-            }
+            }else{
+                if(tempElement){
+                    tempElement.style.display='none';
+                }
         }
     });
 
@@ -1047,6 +1030,7 @@ function hotWorkPermit(button){
             if(!stepTitle){
                 console.log('tidak ada');
             }else if (stepTitle.title === titles) {
+                console.log(i);
                 $('.validation-hse').steps('remove', i);
                 return; // Hentikan setelah menghapus satu langkah
             }
@@ -1135,6 +1119,7 @@ function confinedSpacePermit(button){
             if(!stepTitle){
                 console.log('tidak ada');
             }else if (stepTitle.title === titles) {
+                console.log(i);
                 $('.validation-hse').steps('remove', i);
                 return; // Hentikan setelah menghapus satu langkah
             }
@@ -1230,6 +1215,7 @@ function heightWorkPermit(button){
             if(!stepTitle){
                 console.log('tidak ada');
             }else if (stepTitle.title === titles) {
+                console.log(i);
                 $('.validation-hse').steps('remove', i);
                 return; // Hentikan setelah menghapus satu langkah
             }
@@ -1603,26 +1589,22 @@ function fileChange(input, tipe) {
     var count = 1;
     for (const file of files) {
         if(count==1){
-            text += `<li>${file.name}</li>`;
+            text += `${file.name}`;
         }
         else{
-            text += `<li>${file.name}</li>`;
+            text += `, ${file.name}`;
         }
         count++;
     }
     if(tipe=="SIO"){
         sioFile.innerHTML=`
-            <th>Sio</th>
-            <td class="break-all whitespace-normal p-2">
-                ${text}
-            </td>
+            <th>SIO</th>
+            <td>${text}</td>
         `;
     }else if(tipe=="SILO"){
         siloFile.innerHTML=`
-            <th>Silo</th>
-            <td class="break-all whitespace-normal p-2">
-                ${text}
-            </td>
+            <th>SILO</th>
+            <td>${text}</td>
         `;
     }
 };

@@ -95,7 +95,7 @@
     @endpush
 
 <div class="box-body wizard-content">
-    <form action="{{ route('hse.form.insert') }}" id="form" name="form" method="POST" class="validation-hse wizard-circle card py-10"  enctype="multipart/form-data">
+    <form action="{{ route('submit.form.hse') }}" id="form" name="form" method="POST" class="validation-hse wizard-circle card py-10"  enctype="multipart/form-data">
         @csrf
         <!-- Step 1 -->
         <h6 class="text-md font-semibold mb-4">Ijin Kerja 1</h6>
@@ -105,6 +105,7 @@
                     <span class="text-lg text-white">Pelaksana Pekerjaan</span>
                 </div>
                 <div class="p-2" id="pelaksanaPekerjaanContent">
+                    <input type="hidden" name="formId" value="{{ $form->form_id }}">
                     <div class="grid flex justify-center md:grid-cols-4 sm:grid-cols-2">
                         @php 
                             $workTitle = ["Nama Perusahaan / Departemen","No HP","Tanggal Mulai Pelaksanaan", "Tanggal Berakhir Pelaksanaan","Penanggung Jawab Lapangan","Lokasi Pekerjaan","Jam Mulai Kerja","Jam Berakhir Kerja","Jumlah Tenaga Kerja", "Penjelasan Pekerjaan"];
@@ -113,34 +114,34 @@
                             @if($title == "No HP")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="number" id="{{$title}}" name="{{$title}}"  placeholder="Input data" class="form-control rounded-lg w-3/4" required>
+                                <input type="number" id="{{$title}}" name="{{$title}}" placeholder="Input data" value="{{$form->hp_number}}" class="form-control rounded-lg w-3/4" required>
                             </div>
                             @elseif($title == "Tanggal Mulai Pelaksanaan")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="date" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4"  onchange="ubahTanggal()" required>
+                                <input type="date" id="{{$title}}" name="{{$title}}" value="{{$form->start_date}}" class="form-control flex rounded-lg w-3/4"  onchange="ubahTanggal()" required>
 
                             </div>
                             @elseif($title == "Tanggal Berakhir Pelaksanaan")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="date" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4" readonly required>
+                                <input type="date" id="{{$title}}" name="{{$title}}" value="{{$form->end_date}}" class="form-control flex rounded-lg w-3/4" readonly required>
                             </div>
                             @elseif($title == "Jam Mulai Kerja" || $title == "Jam Berakhir Kerja")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="time" id="{{$title}}" name="{{$title}}" class="form-control flex rounded-lg w-3/4" required>                                    
+                                <input type="time" id="{{$title}}" name="{{$title}}" value="{{$title == 'Jam Mulai Kerja' ? $form->start_time : $form->end_time}}" class="form-control flex rounded-lg w-3/4" required>                                    
                             </div>
                             @elseif($title == "Penjelasan Pekerjaan")
                             <div class="form-group flex flex-col md:col-span-3">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <textarea name="{{$title}}" id="{{$title}}" class="form-control w-3/4" style="resize: none;" rows="4" placeholder="Penjelasaan..." required></textarea>
+                                <textarea name="{{$title}}" id="{{$title}}" class="form-control w-3/4" style="resize: none;" rows="4" placeholder="Penjelasaan..." required>{{$form->work_description}}</textarea>
                             </div>
                             @elseif($title == "Jumlah Tenaga Kerja")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
                                 <div class="flex w-3/4 items-center">
-                                    <input type="number" id="{{$title}}" name="{{$title}}" class="form-control rounded-lg w-3/4" placeholder="Input data" required>
+                                    <input type="number" id="{{$title}}" name="{{$title}}" value="{{$form->workers_count}}" class="form-control rounded-lg w-3/4" placeholder="Input data" required>
                                     <label for="{{$title}}" class="p-2">orang</label>
                                 </div>
                             </div>
@@ -148,16 +149,21 @@
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
                                 <select name="{{$title}}" id="{{$title}}" class="form-select rounded-lg w-3/4" required>
-                                    <option value="" disabled selected>Pilih Lokasi</option>
+                                    <option value="" disabled>Pilih Lokasi</option>
                                     @foreach($locations as $location)
-                                    <option value="{{$location}}" class="w-3/4">{{$location}}</option>
+                                    <option value="{{$location}}" class="w-3/4"
+                                        @if($location === $form->location )
+                                            selected
+                                        @endif>
+                                        {{$location}}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
                             @else
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="text" id="{{$title}}" name="{{$title}}" class="form-control rounded-lg w-3/4" placeholder="Input data" required>
+                                <input type="text" id="{{$title}}" name="{{$title}}" value="{{$title == 'Nama Perusahaan / Departemen' ? $form->company_department : ($title == 'Penanggung Jawab Lapangan' ? $form->supervisor : '')}}" class="form-control rounded-lg w-3/4" placeholder="Input data" required>
                             </div>
                             @endif
                         @endforeach
@@ -184,17 +190,33 @@
                         @foreach($potentialHazards as $hazard)
                             @if(in_array($hazard->name, $workTitle))
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="potentialHazards[]" value="{{$hazard->id}}" id="hazard {{$hazard->id}}">
+                                    <input class="form-check-input" type="checkbox" name="potentialHazards[]" value="{{$hazard->id}}" id="hazard {{$hazard->id}}"
+                                    @if(in_array($hazard->id, $potentialHazards_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="hazard {{$hazard->id}}">
                                         {{$hazard->name}}
                                     </label>
                                 </div>
+                            @else
+                                @if(in_array($hazard->id, $potentialHazards_data))
+                                    @php
+                                        $newHazardId = $hazard->id;
+                                        $newHazardName = $hazard->name;
+                                    @endphp
+                                @endif
                             @endif
                         @endforeach
                         <div class="form-check flex items-center">
-                            <input class="form-check-input" type="checkbox" name="newHazard" id="newHazard">
+                            <input class="form-check-input" type="checkbox" name="newHazard" id="newHazard"
+                            @if(isset($newHazardId))
+                                checked
+                            @endif>
                             <label class="form-check-label block text-md font-medium" for="newHazard">
-                                <input type="text" id="newHazardItem" name="newHazardItem" class="form-control rounded-lg w-3/4" style="height:100%;">
+                                <input type="text" id="newHazardItem" name="newHazardItem" class="form-control rounded-lg w-3/4" style="height:100%;"
+                                @if(isset($newHazardName))
+                                    value="{{$newHazardName}}"
+                                @endif>
                             </label>
                         </div>
                     </div>
@@ -225,7 +247,10 @@
                             @foreach($personalProtectEquipments as $equipment)
                                 @if(in_array($equipment->name, $workTitle))
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="head {{$equipment->id}}">
+                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="head {{$equipment->id}}"
+                                    @if(in_array($equipment->id, $personalProtectEquipments_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="head {{$equipment->id}}">
                                         {{$equipment->name}}
                                     </label>
@@ -241,7 +266,10 @@
                             @foreach($personalProtectEquipments as $equipment)
                                 @if(in_array($equipment->name, $workTitle))
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="respiratory {{$equipment->id}}">
+                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="respiratory {{$equipment->id}}"
+                                    @if(in_array($equipment->id, $personalProtectEquipments_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="respiratory {{$equipment->id}}">
                                         {{$equipment->name}}
                                     </label>
@@ -256,7 +284,10 @@
                             @foreach($personalProtectEquipments as $equipment)
                                 @if(in_array($equipment->name, $workTitle))
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="body {{$equipment->id}}">
+                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="body {{$equipment->id}}"
+                                    @if(in_array($equipment->id, $personalProtectEquipments_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="body {{$equipment->id}}">
                                         {{$equipment->name}}
                                     </label>
@@ -272,7 +303,10 @@
                             @foreach($personalProtectEquipments as $equipment)
                                 @if(in_array($equipment->name, $workTitle))
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="foot {{$equipment->id}}">
+                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="foot {{$equipment->id}}"
+                                    @if(in_array($equipment->id, $personalProtectEquipments_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="foot {{$equipment->id}}">
                                         {{$equipment->name}}
                                     </label>
@@ -287,7 +321,10 @@
                             @foreach($personalProtectEquipments as $equipment)
                                 @if(in_array($equipment->name, $workTitle))
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="ear {{$equipment->id}}">
+                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="ear {{$equipment->id}}"
+                                    @if(in_array($equipment->id, $personalProtectEquipments_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="ear {{$equipment->id}}">
                                         {{$equipment->name}}
                                     </label>
@@ -303,7 +340,10 @@
                             @foreach($personalProtectEquipments as $equipment)
                                 @if(in_array($equipment->name, $workTitle))
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="hand {{$equipment->id}}">
+                                    <input class="form-check-input" type="checkbox" name="personalProtectEquipments[]" value="{{$equipment->id}}" id="hand {{$equipment->id}}"
+                                    @if(in_array($equipment->id, $personalProtectEquipments_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="hand {{$equipment->id}}">
                                         {{$equipment->name}}
                                     </label>
@@ -337,25 +377,51 @@
                         @foreach($workEquipments as $equipment)
                             @if(in_array($equipment->name, $workTitle))
                                 <div class="form-check">
+                                
                                 @if($equipment->name == "Alat angkat & Angkut")
-                                    <input class="form-check-input" type="checkbox" name="workEquipments[]" value="{{$equipment->id}}" id="workEquips {{$equipment->id}}" onClick="sioSilo(this)">
-                                    <label class="block text-md font-medium" for="workEquips {{$equipment->id}}">
+                                    @if(in_array($equipment->id, $workEquipments_data))
+                                        <input class="form-check-input" type="hidden" name="workEquipments[]" value="{{$equipment->id}}">
+                                    @endif
+                                    <input class="form-check-input" type="checkbox" name="workEquipments[]" value="{{$equipment->id}}" id="sioSiloCheck" onClick="sioSilo(this)"
+                                    @if(in_array($equipment->id, $workEquipments_data))
+                                        @php
+                                            $AlatAngkutCheck = True;
+                                        @endphp    
+                                        disabled checked
+                                    @endif>
+                                    <label class="block text-md font-medium" for="sioSiloCheck">
                                         {{$equipment->name}} </br> (Forklift, Crane, Hoise, Boomlift)
                                     </label>
                                         
                                 @else
-                                    <input class="form-check-input" type="checkbox" name="workEquipments[]" value="{{$equipment->id}}" id="workEquips {{$equipment->id}}">
+                                    <input class="form-check-input" type="checkbox" name="workEquipments[]" value="{{$equipment->id}}" id="workEquips {{$equipment->id}}"
+                                    @if(in_array($equipment->id, $workEquipments_data))
+                                        checked
+                                    @endif>
                                     <label class="block text-md font-medium" for="workEquips {{$equipment->id}}">
                                         {{$equipment->name}}
                                     </label>
                                 @endif
                                 </div>
+                            @else
+                                @if(in_array($equipment->id, $workEquipments_data))
+                                    @php
+                                        $newEquipmentId = $equipment->id;
+                                        $newEquipmentName = $equipment->name;
+                                    @endphp
+                                @endif
                             @endif
                         @endforeach
                         <div class="form-check"> 
-                            <input class="form-check-input" type="checkbox" name="newEquipment" id="newEquipment">
+                            <input class="form-check-input" type="checkbox" name="newEquipment" id="newEquipment"
+                            @if(isset($newEquipmentId))
+                                checked
+                            @endif>
                             <label class="form-check-label block text-md font-medium" for="newEquipment">
-                                <input type="text" id="newEquipmentText" name="newEquipmentText" class="form-control rounded-lg w-3/4" style="height:100%;">
+                                <input type="text" id="newEquipmentText" name="newEquipmentText" class="form-control rounded-lg w-3/4" style="height:100%;"
+                                @if(isset($newEquipmentName))
+                                    value="{{$newEquipmentName}}"
+                                @endif>
                             </label>
                         </div>
                             
@@ -381,7 +447,13 @@
                     <div class="grid flex justify-center md:grid-cols-4 sm:grid-cols-2">
                         <div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="1" id="hotWork" onclick="hotWorkPermit(this)">
+                                <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="1" id="hotWork" onclick="hotWorkPermit(this)"
+                                @if(in_array(1, $additionalWorkPermits_data))
+                                    @php 
+                                        $hotWorkPermit = true;
+                                    @endphp
+                                    checked
+                                @endif>
                                 <label class="block text-md font-medium" for="hotWork">
                                     <p class="">Ijin Pekerjaan Panas</p>
                                 </label>
@@ -389,7 +461,13 @@
                         </div>
                         <div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="2" id="confinedSpace" onclick="confinedSpacePermit(this)">
+                                <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="2" id="confinedSpace" onclick="confinedSpacePermit(this)"
+                                @if(in_array(2, $additionalWorkPermits_data))
+                                    @php 
+                                        $confinedSpaceWorkPermit = true;
+                                    @endphp
+                                    checked
+                                @endif>
                                 <label class="block text-md font-medium" for="confinedSpace">
                                     <p class="">Ijin Kerja Di Ruang Terbatas</p>
                                 </label>
@@ -397,7 +475,13 @@
                         </div>
                         <div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="3" id="heightWork" onclick="heightWorkPermit(this)">
+                                <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="3" id="heightWork" onclick="heightWorkPermit(this)"
+                                @if(in_array(3, $additionalWorkPermits_data))
+                                    @php 
+                                        $heightWorkPermit = true;
+                                    @endphp
+                                    checked
+                                @endif>
                                 <label class="block text-md font-medium" for="heightWork">
                                     <p class="">Ijin Kerja Di Ketinggian</p>
                                 </label>
@@ -429,7 +513,10 @@
                         <div>
                             <label class="inline-flex items-center cursor-pointer">
                                 <span class="ms-3 text-sm font-medium mr-3">Tidak</span>
-                                <input type="checkbox" value="" id="" class="sr-only peer" onclick="sistemProteksiKebakaran(this)">
+                                <input type="checkbox" value="" id="fireHazardControlCheck" class="sr-only peer" onclick="sistemProteksiKebakaran(this)"
+                                @if(!empty($fireHazardControls_data))
+                                    checked
+                                @endif>
                                 <div class="relative w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                                 <span class="ms-3 text-sm font-medium ">Ya</span>
                             </label>
@@ -707,6 +794,107 @@
 
 @push('scripts')
 <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    
+    var files = @json($files);
+    console.log(files);
+
+    var sioSiloButton = document.getElementById("sioSiloCheck");
+    sioSilo(sioSiloButton);
+
+    var hotWorkButton = document.getElementById("hotWork");
+    var confinedSpaceButton = document.getElementById("confinedSpace");
+    var heightWorkButton = document.getElementById("heightWork");
+    if(heightWorkButton.checked){
+        heightWorkPermit(heightWorkButton);
+        
+        var scaffoldingButton = document.getElementById("checkScaffolding");
+        if(scaffoldingButton.checked){
+            checklistScaffolding(scaffoldingButton);
+        }
+    }
+    if(confinedSpaceButton.checked){
+        confinedSpacePermit(confinedSpaceButton);
+    }
+    if(hotWorkButton.checked){
+        hotWorkPermit(hotWorkButton);
+    }
+
+    var fireHazardButton = document.getElementById("fireHazardControlCheck");
+    if(fireHazardButton.checked){
+        sistemProteksiKebakaran(fireHazardButton);
+    }
+
+
+    const workers = @json($workers);
+    if(workers){
+        var addTenagaKerjaButton = document.getElementById("addButtonTenagaKerja");
+        workers.forEach(function(worker, index) {
+            if(index>=1){
+                addTenagaKerjaButton.click();
+            }
+            var textbox = document.getElementById("namaTenagaKerja"+(index+1))
+            textbox.value = worker.worker_name;
+        });
+    }
+
+    document.getElementById('JSA dilakukan oleh1').value =  document.getElementById('Penanggung Jawab Lapangan').value; 
+    document.getElementById('Penjelasan Pekerjaan1').value = document.getElementById('Penjelasan Pekerjaan').value; 
+    document.getElementById('Lokasi1').value = document.getElementById('Lokasi Pekerjaan').value; 
+    ubahTanggal();
+
+    const jsas = @json($jsas);
+    if(jsas){
+        jsas.forEach(function(jsa, index) {
+            var addPotentialDangerButton = document.getElementById("addButtonPotentialDanger");
+            if(index>=1){
+                addPotentialDangerButton.click();
+            }
+
+            var potentialDangerText = document.getElementById("potentialDanger"+(index+1))
+            potentialDangerText.value = jsa.potential_danger;
+
+            var dangerControlText = document.getElementById("dangerControl"+(index+1))
+            dangerControlText.value = jsa.danger_control;
+
+            var severityBeforeButton = document.getElementById("severityBefore"+(index+1)+"Button")
+            severityBeforeButton.innerHTML = `${jsa.severity_before} 
+            <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>`;
+            document.getElementById(severityBeforeButton.id+"Input").value = parseInt(`${jsa.severity_before}`);
+
+            var opportunityBeforeButton = document.getElementById("opportunityBefore"+(index+1)+"Button")
+            opportunityBeforeButton.innerHTML = `${jsa.opportunity_before} 
+            <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>`;
+            document.getElementById(opportunityBeforeButton.id+"Input").value = parseInt(`${jsa.opportunity_before}`);
+
+            var severityAfterButton = document.getElementById("severityAfter"+(index+1)+"Button")
+            severityAfterButton.innerHTML = `${jsa.severity_after} 
+            <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>`;
+            document.getElementById(severityAfterButton.id+"Input").value = parseInt(`${jsa.severity_after}`);
+
+            var opportunityAfterButton = document.getElementById("opportunityAfter"+(index+1)+"Button")
+            opportunityAfterButton.innerHTML = `${jsa.opportunity_after} 
+            <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>`;
+            document.getElementById(opportunityAfterButton.id+"Input").value = parseInt(`${jsa.opportunity_after}`);
+
+            document.getElementById("riskFactorBefore"+(index+1)).value = parseInt(`${jsa.risk_factor_before}`);
+            document.getElementById("riskFactorAfter"+(index+1)).value = parseInt(`${jsa.risk_factor_after}`);
+
+        });
+    }
+
+});
+
 var form = $(".validation-hse").show();
 var lastCurrSection;
 var childCurrDiv;
@@ -763,9 +951,8 @@ $(".validation-hse").steps({
         lastCurrSection = $(".validation-hse section").eq(currentIndex).children("div").last();
         childCurrDiv = lastCurrSection.children("div").last();
         if (childCurrDiv.hasClass("hidden")) {
+
             // Lakukan sesuatu jika div terakhir memiliki kelas 'hidden'
-            console.log("Div terakhir di section ini tersembunyi!");
-            
             $("a[href$='next']").hide();
             $("a[href$='previous']").hide();
         }else{
@@ -777,8 +964,21 @@ $(".validation-hse").steps({
         return form.validate().settings.ignore = ":disabled", form.valid()
     }
     , onFinished: function (event, currentIndex) {
-        swal("Success", "Your Form Submitted!.");
-        $("#form").submit();
+        // SweetAlert2 confirmation dialog for delete action
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#26D639',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#form").submit();
+            }
+        });
     }
 }), $(".validation-hse").validate({
     ignore: "input[type=hidden]"
@@ -811,7 +1011,7 @@ function nextClass(currContent,nextContent) {
 
     let allFilled = true;
 
-    const inputs = document.querySelectorAll(`#${currContent} input[required]:not([type="checkbox"]), #${currContent} textarea[required], #${currContent} select[required]`); 
+    const inputs = document.querySelectorAll(`#${currContent} input[required]:not([type="checkbox"]), #${currContent} textarea[required]`); 
     const inputsCheckbox = document.querySelectorAll(`#${currContent} input[type="checkbox"][required]`); 
     inputs.forEach(input => {
     
@@ -926,14 +1126,20 @@ function sioSilo(button){
         newDiv.innerHTML = `
         <div class="flex" style="justify-content: space-around;">
             <div class="form-check flex flex-col p-1">
-                <input type="file" name="uploadSIO[]" id="SIO" class="form-control w-3/4 hidden" onchange="fileChange(this,'SIO')" multiple required/>
+                <input type="file" name="uploadSIO[]" id="SIO" class="form-control w-3/4 hidden" onchange="fileChange(this,'SIO')" multiple 
+                @if(!isset($AlatAngkutCheck))
+                    required
+                @endif/>
                 <label for="SIO">
                     SIO
                     <i class="fa-solid fa-file-arrow-up"></i>
                 </label>
             </div>
             <div class="form-check flex flex-col p-1">
-                <input type="file" name="uploadSILO[]" id="SILO" class="form-control w-3/4 hidden" onchange="fileChange(this,'SILO')" multiple required/>
+                <input type="file" name="uploadSILO[]" id="SILO" class="form-control w-3/4 hidden" onchange="fileChange(this,'SILO')" multiple 
+                @if(!isset($AlatAngkutCheck))
+                    required
+                @endif/>
                 <label for="SILO">
                     SILO
                     <i class="fa-solid fa-file-arrow-up"></i>
@@ -949,14 +1155,38 @@ function sioSilo(button){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="sioFile" style="border-top: 1px solid black">
-                        <th>Sio</th>
-                        <td></td>
-                    </tr>
-                    <tr id="siloFile" style="border-top: 1px solid black">
-                        <th>Silo</th>
-                        <td></td>
-                    </tr>
+                    @if(count($files) > 0)
+                        <tr id="sioFile" style="border-top: 1px solid black">
+                            <th>Sio</th>
+                            <td class="break-all whitespace-normal p-2">
+                            @foreach($files as $index => $file)
+                                @if($file->type === 'SIO')
+                                    <li>{{$file->file_name}}</li>
+                                @endif
+                            @endforeach
+                            </td>
+                        </tr>
+                        <tr id="siloFile" style="border-top: 1px solid black">
+                            <th>Silo</th>
+                            <td class="break-all whitespace-normal p-2">
+                            @php $isFirst = true; @endphp
+                            @foreach($files as $index => $file)
+                                @if($file->type === 'SILO')
+                                    <li>{{$file->file_name}}</li>
+                                @endif
+                            @endforeach
+                            </td>
+                        </tr>
+                    @else
+                        <tr id="sioFile" style="border-top: 1px solid black">
+                            <th>Sio</th>
+                            <td class="break-all whitespace-normal p-2"></td>
+                        </tr>
+                        <tr id="siloFile" style="border-top: 1px solid black">
+                            <th>Silo</th>
+                            <td class="break-all whitespace-normal p-2"></td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -988,7 +1218,10 @@ function hotWorkPermit(button){
                     @endphp
                     @foreach($workTitle as $index => $title)
                     <div class="form-check my-3">
-                        <input class="form-check-input" type="checkbox" value="ada" id="perlindunganKebakaran{{$index}}" name="perlindunganKebakaran{{$index}}" required>
+                        <input class="form-check-input" type="checkbox" value="ada" id="perlindunganKebakaran{{$index}}" name="perlindunganKebakaran{{$index}}" required
+                        @if(isset($hotWorkPermit))
+                            checked
+                        @endif>
                         <label class="block text-md font-medium" for="perlindunganKebakaran{{$index}}">
                             {{$title}}
                         </label>
@@ -1023,7 +1256,10 @@ function hotWorkPermit(button){
                         @endphp
                         @foreach($workTitle as $index => $title)
                         <div class="form-check my-3">
-                            <input class="form-check-input" type="checkbox" value="ada" id="pencegahanDalamRadius{{$index}}" name="pencegahanDalamRadius{{$index}}" required>
+                            <input class="form-check-input" type="checkbox" value="ada" id="pencegahanDalamRadius{{$index}}" name="pencegahanDalamRadius{{$index}}" required
+                            @if(isset($hotWorkPermit))
+                                checked
+                            @endif>
                             <label class="block text-md font-medium" for="pencegahanDalamRadius{{$index}}">
                                 {{$title}}
                             </label>
@@ -1045,7 +1281,7 @@ function hotWorkPermit(button){
         for (var i = 0; i < steps; i++) {
             var stepTitle = $('.validation-hse').steps('getStep', i);
             if(!stepTitle){
-                console.log('tidak ada');
+                console.log('tidak ada step');
             }else if (stepTitle.title === titles) {
                 $('.validation-hse').steps('remove', i);
                 return; // Hentikan setelah menghapus satu langkah
@@ -1076,7 +1312,10 @@ function confinedSpacePermit(button){
                     @endphp
                     @foreach($workTitle as $index => $title)
                     <div class="form-check my-3">
-                        <input class="form-check-input" type="checkbox" value="" id="perlindunganRuangTerbatas{{$index}}" name="perlindunganRuangTerbatas{{$index}}" required>
+                        <input class="form-check-input" type="checkbox" value="" id="perlindunganRuangTerbatas{{$index}}" name="perlindunganRuangTerbatas{{$index}}" required
+                        @if(isset($confinedSpaceWorkPermit))
+                            checked
+                        @endif>
                         <label class="block text-md font-medium" for="perlindunganRuangTerbatas{{$index}}">
                             {{$title}}
                         </label>
@@ -1110,7 +1349,10 @@ function confinedSpacePermit(button){
                         @endphp
                         @foreach($workTitle as $index => $title)
                         <div class="form-check my-3">
-                            <input class="form-check-input" type="checkbox" value="" id="pengendalianRuangTerbatas{{$index}}" name="pengendalianRuangTerbatas{{$index}}" required>
+                            <input class="form-check-input" type="checkbox" value="" id="pengendalianRuangTerbatas{{$index}}" name="pengendalianRuangTerbatas{{$index}}" required
+                            @if(isset($confinedSpaceWorkPermit))
+                                checked
+                            @endif>
                             <label class="block text-md font-medium" for="pengendalianRuangTerbatas{{$index}}">
                                 {{$title}}
                             </label>
@@ -1133,7 +1375,7 @@ function confinedSpacePermit(button){
         for (var i = 0; i < steps; i++) {
             var stepTitle = $('.validation-hse').steps('getStep', i);
             if(!stepTitle){
-                console.log('tidak ada');
+                console.log('tidak ada step');
             }else if (stepTitle.title === titles) {
                 $('.validation-hse').steps('remove', i);
                 return; // Hentikan setelah menghapus satu langkah
@@ -1164,7 +1406,10 @@ function heightWorkPermit(button){
                     @endphp
                     @foreach($workTitle as $index => $title)
                     <div class="form-check my-3">
-                        <input class="form-check-input" type="checkbox" value="" id="perlindunganKetinggian{{$index}}" name="perlindunganKetinggian{{$index}}" required>
+                        <input class="form-check-input" type="checkbox" value="" id="perlindunganKetinggian{{$index}}" name="perlindunganKetinggian{{$index}}" required
+                        @if(isset($heightWorkPermit))
+                            checked
+                        @endif>
                         <label class="block text-md font-medium" for="perlindunganKetinggian{{$index}}">
                             {{$title}}
                         </label>
@@ -1195,7 +1440,10 @@ function heightWorkPermit(button){
                         @endphp
                         @foreach($workTitle as $index => $title)
                         <div class="form-check my-3">
-                            <input class="form-check-input" type="checkbox" value="" id="tangga{{$index}}" name="tangga{{$index}}" required>
+                            <input class="form-check-input" type="checkbox" value="" id="tangga{{$index}}" name="tangga{{$index}}" required
+                            @if(isset($heightWorkPermit))
+                                checked
+                            @endif>
                             <label class="block text-md font-medium" for="tangga{{$index}}">
                                 {{$title}}
                             </label>
@@ -1205,7 +1453,13 @@ function heightWorkPermit(button){
                     
                     
                     <div class="form-check my-6">
-                        <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="4" id="checkScaffolding" onclick="checklistScaffolding(this)">
+                        <input class="form-check-input" type="checkbox" name="additionalPermit[]" value="4" id="checkScaffolding" onclick="checklistScaffolding(this)"
+                        @if(in_array(4, $additionalWorkPermits_data))
+                            @php
+                                $scaffoldingPermit = true;
+                            @endphp
+                            checked
+                        @endif>
                         <label class="block text-md font-medium" for="checkScaffolding">
                             Apakah menggunakan scaffolding?
                         </label>
@@ -1228,7 +1482,7 @@ function heightWorkPermit(button){
         for (var i = 0; i < steps; i++) {
             var stepTitle = $('.validation-hse').steps('getStep', i);
             if(!stepTitle){
-                console.log('tidak ada');
+                console.log('tidak ada step');
             }else if (stepTitle.title === titles) {
                 $('.validation-hse').steps('remove', i);
                 return; // Hentikan setelah menghapus satu langkah
@@ -1252,7 +1506,10 @@ function sistemProteksiKebakaran(button){
             @endphp
             @foreach($fireHazardControls as $equipment)
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="fireHazardControls[]" value="{{$equipment->id}}" id="fireControl {{$equipment->id}}">
+                <input class="form-check-input" type="checkbox" name="fireHazardControls[]" value="{{$equipment->id}}" id="fireControl {{$equipment->id}}"
+                @if(in_array($equipment->id, $fireHazardControls_data))
+                    checked
+                @endif>
                 <label class="block text-md font-medium" for="fireControl {{$equipment->id}}">
                     {{$equipment->name}}
                 </label>
@@ -1302,7 +1559,10 @@ function checklistScaffolding(button){
                     @endphp
                     @foreach($workTitle as $index => $title)
                     <div class="form-check my-3">
-                        <input class="form-check-input" type="checkbox" value="" id="scaffolding{{$index}}" name="scaffolding{{$index}}" required>
+                        <input class="form-check-input" type="checkbox" value="" id="scaffolding{{$index}}" name="scaffolding{{$index}}" required
+                        @if(isset($scaffoldingPermit))
+                            checked
+                        @endif>
                         <label class="block text-md font-medium" for="scaffolding{{$index}}">
                             {{$title}}
                         </label>
@@ -1388,7 +1648,6 @@ const addButtonPotentialDanger = document.getElementById('addButtonPotentialDang
 let rowCountPotentialDanger = 1;
 addButtonPotentialDanger.addEventListener('click', () => {
     const newRow = document.createElement('div');
-    const newRow2 = document.createElement('div');
     
     rowCountPotentialDanger++;
 

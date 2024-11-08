@@ -22,22 +22,22 @@
 <div class="box">
     <div class="box-header flex justify-center items-center">
         <div class="text-3xl font-medium">
-            Review List
+            Approval List {{$approver->name}} {{$approver->level}}
         </div>
     </div>
     <div class="box-body overflow-x-auto">
         <table id="myTable" class="w-full table">
             <thead>
                 <tr>
-                    <th class="py-3">No.</th>
-                    <th class="py-3">Perusahaan / Departemen</th>
-                    <th class="py-3">Penanggung Jawab Lapangan</th>
-                    <th class="py-3">Lokasi Pekerjaan</th>
-                    <th class="py-3">No. Hp</th>
-                    <th class="py-3">Tanggal</th>
-                    <th class="py-3">Jam Kerja</th>
-                    <th class="py-3">Jumlah Tenaga Kerja</th>
-                    <th class="py-3">Action</th>
+                    <th>No.</th>
+                    <th>Perusahaan / Departemen</th>
+                    <th>Penanggung Jawab Lapangan</th>
+                    <th>Lokasi Pekerjaan</th>
+                    <th>No. Hp</th>
+                    <th>Tanggal</th>
+                    <th>Jam Kerja</th>
+                    <th>Jumlah Tenaga Kerja</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,11 +52,11 @@
                     <td>{{$form->start_time}} - {{$form->end_time}}</td>
                     <td>{{$form->workers_count}}</td>
                     <td>
-                        <form action="{{ route('review.form') }}" method="POST" style="display: inline;">
+                        <form action="{{ route('approval.form') }}" method="POST" style="display: inline;">
                             @csrf
                             <input type="hidden" name="value" value="{{ $form->form_id }}">
                             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                Awaiting Review
+                                Awaiting Approval
                             </button>
                         </form>
                     </td>

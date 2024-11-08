@@ -55,43 +55,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php
-                        $datas = [
-                            ["Departemen", "Zaki", "Kantor", "0818123456", "10-10-2024 - 18-10-2024", "08:00 - 17:00", "8"]
-                        ];
-                    @endphp
-                    @foreach($datas as $index => $data)
                     <tr>
-                        <td class="text-center">{{$data[0]}}</td>
-                        <td class="text-center">{{$data[1]}}</td>
-                        <td class="text-center">{{$data[2]}}</td>
-                        <td class="text-center">{{$data[3]}}</td>
-                        <td class="text-center">{{$data[4]}}</td>
-                        <td class="text-center">{{$data[5]}}</td>
-                        <td class="text-center">{{$data[6]}}</td>
+                        <td>{{$form->company_department}}</td>
+                        <td>{{$form->supervisor}}</td>
+                        <td>{{$form->location}}</td>
+                        <td>{{$form->hp_number}}</td>
+                        <td>{{$form->start_date}} - {{$form->end_date}}</td>
+                        <td>{{$form->start_time}} - {{$form->end_time}}</td>
+                        <td>{{$form->workers_count}}</td>
                     </tr>
                     <tr>
                         <td colspan="7">
                             <p class="text-justify">
                                 <strong>Penjelasan Pekerjan :</strong>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-                                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
-                                ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit 
-                                in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
-                                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim 
-                                id est laborum.
+                                {{$form->work_description}}
                             </p> 
                         </td>
                     </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 
-    <form id="form" name="form" method="POST" class="validation-hse wizard-circle card py-10">
+    <form action="{{ route('update.form.hse') }}" id="form" name="form" method="POST" class="validation-hse wizard-circle card py-10">
         @csrf
+        @if ($permits->contains('master_id', 4))
         <!-- Step 1 -->
         <h6 class="">Scaffolding</h6>
         <section id="scaffolding">
@@ -105,79 +93,85 @@
                     <div class="grid md:grid-cols-4">
                         @php 
                             $workTitle = [
-                                "1. Bracing tidak bengkok / retak / karat",
-                                "2. Kondisi frame tidak bengkok / retak / karat",
-                                "3. Kondisi Cat Walk atau Plank tidak bengkok / retak / karat",
-                                "4. Kondisi join pin tidak bengkok / retak / karat",
-                                "5. Tidak terdapat material / cairan di dekat tempat penyimpanan yang berpotensi mengakibatkan karat pada frame / bagian lain",
-                                "6. Penyimpanan scaffolding tidak terpapar langsung dengan hujan / panas secara terus menerus",
-                                "7. Tumpukan frame / bagian lain saat disimpan tidak mengakibatkan kerusakan / perubahaan bentuk"
+                                "Bracing tidak bengkok / retak / karat",
+                                "Kondisi frame tidak bengkok / retak / karat",
+                                "Kondisi Cat Walk atau Plank tidak bengkok / retak / karat",
+                                "Kondisi join pin tidak bengkok / retak / karat",
+                                "Tidak terdapat material / cairan di dekat tempat penyimpanan yang berpotensi mengakibatkan karat pada frame / bagian lain",
+                                "Penyimpanan scaffolding tidak terpapar langsung dengan hujan / panas secara terus menerus",
+                                "Tumpukan frame / bagian lain saat disimpan tidak mengakibatkan kerusakan / perubahaan bentuk"
                                 ];
                         @endphp
-                        @foreach($workTitle as $index => $title)
-                        <div class="form-check my-3 md:col-span-3">
-                            <label class="block text-md font-medium">
-                                {{$title}}
-                            </label>
-                        </div>
-                        <div class="mt-1 grid grid-cols-3">
-                            <div class="flex flex-col">
-                                <input class="form-check-input" type="checkbox" value="ya" id="penyimpanan{{$index}}ya" name="penyimpanan{{$index}}" onclick="toggleCheckbox(this)">
-                                <label for="penyimpanan{{$index}}ya" style="padding-left:25px;">Ya</label>
+                        @foreach($scaffs as $index => $scaff)
+                            @if(in_array($scaff->name, $workTitle))
+                            <div class="form-check my-3 md:col-span-3">
+                                <label class="block text-md font-medium">
+                                {{$index+1}}. {{$scaff->name}}
+                                </label>
                             </div>
-                            <div class="flex">
-                                <input class="form-check-input" type="checkbox" value="tidak" id="penyimpanan{{$index}}tidak" name="penyimpanan{{$index}}" onclick="toggleCheckbox(this)">
-                                <label for="penyimpanan{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                            <div class="mt-1 grid grid-cols-3">
+                                <div class="flex flex-col">
+                                    <input class="form-check-input" type="checkbox" value="yes" id="penyimpanan{{$index}}ya" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <label for="penyimpanan{{$index}}ya" style="padding-left:25px;">Ya</label>
+                                </div>
+                                <div class="flex">
+                                    <input class="form-check-input" type="checkbox" value="no" id="penyimpanan{{$index}}tidak" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <label for="penyimpanan{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                                </div>
+                                <div class="flex">
+                                    <input class="form-check-input" type="checkbox" value="na" id="penyimpanan{{$index}}n/a" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <label for="penyimpanan{{$index}}n/a" style="padding-left:25px;">N/A</label>
+                                </div>
                             </div>
-                            <div class="flex">
-                                <input class="form-check-input" type="checkbox" value="n/a" id="penyimpanan{{$index}}n/a" name="penyimpanan{{$index}}" onclick="toggleCheckbox(this)">
-                                <label for="penyimpanan{{$index}}n/a" style="padding-left:25px;">N/A</label>
-                            </div>
-                        </div>
+                            @endif
                         @endforeach
                     </div>
                     <div class="p-1.5 pl-3"><strong><i>Operasional / Penggunaan</i></strong></div>
                     <div class="grid md:grid-cols-4">
                         @php 
                             $workTitle = [
-                                "1. Bracing terpasang pada frame",
-                                "2. Koneksi bracing dengan frame dalam kondisi aman / terkunci",
-                                "3. Semua bagian frame terkunci seluruhnya dengan join pin",
-                                "4. Cat Walk / Plank terpasang pada frame",
-                                "5. Scaffolding didirikan oleh petugas yang berkompeten",
-                                "6. Minimal 2 tumpuk frame harus menggunakan railing atau pekerja menggunakan Safety body harness",
-                                "7. Pada saat bekerja harus menggunakan barikade, untuk mencegah orang melewati kolong frame",
-                                "8. Frame harus terikat di srtuktur yang kuat",
-                                "9. Kaki frame tidak boleh berada pada struktur yang tidak stabil / lembek / mudah patah / pecah"
+                                "Bracing terpasang pada frame",
+                                "Koneksi bracing dengan frame dalam kondisi aman / terkunci",
+                                "Semua bagian frame terkunci seluruhnya dengan join pin",
+                                "Cat Walk / Plank terpasang pada frame",
+                                "Scaffolding didirikan oleh petugas yang berkompeten",
+                                "Minimal 2 tumpuk frame harus menggunakan railing atau pekerja menggunakan Safety body harness",
+                                "Pada saat bekerja harus menggunakan barikade, untuk mencegah orang melewati kolong frame",
+                                "Frame harus terikat di srtuktur yang kuat",
+                                "Kaki frame tidak boleh berada pada struktur yang tidak stabil / lembek / mudah patah / pecah"
                                 ];
                         @endphp
-                        @foreach($workTitle as $index => $title)
-                        <div class="form-check my-3 md:col-span-3">
-                            <label class="block text-md font-medium" for="operasional{{$index}}">
-                                {{$title}}
-                            </label>
-                        </div>
-                        <div class="mt-1 grid grid-cols-3">
-                            <div class="flex">
-                                <input class="form-check-input" type="checkbox" value="ya" id="operasional{{$index}}ya" name="operasional{{$index}}" onclick="toggleCheckbox(this)">
-                                <label for="operasional{{$index}}ya" style="padding-left:25px;">Ya</label>
+                        @foreach($scaffs as $index => $scaff)
+                            @if(in_array($scaff->name, $workTitle))
+                            <div class="form-check my-3 md:col-span-3">
+                                <label class="block text-md font-medium" for="operasional{{$index}}">
+                                 {{$index+1}}. {{$scaff->name}}
+                                </label>
                             </div>
-                            <div class="flex">
-                                <input class="form-check-input" type="checkbox" value="tidak" id="operasional{{$index}}tidak" name="operasional{{$index}}" onclick="toggleCheckbox(this)">
-                                <label for="operasional{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                            <div class="mt-1 grid grid-cols-3">
+                                <div class="flex">
+                                    <input class="form-check-input" type="checkbox" value="yes" id="operasional{{$index}}ya" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <label for="operasional{{$index}}ya" style="padding-left:25px;">Ya</label>
+                                </div>
+                                <div class="flex">
+                                    <input class="form-check-input" type="checkbox" value="no" id="operasional{{$index}}tidak" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <label for="operasional{{$index}}tidak" style="padding-left:25px;">Tidak</label>
+                                </div>
+                                <div class="flex">
+                                    <input class="form-check-input" type="checkbox" value="na" id="operasional{{$index}}n/a" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <label for="operasional{{$index}}n/a" style="padding-left:25px;">N/A</label>
+                                </div>
                             </div>
-                            <div class="flex">
-                                <input class="form-check-input" type="checkbox" value="n/a" id="operasional{{$index}}n/a" name="operasional{{$index}}" onclick="toggleCheckbox(this)">
-                                <label for="operasional{{$index}}n/a" style="padding-left:25px;">N/A</label>
-                            </div>
-                        </div>
+                            @endif
                         @endforeach
                     </div>
                 </div>
             </div>
 
         </section>
+        @endif
 
+        @if ($permits->contains('master_id', 2))
         <!-- Step 2 -->
         <h6 class="">Tes Kadar</h6>
         <section id="suhu">
@@ -188,25 +182,7 @@
                 <div class="" id="tesSuhuContent">
                 <div class="flex flex-col justify-center">
                     <div class="flex items-center flex-wrap">
-                        <div class="p-1.5 pl-3 font-medium"><strong><i>Kadar</i></strong></div>
-                        <ul class="m-0" style="list-style: none;">
-                            <li class="dropdown">
-                                <button id="dateDisplay" class="waves-effect waves-light btn btn-outline dropdown-toggle btn-md font-bold"
-                                    data-bs-toggle="dropdown" href="#" aria-expanded="false">
-                                    {{ date('d F Y') }}
-                                </button>
-                                <div class="dropdown-menu" style="will-change: transform;">
-                                    <div class="px-3 py-2">
-                                        <input type="date" id="dateFilterDropdown" class="bg-gray-200 text-black" value="{{ date('Y-m-d') }}">
-                                        <div class="flex">
-                                            <div id="applyDateFilterDropdown" class="bg-blue-500 text-white px-2 py-1 mt-2 btn" onClick="changeDate()">
-                                                Terapkan
-                                            </div>
-                                        </div>
-                                    </div>           
-                                </div>
-                            </li>
-                        </ul>
+                        <div class="p-1.5 pl-3 font-medium"><strong><i>Kadar <span class="ml-2">{{ date('d F Y') }}</span></i></strong></div>
                     </div>
                     <div class="flex">
                         <div class="grid grid-cols-1 md:grid-cols-2">
@@ -244,6 +220,7 @@
             </div>
 
         </section>
+        @endif
 
         <h6 class="">Tenaga Kerja</h6>
         <section id="ijinKerja1">
@@ -287,9 +264,6 @@
                                     </div>
                                 </div>
                             </div>
-                            @php
-                                $workers = ["Yogi", "Riono", "Sutiyo", "Gito", "Dimun", "Dirman"]
-                            @endphp
                             @foreach($workers as $id => $worker)
                             <div class="grid md:grid-cols-16">
                                 <div>
@@ -299,26 +273,26 @@
                                 </div>
                                 <div class="md:col-span-15 grid md:grid-cols-4 gap-x-4">
                                     <div class="flex md:justify-center">
-                                        <label for="namaTenagaKerja1" class="font-medium">{{$worker}}</label>
+                                        <label for="namaTenagaKerja1" class="font-medium">{{$worker->worker_name}}</label>
                                     </div>
                                     <div class="col-span-3 grid md:grid-cols-5">
 
                                         <div class="col-span-2 grid md:grid-cols-3">
                                             <div>
                                                 <input type="checkbox" name="tenagaKerja{{$id}}" id="ok{{$id}}" value="ok" onclick="toggleCheckbox(this)">
-                                                <label for="ok{{$id}}"></label>
+                                                <label for="ok{{$id}}"><span class="md:hidden">OK</span></label>
                                             </div>
                                             <div>
                                                 <input type="checkbox" name="tenagaKerja{{$id}}" id="notOk{{$id}}" value="notOk" onclick="toggleCheckbox(this)">
-                                                <label for="notOk{{$id}}"></label>
+                                                <label for="notOk{{$id}}"><span class="md:hidden">NOT OK</span></label>
                                             </div>
                                             <div>
                                                 <input type="checkbox" name="tenagaKerja{{$id}}" id="cekKlinik{{$id}}" value="cekKlinik" onclick="toggleCheckbox(this)">
-                                                <label for="cekKlinik{{$id}}"></label>
+                                                <label for="cekKlinik{{$id}}"><span class="md:hidden">Cek Klinik</span></label>
                                             </div>
                                         </div>
                                         <div class="col-span-3">
-                                            <input type="text" id="namaTenagaKerja{{$id}}" name="namaTenagaKerja{{$id}}" class="form-control rounded-lg w-full" placeholder="Input data">
+                                            <input type="text" id="clinicRecomendation{{$id}}" name="clinicRecomendation{{$id}}" class="form-control rounded-lg w-full" placeholder="Input data">
                                         </div>
                                     </div>
                                 </div>
@@ -328,34 +302,8 @@
                     </div>
                 </div>
             </div>
-
-            <div id="validasiPekerjaanContent">
-                <div class="p-1.5 pl-3 border rounded-lg my-10" style="background-color: #A78734">
-                    <span class="text-lg text-white">Validasi Pekerjaan</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3">
-                    <div>
-                        <div class="font-medium"><i>Apakah Mematuhi Persyaratan <strong>K3 & Lingkungan yang telah disetujui</strong> selama pekerjaan?</i></div>
-                        <div class="my-3">
-                            <div class="flex flex-col">
-                                <input class="form-check-input" type="checkbox" value="ya" id="validasiPekerjaanYa" name="validasiPekerjaanCheck" onclick="toggleCheckbox(this)" required>
-                                <label for="validasiPekerjaanYa" style="padding-left:25px;">YA</label>
-                            </div>
-                            <div class="flex">
-                                <input class="form-check-input" type="checkbox" value="tidak" id="validasiPekerjaanTidak" name="validasiPekerjaanCheck" onclick="toggleCheckbox(this)" required>
-                                <label for="validasiPekerjaanTidak" style="padding-left:25px;">TIDAK</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="font-medium"><i>Jelaskan hal yang tidak dipenuhi :</i></div>
-                        <div class="w-full my-3">
-                            <textarea id="message" class="w-full" style="resize: none;" name="message" rows="4" cols="50" placeholder="Jelaskan..."></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+             
+            <input type="hidden" name="value" value="{{ $form->form_id }}">                   
         </section>
     </form>
 </div>
@@ -402,7 +350,7 @@ $(".validation-hse").steps({
     }
     , onFinished: function (event, currentIndex) {
         swal("Success", "Your Form Submitted!.");
-        // $("#form").submit();
+        $("#form").submit();
     }
 }), $(".validation-hse").validate({
     ignore: "input[type=hidden]"

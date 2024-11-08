@@ -6,56 +6,16 @@
     </x-slot>
     @push('css')
     <style>
-        [type="checkbox"]+label, [type="radio"]:not(:checked)+label, [type="radio"]:checked+label, [type="date"] {
-            color: unset;
-            background-color: unset;
+        table.dataTable thead .sorting:before, 
+        table.dataTable thead .sorting:after, 
+        table.dataTable thead .sorting_asc:before, 
+        table.dataTable thead .sorting_asc:after,
+        table.dataTable thead .sorting_desc:before,
+        table.dataTable thead .sorting_desc:after  {
+            bottom: 0.5em !important; 
+            /* Menghapus margin-bottom */
+            /* padding-bottom: 0px; Menyesuaikan padding jika diperlukan */
         }
-        .dark-skin .form-control, .dark-skin .form-select{
-            border-color: unset;
-            color: unset;
-        }
-        @media (min-width: 768px) {
-            .md\:row-span-4 {
-                grid-row: span 4 / span 4;
-            }
-            .md\:col-start-4 {
-                grid-column-start: 4;
-            }
-            .md\:row-start-1 {
-                grid-row-start: 1;
-            }
-            .md\:row-end-4 {
-                grid-row-end: 4;
-            }
-            .md\:grid-cols-5 {
-                grid-template-columns: repeat(5, minmax(0, 1fr));
-            }
-            .md\:grid-cols-16 {
-                grid-template-columns: repeat(16, minmax(0, 1fr));
-            }
-            .md\:col-span-15 {
-                grid-column: span 15 / span 15;
-            }
-            .md\:grid-rows-2 {
-                grid-template-rows: repeat(2, minmax(0, 1fr));
-            }
-            .md\:grid-flow-col {
-                grid-auto-flow: column;
-            }
-            .md\:justify-center {
-                justify-content: center
-            }
-            .md\:col-span-3 {
-                grid-column: span 3/span 3
-            }
-        }
-        .justify-self-end{
-            justify-self: end;
-        }
-        .col-start-1 {
-            grid-column-start: 1;
-        }
-        
     </style>
     @endpush
 
@@ -66,58 +26,62 @@
         </div>
     </div>
     <div class="box-body overflow-x-auto">
-        <table class="w-full table">
+        <table id="myTable" class="w-full table">
             <thead>
                 <tr>
-                    <th>No.</th>
-                    <th>Perusahaan / Departemen</th>
-                    <th>Penanggung Jawab Lapangan</th>
-                    <th>Lokasi Pekerjaan</th>
-                    <th>No. Hp</th>
-                    <th>Tanggal</th>
-                    <th>Jam Kerja</th>
-                    <th>Jumlah Tenaga Kerja</th>
-                    <th>Action</th>
+                    <th class="px-2 py-3">No.</th>
+                    <th class="px-2 py-3">Penanggung Jawab Lapangan</th>
+                    <th class="px-2 py-3">Date Created</th>
+                    <th class="px-2 py-3">Date Updated</th>
+                    <th class="px-2 py-3">Status</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $datas = [
-                        ["Departemen", "Zaki", "Kantor", "0818123456", "10-10-2024 - 18-10-2024", "08:00 - 17:00", "8", "Draft"],
-                        ["Departemen", "Zaki", "Kantor", "0818123456", "10-10-2024 - 18-10-2024", "08:00 - 17:00", "8", "In Review"],
-                        ["Departemen", "Zaki", "Kantor", "0818123456", "10-10-2024 - 18-10-2024", "08:00 - 17:00", "8", "In Approve"],
-                        ["Departemen", "Zaki", "Kantor", "0818123456", "10-10-2024 - 18-10-2024", "08:00 - 17:00", "8", "Rejected"],
-                        ["Departemen", "Zaki", "Kantor", "0818123456", "10-10-2024 - 18-10-2024", "08:00 - 17:00", "8", "Done"]
-                    ];
-                @endphp
-                @foreach($datas as $index => $data)
+            @foreach ($forms as $index => $form)
                 <tr>
-                    <td>{{$index+1}}</td>
-                    <td>{{$data[0]}}</td>
-                    <td>{{$data[1]}}</td>
-                    <td>{{$data[2]}}</td>
-                    <td>{{$data[3]}}</td>
-                    <td>{{$data[4]}}</td>
-                    <td>{{$data[5]}}</td>
-                    <td>{{$data[6]}}</td>
                     <td>
-                        <div>
-                            <div class="{{$data[7] == 'Done' ? 'text-green-400' : ($data[7] == 'Rejected' ? 'text-red-400' : ($data[7] == 'In Review' ? 'text-yellow-400' : ($data[7] == 'In Approve' ? 'text-blue-400' : 'text-gray-400')))}}">
-                                {{$data[7]}}
-                                @if($data[7] == "Done")
+                        {{ $index +1 }}
+                    </td><td>
+                        {{ $form->supervisor}}
+                    </td>
+                    <td>
+                        {{ $form->created_at }}
+                    </td>
+                    <td>
+                        {{ $form->updated_at }}
+                    </td>
+                    <td>
+                        <div class="{{$form->status == 'Approved' ? 'text-green-400' : ($form->status == 'Rejected' ? 'text-red-400' : ($form->status == 'In Review' ? 'text-yellow-400' : ($form->status == 'In Approval' ? 'text-blue-400' : 'text-gray-400')))}}">
+                            {{ $form->status }}
+                            @if($form->status == "In Approval")
+                                {{ $form->count }}/3
+                            @endif
+                            @if($form->status == "Approved")
+                                <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
+                                @csrf
+                                    <input type="hidden" name="value" value="{{$form->id}}">
                                     <button class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
                                         <div>Report</div>
                                     </button>
-                                @endif
-                            </div>
-                            
+                                </form>
+                            @endif
                         </div>
                     </td>
                 </tr>
-                @endforeach
+            @endforeach
             </tbody>
         </table>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#myTable').DataTable({
+           
+        });
+    });
+</script>
+@endpush
 
 </x-app-layout>

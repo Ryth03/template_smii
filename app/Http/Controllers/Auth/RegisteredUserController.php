@@ -20,7 +20,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        // return view('auth.register');
+        return view('hse.register.registerForm');
     }
 
     /**
@@ -32,19 +33,32 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'name' => ['required', 'string', 'max:255'],
+            'company_department' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
-            'nik' => $request->nik,
+            'username' => $request->name,
+            'company_department' => $request->company_department,
+            'position_id' => 1,
+            'department_id' => 1,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+        // $user = User::create([
+        //     'name' => $request->name,
+        //     'username' => $request->name,
+        //     'nik' => $request->name,
+        //     'company_department' => $request->company_department,
+        //     'position_id' => 1,
+        //     'department_id' => 1,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password),
+        // ]);
 
-        event(new Registered($user));
+        // event(new Registered($user));
 
         Auth::login($user);
 
