@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\HSE\Form;
 use App\Models\HSE\projectExecutor;
 use App\Models\HSE\potentialHazardsInWorkplace_master;
@@ -27,7 +28,6 @@ use App\Models\HSE\scaffoldingRiskControl_data;
 use App\Models\HSE\testResult;
 use App\Models\HSE\approvalDetail;
 use App\Models\HSE\approver;
-use App\Models\HSE\userHasApprover;
 use App\Models\HSE\hseLocation;
 
 class HSEController extends Controller
@@ -70,10 +70,10 @@ class HSEController extends Controller
 
     public function viewAllTable()
     {
-        // $forms = Form::leftJoin('projectexecutors', 'projectexecutors.form_id', '=', 'forms.id')
+        // $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         // ->get();
         $forms = Form::select('forms.id as id', 'supervisor', 'forms.created_at as created_at', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
-        ->leftJoin('projectexecutors', 'projectexecutors.form_id', '=', 'forms.id')
+        ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
         ->groupBy('supervisor','forms.created_at', 'forms.updated_at', 'forms.status', 'forms.id')
         ->orderBy('forms.id', 'asc')
@@ -86,9 +86,10 @@ class HSEController extends Controller
         // Mendapatkan tanggal hari ini
         $today = Carbon::today();
 
-        $forms = Form::leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+        $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->where('start_date', '<=', $today)
         ->where('end_date', '>=', $today)
+        ->where('status', "Approved")
         ->get();
 
         $files = uploadFile::leftJoin('forms', 'forms.id', '=', 'uploadfiles.form_id')
@@ -104,7 +105,7 @@ class HSEController extends Controller
     public function reviewTable()
     {
         $forms = Form::where('status', 'In Review')
-        ->leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+        ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->get();
 
         return view('hse.admin.table.reviewTable', compact('forms'));
@@ -113,10 +114,10 @@ class HSEController extends Controller
     public function approvalTable()
     {
         $user = Auth::user();
-        $approver = approver::leftJoin('roles', "roles.id", "=", "approvers.role_id")
-        ->leftJoin('model_has_roles', "model_has_roles.role_id" , "=", "roles.id")
-        ->select('approvers.level as level', 'approvers.name as role_name')
-        ->where('model_has_roles.model_id', $user->id)
+        $userRole =  strToLower($user->getRoleNames()->first());
+
+        $approver = approver::where('role_name', $userRole)
+        ->select('name', 'level')
         ->first();
         
         if(!$approver){
@@ -128,7 +129,7 @@ class HSEController extends Controller
         if($approver->level === 1){
             $approvalDetail = approvalDetail::pluck('form_id');
             $forms = Form::where('status', 'In Approval')
-            ->leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+            ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
             ->whereNotIn('forms.id',$approvalDetail)
             ->get();
         }elseif($approver->level === 2){
@@ -137,7 +138,7 @@ class HSEController extends Controller
             ->havingRaw('COUNT(form_id) = 1')
             ->pluck('form_id');
             $forms = Form::where('status', 'In Approval')
-            ->leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+            ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
             ->whereIn('forms.id',$approvalDetail)
             ->get();
         }elseif($approver->level === 3){
@@ -146,13 +147,13 @@ class HSEController extends Controller
             ->havingRaw('COUNT(form_id) = 2')
             ->pluck('form_id');
             $forms = Form::where('status', 'In Approval')
-            ->leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+            ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
             ->whereIn('forms.id',$approvalDetail)
             ->get();
         }
-        if($approver->role_name === 'Area Owner'){
+        if($userRole === 'area owner'){
             $location = hseLocation::where('nik', $user->nik)->get()->pluck('name');
-            $forms = Form::leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+            $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
             ->where('status', 'In Approval')
             ->whereIn('forms.id',$approvalDetail)
             ->whereIn('location', $location)
@@ -164,7 +165,7 @@ class HSEController extends Controller
 
     public function reviewForm(Request $request)
     {
-        $form = Form::leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+        $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->where('forms.id', $request->input('value'))
         ->first();
 
@@ -186,7 +187,7 @@ class HSEController extends Controller
         
         $formId = $request->input('value'); 
 
-        $form = Form::leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+        $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->where('forms.id', $formId)
         ->first();
 
@@ -306,28 +307,28 @@ class HSEController extends Controller
     public function approveForm(Request $request)
     {
         $user = Auth::user();
-        $approver = approver::leftJoin('user_has_approvers', "user_has_approvers.approver_id", "=", "approvers.id")
-        ->where("user_id", $user->id)
+        $userRole =  strToLower($user->getRoleNames()->first());
+        $approver = approver::where('role_name', $userRole)
         ->first();
 
         $formId = $request->input('value');
         
-        $comments = $request->input('comment');
+        $comment = $request->input('comment');
         $action = $request->input('action'); // Ambil nilai action
 
         if ($action === 'approve') {
 
-            if (trim($comments) !== '') {
+            if (trim($comment) !== '') {
                 approvalDetail::create([
                     'form_id' => $formId,
-                    'approver_id' => $approver->approver_id,
+                    'approver_id' => $approver->id,
                     'status' => "Approved",
-                    'comments' => $comments
+                    'comment' => $comment
                 ]);
             }else{
                 approvalDetail::create([
                     'form_id' => $formId,
-                    'approver_id' => $approver->approver_id,
+                    'approver_id' => $approver->id,
                     'status' => "Approved"
                 ]);
             }
@@ -346,15 +347,15 @@ class HSEController extends Controller
             return redirect()->route('approval.table');
 
         }else if($action === 'reject'){
-            if (trim($comments) == '') {
+            if (trim($comment) == '') {
                 return redirect()->back()->with("error", "Data tidak berhasil. Komentar tidak boleh kosong atau hanya spasi.");
             }else{
                 $formId = $request->input('value'); 
                 approvalDetail::create([
                     'form_id' => $formId,
-                    'approver_id' => $approver->approver_id,
+                    'approver_id' => $approver->id,
                     'status' => "Rejected",
-                    'comments' => $request->input('comment')
+                    'comment' => $request->input('comment')
                 ]);
                 $form = Form::find($formId);
                 $form->status = 'Rejected';
@@ -373,7 +374,7 @@ class HSEController extends Controller
         // dd($request);
         $formId = $request->input('value'); 
 
-        $form = Form::leftJoin('projectexecutors', 'forms.id', '=', 'projectexecutors.form_id')
+        $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->where('forms.id', $formId)
         ->first();
 

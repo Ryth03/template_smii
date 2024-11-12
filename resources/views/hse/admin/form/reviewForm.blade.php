@@ -150,7 +150,7 @@
                             </div>
                             <div class="mt-1 grid grid-cols-3">
                                 <div class="flex">
-                                    <input class="form-check-input" type="checkbox" value="yes" id="operasional{{$index}}ya" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <input class="form-check-input" type="checkbox" value="yes" id="operasional{{$index}}ya" name="scaff{{$index}}" onclick="toggleCheckbox(this)" required>
                                     <label for="operasional{{$index}}ya" style="padding-left:25px;">Ya</label>
                                 </div>
                                 <div class="flex">
@@ -279,15 +279,15 @@
 
                                         <div class="col-span-2 grid md:grid-cols-3">
                                             <div>
-                                                <input type="checkbox" name="tenagaKerja{{$id}}" id="ok{{$id}}" value="ok" onclick="toggleCheckbox(this)">
+                                                <input type="checkbox" name="tenagaKerja{{$id}}" id="ok{{$id}}" value="ok" onclick="toggleCheckbox(this)" required>
                                                 <label for="ok{{$id}}"><span class="md:hidden">OK</span></label>
                                             </div>
                                             <div>
-                                                <input type="checkbox" name="tenagaKerja{{$id}}" id="notOk{{$id}}" value="notOk" onclick="toggleCheckbox(this)">
+                                                <input type="checkbox" name="tenagaKerja{{$id}}" id="notOk{{$id}}" value="notOk" onclick="toggleCheckbox(this)" required>
                                                 <label for="notOk{{$id}}"><span class="md:hidden">NOT OK</span></label>
                                             </div>
                                             <div>
-                                                <input type="checkbox" name="tenagaKerja{{$id}}" id="cekKlinik{{$id}}" value="cekKlinik" onclick="toggleCheckbox(this)">
+                                                <input type="checkbox" name="tenagaKerja{{$id}}" id="cekKlinik{{$id}}" value="cekKlinik" onclick="toggleCheckbox(this)" required>
                                                 <label for="cekKlinik{{$id}}"><span class="md:hidden">Cek Klinik</span></label>
                                             </div>
                                         </div>

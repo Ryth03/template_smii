@@ -17,5 +17,4 @@ class fitToWork extends Model
         "clinic_check",
         "clinic_recomendation"
     ];
-    public $timestamps = false;
 }

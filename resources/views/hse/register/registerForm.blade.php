@@ -112,7 +112,7 @@
                             </button>
                         </div>
                         <label class="text-justify block mt-4 text-gray-900 dark:text-white">
-                            Dalam hal ini menerangkan bahwa kedua belah pihak sepakat mengadakan sebuah perjanjian kerja dengan keetentuan dan syarat-syarat sebagai berikut :
+                            Dalam hal ini menerangkan bahwa kedua belah pihak sepakat mengadakan sebuah perjanjian kerja dengan ketentuan dan syarat-syarat sebagai berikut :
                         </label>
                     </div>
                     <!-- Modal body -->

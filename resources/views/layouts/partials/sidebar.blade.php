@@ -107,11 +107,6 @@
                                 class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Dashboard HSE</a>
                     </li>
                     @endcan
-                    @can('create form hse')
-                    <li><a href="{{ route('permit.form') }}" class="{{ request()->is('users*') ? 'current' : '' }}"><i
-                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Permit Form</a>
-                    </li>
-                    @endcan
                     @can('review form hse')
                     <li><a href="{{ route('review.table') }}"
                             class="{{ request()->is('department*') ? 'current' : '' }}"><i class="icon-Commit"><span

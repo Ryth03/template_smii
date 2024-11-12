@@ -8,6 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class approvalDetail extends Model
 {
     use HasFactory;
-    protected $table = 'approval_details';
-    protected $fillable = ["form_id", "approver_id", "status", "comments"];
+    protected $fillable = ["form_id", "approver_id", "status", "comment"];
 }

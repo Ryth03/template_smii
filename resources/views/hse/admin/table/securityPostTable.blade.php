@@ -32,10 +32,10 @@
                     <th class="py-3">No.</th>
                     <th class="py-3">Perusahaan / Departemen</th>
                     <th class="py-3">Penanggung Jawab Lapangan</th>
+                    <th class="py-3">Lokasi</th>
                     <th class="py-3">Tanggal</th>
-                    <th class="py-3">Jam Kerja</th>
                     <th class="py-3">Jumlah Tenaga Kerja</th>
-                    <th class="py-3">Action</th>
+                    <th class="py-3">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,8 +44,8 @@
                     <td>{{$index+1}}</td>
                     <td>{{$form->company_department}}</td>
                     <td>{{$form->supervisor}}</td>
+                    <td>{{$form->location}}</td>
                     <td>{{$form->start_date}} - {{$form->end_date}}</td>
-                    <td>{{$form->start_time}} - {{$form->end_time}}</td>
                     <td>{{$form->workers_count}}</td>
                     <td>
                         <div class="{{$form->status == 'Approved' ? 'text-green-400' : ($form->status == 'Rejected' ? 'text-red-400' : ($form->status == 'In Review' ? 'text-yellow-400' : ($form->status == 'In Approval' ? 'text-blue-400' : 'text-gray-400')))}}">

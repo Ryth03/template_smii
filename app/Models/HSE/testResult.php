@@ -17,5 +17,4 @@ class testResult extends Model
         'co',
         'test_date',
     ];
-    public $timestamps = false;
 }

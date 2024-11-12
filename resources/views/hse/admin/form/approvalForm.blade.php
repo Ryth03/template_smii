@@ -940,7 +940,7 @@
                         </div>
                     </div>
 
-                    <div class="border rounded-lg p-3 mt-4">
+                    <div class="border rounded-lg p-3">
                         <div id="potentialDangerGrid" class="grid gap-y-3">
                         @foreach($jsas as $index => $jsa)
                             <div class="grid md:grid-cols-16">
@@ -954,7 +954,7 @@
                                         <div><label for="namaPekerjaan{{$index+1}}" class="block text-md font-medium">Nama Pekerjaan</label></div>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <input type="text" id="bahayaPotensial{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->job_name}}" readonly>
+                                        <input type="text" id="namaPekerjaan{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->job_name}}" readonly>
                                     </div>
                                     <div class="md:col-span-4">
                                         <div><label for="bahayaPotensial{{$index+1}}" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>

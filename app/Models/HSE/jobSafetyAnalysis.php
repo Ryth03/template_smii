@@ -11,14 +11,8 @@ class jobSafetyAnalysis extends Model
     protected $table = 'jobSafetyAnalysis';
     protected $fillable = [
         "form_id", 
+        "job_name",
         "potential_danger",
-        "severity_before",
-        "opportunity_before",
-        "risk_factor_before",
         "danger_control",
-        "severity_after",
-        "opportunity_after",
-        "risk_factor_after"
     ];
-    public $timestamps = false;
 }

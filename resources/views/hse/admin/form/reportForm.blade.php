@@ -42,8 +42,8 @@
             .md\:grid-cols-8 {
                 grid-template-columns: repeat(8, minmax(0, 1fr))
             }
-            .md\:grid-cols-14 {
-                grid-template-columns: repeat(14, minmax(0, 1fr));
+            .md\:grid-cols-12 {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
             }
             .md\:grid-cols-16 {
                 grid-template-columns: repeat(16, minmax(0, 1fr));
@@ -939,100 +939,34 @@
                             @endforeach
                         </div>
                     </div>
-                    
-                    <div class="grid md:grid-cols-8" >
-                        <div class="md:col-span-3 my-2">
-                            <img src="{{ asset('assets\images\hse\Matriks HSE.jpg')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                        <div class="md:col-span-2 my-2">
-                            <img src="{{ asset('assets\images\hse\Kemungkinan Matriks.jpg')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                        <div class="md:col-span-3 my-2">
-                            <img src="{{ asset('assets\images\hse\Keparahan Matriks.png')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                    </div>
 
-                    <div class="border rounded-lg p-3 mt-4">
+                    <div class="border rounded-lg p-3">
                         <div id="potentialDangerGrid" class="grid gap-y-3">
                         @foreach($jsas as $index => $jsa)
                             <div class="grid md:grid-cols-16">
                                 <div>
                                     <div class="flex md:justify-center">
-                                        <label for="bahayaPotensial" class="block text-md font-medium">No. {{$index+1}}</label>
+                                        <label for="namaPekerjaan{{$index+1}}" class="block text-md font-medium">No. {{$index+1}}</label>
                                     </div>
                                 </div>
-                                <div class="md:col-span-15 grid md:grid-cols-14 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
+                                <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
                                     <div class="md:col-span-4">
-                                        <div><label for="bahayaPotensial1" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <input type="text" id="bahayaPotensial1" class="form-control rounded-lg w-full" value="{{$jsa->potential_danger}}" readonly>
-                                    </div>
-                                    <div>
-                                        <div><label for="severityBefore1" class="block text-md font-medium">S</label></div>
-                                    </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="severityBefore1Button"  class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" disabled>
-                                                {{$jsa->severity_before}}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div><label for="opportunityBefore1" class="block text-md font-medium">O</label></div>
-                                    </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="opportunityBefore1Button"  class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" disabled>
-                                                {{$jsa->opportunity_before}}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div><label for="riskFactorBefore1" class="block text-md font-medium">RF</label></div>
-                                    </div>
-                                    <div>
-                                        <input type="number" id="riskFactorBefore1" class="form-control rounded-lg w-full" value="{{$jsa->risk_factor_before}}" readonly>
+                                        <div><label for="namaPekerjaan{{$index+1}}" class="block text-md font-medium">Nama Pekerjaan</label></div>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <div><label for="pengendalianBahayaHirarki1" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+                                        <input type="text" id="namaPekerjaan{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->job_name}}" readonly>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <input type="text" id="pengendalianBahayaHirarki1" class="form-control rounded-lg w-full" value="{{$jsa->danger_control}}" readonly>
+                                        <div><label for="bahayaPotensial{{$index+1}}" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
                                     </div>
-                                    <div>
-                                        <div><label for="severityAfter1" class="block text-md font-medium">S</label></div>
+                                    <div class="md:col-span-4">
+                                        <input type="text" id="bahayaPotensial{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->potential_danger}}" readonly>
                                     </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="severityAfter1Button"  class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                                {{$jsa->severity_after}}
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div class="md:col-span-4">
+                                        <div><label for="pengendalianBahayaHirarki{{$index+1}}" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
                                     </div>
-                                    <div>
-                                        <div><label for="opportunityAfter1" class="block text-md font-medium">O</label></div>
-                                    </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="opportunityAfter1Button"  class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                                {{$jsa->opportunity_after}}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div><label for="riskFactorAfter1" class="block text-md font-medium">RF</label></div>
-                                    </div>
-                                    <div>
-                                        <input type="number" id="riskFactorAfter1" class="form-control rounded-lg w-full" value="{{$jsa->risk_factor_after}}" readonly>
+                                    <div class="md:col-span-4">
+                                        <input type="text" id="pengendalianBahayaHirarki{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->danger_control}}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -1043,7 +977,7 @@
                 </div>
             </div>
         </section>
-        
+
         <div class="my-4 py-4" style="background-color: #A78734"></div>
             <button name="action" value="approve" class="m-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onclick="window.print()">
                 Print

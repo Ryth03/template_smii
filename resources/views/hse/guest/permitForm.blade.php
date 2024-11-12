@@ -33,8 +33,8 @@
             .md\:grid-cols-8 {
                 grid-template-columns: repeat(8, minmax(0, 1fr))
             }
-            .md\:grid-cols-14 {
-                grid-template-columns: repeat(14, minmax(0, 1fr));
+            .md\:grid-cols-12 {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
             }
             .md\:grid-cols-16 {
                 grid-template-columns: repeat(16, minmax(0, 1fr));
@@ -470,7 +470,7 @@
                                         <label for="namaTenagaKerja1" class="font-medium">Nama Tenaga Kerja :</label>
                                     </div>
                                     <div class="col-span-3">
-                                        <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data">
+                                        <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                 </div>
                             </div>
@@ -525,21 +525,8 @@
                             @endforeach
                         </div>
                     </div>
-                    
-                    
-                    <div class="grid md:grid-cols-8" >
-                        <div class="md:col-span-3 my-2">
-                            <img src="{{ asset('assets\images\hse\Matriks HSE.jpg')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                        <div class="md:col-span-2 my-2">
-                            <img src="{{ asset('assets\images\hse\Kemungkinan Matriks.jpg')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                        <div class="md:col-span-3 my-2">
-                            <img src="{{ asset('assets\images\hse\Keparahan Matriks.png')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                    </div>
 
-                    <div class="border rounded-lg p-3 mt-4 md:mb-28">
+                    <div class="border rounded-lg p-3 md:mb-28">
                         <div id="potentialDangerGrid" class="grid gap-y-3">
                             <div class="grid md:grid-cols-16">
                                 <div>
@@ -547,130 +534,24 @@
                                         <label for="potentialDanger" class="block text-md font-medium">No. 1</label>
                                     </div>
                                 </div>
-                                <div class="md:col-span-15 grid md:grid-cols-14 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
+                                <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
+                                    <div class="md:col-span-4">
+                                        <div><label for="jobName1" class="block text-md font-medium">Nama Pekerjaan</label></div>
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <input type="text" id="jobName1" name="jobName[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+                                    </div>
                                     <div class="md:col-span-4">
                                         <div><label for="potentialDanger1" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <input type="text" id="potentialDanger1" name="potentialDanger[]" class="form-control rounded-lg w-full" placeholder="Input data">
-                                    </div>
-                                    <div>
-                                        <div><label for="severityBefore1" class="block text-md font-medium">S</label></div>
-                                    </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="severityBefore1Button" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                                                1
-                                                <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                                </svg>
-                                                </button>
-                                            </div>
-                                            <input type="number" id="severityBefore1ButtonInput" name="severityBefore[]" value="1" hidden>
-                                            <ul id="severityBefore1" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                                                <div class="py-1" role="none">
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                                                </div>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div><label for="opportunityBefore1" class="block text-md font-medium">O</label></div>
-                                    </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="opportunityBefore1Button" name="opportunityBefore[]" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                                                1
-                                                <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                                </svg>
-                                                </button>
-                                            </div>
-                                            <input type="number" id="opportunityBefore1ButtonInput" name="opportunityBefore[]" value="1" hidden>
-                                            <ul id="opportunityBefore1" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                                                <div class="py-1" role="none">
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                                                </div>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div><label for="riskFactorBefore1" class="block text-md font-medium">RF</label></div>
-                                    </div>
-                                    <div>
-                                        <input type="number" id="riskFactorBefore1" name="riskFactorBefore[]"  class="form-control rounded-lg w-full" value="1" readonly>
+                                        <input type="text" id="potentialDanger1" name="potentialDanger[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                     <div class="md:col-span-4">
                                         <div><label for="dangerControl1" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <input type="text" id="dangerControl1" name="dangerControl[]" class="form-control rounded-lg w-full" placeholder="Input data">
-                                    </div>
-                                    <div>
-                                        <div><label for="severityAfter1" class="block text-md font-medium">S</label></div>
-                                    </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="severityAfter1Button" name="severityAfter[]" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                                                1
-                                                <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                                </svg>
-                                                </button>
-                                            </div>
-                                            <input type="number" id="severityAfter1ButtonInput" name="severityAfter[]" value="1" hidden>
-                                            <ul id="severityAfter1" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                                                <div class="py-1" role="none">
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                                                </div>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div><label for="opportunityAfter1" class="block text-md font-medium">O</label></div>
-                                    </div>
-                                    <div>
-                                        <div class="relative inline-block text-left" style="min-width:50px;">
-                                            <div>
-                                                <button type="button" id="opportunityAfter1Button" name="opportunityAfter[]" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                                                1
-                                                <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                                </svg>
-                                                </button>
-                                            </div>
-                                            <input type="number" id="opportunityAfter1ButtonInput" name="opportunityAfter[]" value="1" hidden>
-                                            <ul id="opportunityAfter1" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                                                <div class="py-1" role="none">
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                                                <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                                                </div>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div><label for="riskFactorAfter1" class="block text-md font-medium">RF</label></div>
-                                    </div>
-                                    <div>
-                                        <input type="number" id="riskFactorAfter1" name="riskFactorAfter[]" class="form-control rounded-lg w-full" value="1" readonly>
+                                        <input type="text" id="dangerControl1" name="dangerControl[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                 </div>
                             </div>
@@ -777,8 +658,21 @@ $(".validation-hse").steps({
         return form.validate().settings.ignore = ":disabled", form.valid()
     }
     , onFinished: function (event, currentIndex) {
-        swal("Success", "Your Form Submitted!.");
-        $("#form").submit();
+        // SweetAlert2 confirmation dialog for submit action
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#26D639',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#form").submit();
+            }
+        });
     }
 }), $(".validation-hse").validate({
     ignore: "input[type=hidden]"
@@ -983,7 +877,7 @@ function hotWorkPermit(button){
                             "2. Menyediakan di dekat tempat kerja sekurang-kurangnya dua buah alat pemadam api (APAR), baik personil yang melakukan pekerjaan maupun pengawasan bahaya kebakaran terlatih untuk menggunakannya",
                             "3. Personil yang melakukan pekerjaan maupun pengawasan bahaya kabakaran mengetahui cara mengevakuasi diri dari tempat kejadian dan menyalakan alarm kebakaran ataupun memanggil bantuan pemadam Kebakaran (ERT)",
                             "4. Peralatan pengelasan dan pemotongan dalam kondisi yang baik dan aman. Tabung gas dilengkapi dengan flashback arrester, dan mempunyai selang flexible dalam kondisi baik pula",
-                            "5. Site Watcher / Penjaga Lokasi yang mengawasi pekerjaan di ketinggian ini"
+                            "5. Site Watcher / Penjaga Lokasi yang mengawasi pekerjaan dengan api"
                             ];
                     @endphp
                     @foreach($workTitle as $index => $title)
@@ -1397,130 +1291,24 @@ addButtonPotentialDanger.addEventListener('click', () => {
     <div class="flex md:justify-center">
         <label for="potentialDanger" class="block text-md font-medium">No. ${rowCountPotentialDanger}</label>
     </div> 
-    <div class="md:col-span-15 grid md:grid-cols-14 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
+    <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
+        <div class="md:col-span-4">
+            <div><label for="jobName${rowCountPotentialDanger}" class="block text-md font-medium">Nama Pekerjaan</label></div>
+        </div>
+        <div class="md:col-span-4">
+            <input type="text" id="jobName${rowCountPotentialDanger}" name="jobName[]" class="form-control rounded-lg w-full" placeholder="Input data">
+        </div>
         <div class="md:col-span-4">
             <div><label for="potentialDanger${rowCountPotentialDanger}" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
         </div>
         <div class="md:col-span-4">
             <input type="text" id="potentialDanger${rowCountPotentialDanger}" name="potentialDanger[]" class="form-control rounded-lg w-full" placeholder="Input data">
         </div>
-        <div>
-            <div><label for="severityBefore${rowCountPotentialDanger}" class="block text-md font-medium">S</label></div>
-        </div>
-        <div>
-            <div class="relative inline-block text-left" style="min-width:50px;">
-                <div>
-                    <button type="button" id="severityBefore${rowCountPotentialDanger}Button" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                    1
-                    <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                    </svg>
-                    </button>
-                </div>
-                <input type="number" id="severityBefore${rowCountPotentialDanger}ButtonInput" name="severityBefore[]" value="1" hidden>
-                <ul id="severityBefore${rowCountPotentialDanger}" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                    <div class="py-1" role="none">
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                    </div>
-                </ul>
-            </div>
-        </div>
-        <div>
-            <div><label for="opportunityBefore${rowCountPotentialDanger}" class="block text-md font-medium">O</label></div>
-        </div>
-        <div>
-            <div class="relative inline-block text-left" style="min-width:50px;">
-                <div>
-                    <button type="button" id="opportunityBefore${rowCountPotentialDanger}Button" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                    1
-                    <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                    </svg>
-                    </button>
-                </div>
-                <input type="number" id="opportunityBefore${rowCountPotentialDanger}ButtonInput" name="opportunityBefore[]" value="1" hidden>
-                <ul id="opportunityBefore${rowCountPotentialDanger}" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                    <div class="py-1" role="none">
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                    </div>
-                </ul>
-            </div>
-        </div>
-        <div>
-            <div><label for="riskFactorBefore${rowCountPotentialDanger}" class="block text-md font-medium">RF</label></div>
-        </div>
-        <div>
-            <input type="number" id="riskFactorBefore${rowCountPotentialDanger}" name="riskFactorBefore[]" class="form-control rounded-lg w-full" value="1" readonly>
-        </div>
         <div class="md:col-span-4">
             <div><label for="dangerControl${rowCountPotentialDanger}" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
         </div>
         <div class="md:col-span-4">
             <input type="text" id="dangerControl${rowCountPotentialDanger}" name="dangerControl[]" class="form-control rounded-lg w-full" placeholder="Input data">
-        </div>
-        <div>
-            <div><label for="severityAfter${rowCountPotentialDanger}" class="block text-md font-medium">S</label></div>
-        </div>
-        <div>
-            <div class="relative inline-block text-left" style="min-width:50px;">
-                <div>
-                    <button type="button" id="severityAfter${rowCountPotentialDanger}Button" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                    1
-                    <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                    </svg>
-                    </button>
-                </div>
-                <input type="number" id="severityAfter${rowCountPotentialDanger}ButtonInput" name="severityAfter[]" value="1" hidden>
-                <ul id="severityAfter${rowCountPotentialDanger}" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                    <div class="py-1" role="none">
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                    </div>
-                </ul>
-            </div>
-        </div>
-        <div>
-            <div><label for="opportunityAfter${rowCountPotentialDanger}" class="block text-md font-medium">O</label></div>
-        </div>
-        <div>
-            <div class="relative inline-block text-left" style="min-width:50px;">
-                <div>
-                    <button type="button" id="opportunityAfter${rowCountPotentialDanger}Button" class="dropDownButton inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" aria-expanded="true" aria-haspopup="true" onclick="dropDownToggle(this)">
-                    1
-                    <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                    </svg>
-                    </button>
-                </div>
-                <input type="number" id="opportunityAfter${rowCountPotentialDanger}ButtonInput" name="opportunityAfter[]" value="1" hidden>
-                <ul id="opportunityAfter${rowCountPotentialDanger}" class="hidden dropDownMenu absolute w-full z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onchange="updateButtonText()">
-                    <div class="py-1" role="none">
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">1</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">2</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">3</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">4</li>
-                    <li class="block px-4 py-1 text-sm text-gray-700 hover:bg-gray-100" tabindex="-1" onclick="changeButtonText(this)">5</li>
-                    </div>
-                </ul>
-            </div>
-        </div>
-        <div>
-            <div><label for="riskFactorAfter${rowCountPotentialDanger}" class="block text-md font-medium">RF</label></div>
-        </div>
-        <div>
-            <input type="number" id="riskFactorAfter${rowCountPotentialDanger}" name="riskFactorAfter[]" class="form-control rounded-lg w-full" value="1" readonly>
         </div>
     </div>    
     `;

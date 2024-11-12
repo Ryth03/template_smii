@@ -10,5 +10,4 @@ class potentialHazardsInWorkplace_data extends Model
     use HasFactory;
     protected $table = 'potentialHazardsInWorkplace_data';
     protected $fillable = ["form_id", "master_id"];
-    public $timestamps = false;
 }

@@ -9,5 +9,4 @@ class workEquipments_master extends Model
 {
     protected $table = 'workEquipments_master';
     protected $fillable = ["name"];
-    public $timestamps = false;
 }

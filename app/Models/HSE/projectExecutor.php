@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class projectExecutor extends Model
 {
     use HasFactory;
-    protected $table = 'projectExecutors';
+    protected $table = 'project_executors';
     protected $fillable = 
     ["form_id",
     'company_department',
@@ -21,5 +21,4 @@ class projectExecutor extends Model
     'end_time' ,
     'workers_count' ,
     'work_description'];
-    public $timestamps = false;
 }

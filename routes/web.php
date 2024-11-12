@@ -88,6 +88,7 @@ Route::get('/register2', function () {
 // Form datatables
 use App\Http\Controllers\HSE\HSEFormController;
 Route::get('/hse', [HSEFormController::class, 'viewNewForm'])->name('permit.form');
+Route::post('/extend-form-hse', [HSEFormController::class, 'viewExtendForm'])->name('extend.form');
 Route::get('/dashboard-hse',  [HSEFormController::class, 'viewList'])->name('hse.dashboard');
 Route::post('/insert-form-hse', [HSEFormController::class, 'createNewForm'])->name('hse.form.insert');
 Route::post('/view-form-hse', [HSEFormController::class, 'viewDraftForm'])->name('view.form.hse');

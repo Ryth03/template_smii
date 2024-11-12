@@ -10,5 +10,4 @@ class workEquipments_data extends Model
     use HasFactory;
     protected $table = 'workEquipments_data';
     protected $fillable = ["form_id", "master_id"];
-    public $timestamps = false;
 }
