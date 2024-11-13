@@ -804,7 +804,7 @@ $(".validation-hse").steps({
     , bodyTag: "section"
     , transitionEffect: "none"
     , titleTemplate: '#title#'
-    , enableAllSteps: true
+    , enableAllSteps: false
     , labels: {
         next: "Lanjut",
         previous: "Sebelumnya",

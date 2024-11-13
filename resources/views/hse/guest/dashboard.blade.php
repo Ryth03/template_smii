@@ -20,7 +20,7 @@
 </style>
 @endpush
 
-<div class="card p-10">
+<div class="card mt-20 p-2">
     @can('create form hse')
     <div class="mx-2 my-4">
             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn"
@@ -88,7 +88,7 @@
     {{-- Modal Terms --}}
     <div id="createNewForm" tabindex="-1" aria-hidden="true"
         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-lg max-h-full">
+        <div class="relative p-4 w-full max-w-lg max-h-full" style="margin-top: 5%">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <!-- Modal header -->
@@ -108,22 +108,28 @@
                             <span class="sr-only">Close modal</span>
                         </button>
                     </div>
-                    <label class="text-justify self-center block mt-4 text-gray-900 dark:text-white">
-                        Choose One
-                    </label>
                 </div>
                 <!-- Modal body -->
-                <div class="p-4 md:p-5">
-                    <div class="flex items-center justify-center text-xl space-x-4">
-                        <a href="{{route('permit.form')}}">
+                <div class="p-4 md:p-5 flex flex-col items-center text-xl">
+                    <div class="form-group flex flex-col w-full">
+                        <label class="text-white">Buat Form</label>
+                        <a href="{{route('permit.form')}}" class="self-center">
                             <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
                                 New Form
                             </button>
                         </a>
-                        <form action="{{route('extend.form')}}" method="POST" style="display: inline;">
+                    </div>
+                    <div class="form-group w-full">
+                        <label class="text-white">Perpanjang Form</label>
+                        <form action="{{route('extend.form')}}" method="POST" class="flex flex-col">
                             @csrf
-                            <input type="hidden" value="{{$extendValue}}" name="value">
-                            <button  class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
+                            <select name="value" id="value" class="form-select rounded-lg" required>
+                                <option value="" selected disabled>Pilih Lokasi</option>
+                                @foreach($extendValue as $value)
+                                <option value="{{$value->id}}">{{$value->location}} ({{$value->start_date}} - {{$value->end_date}})</option>
+                                @endforeach
+                            </select>
+                            <button  class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn self-center">
                                 Extend Form
                             </button>
                         </form>

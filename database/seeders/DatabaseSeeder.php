@@ -271,7 +271,7 @@ class DatabaseSeeder extends Seeder
             ["Sangudin", "U0947"],
             ["Suwanto", "H0689"],
             ["Muchammad Arif Fathoni", "U0942"],
-            ["Maria Muyarni", "Tidak ada"]
+            ["Maria Muyarni", "Q0881"]
 
         ];
         foreach ($names as $name) {

@@ -95,7 +95,7 @@
     @endpush
 
 <div class="box-body wizard-content">
-    <form action="" id="form" name="form" method="POST" class="validation-hse wizard-circle card py-10"  enctype="multipart/form-data">
+    <form action="{{ route('hse.form.extend')}}" id="form" name="form" method="POST" class="validation-hse wizard-circle card py-10"  enctype="multipart/form-data">
         @csrf
         <!-- Step 1 -->
         <h6 class="text-md font-semibold mb-4">Ijin Kerja 1</h6>
@@ -214,7 +214,7 @@ $(".validation-hse").steps({
     , bodyTag: "section"
     , transitionEffect: "none"
     , titleTemplate: '#title#'
-    , enableAllSteps: true
+    , enableAllSteps: false
     , labels: {
         next: "Lanjut",
         previous: "Sebelumnya",

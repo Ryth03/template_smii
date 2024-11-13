@@ -28,16 +28,51 @@ use App\Models\HSE\scaffoldingRiskControl_data;
 use App\Models\HSE\testResult;
 use App\Models\HSE\approvalDetail;
 use App\Models\HSE\approver;
-use App\Models\HSE\hseLocation;
+use App\Models\HSE\hseLocation;   
+use App\Notifications\PrNotification;
+use Illuminate\Support\Facades\Notification; 
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Jobs\sendToUserJob;
 
 class HSEController extends Controller
 {
 
     public function __construct(){
         $this->middleware('permission:review form hse', ['only' =>['reviewTable']]);
+        $this->middleware('permission:review form hse', ['only' =>['reviewForm']]);
+        $this->middleware('permission:review form hse', ['only' =>['updateForm']]);
         $this->middleware('permission:approve form hse', ['only' =>['approvalTable']]);
         $this->middleware('permission:approve form hse', ['only' =>['approvalForm']]);
         $this->middleware('permission:approve form hse', ['only' =>['approveForm']]);
+    }
+
+    private function userNotification($user_id, $status){
+        
+        $user = User::where('id', $user_id)->first();
+        $data = [
+            'title' => 'Form Status',
+            'message' => 'Your form has been ' . $status . '.'
+        ];
+        Notification::send($user, new PrNotification($data));
+
+    }
+
+    private function approvalNotification($role){
+        $approvalUser = User::role($role)->get();
+        $data = [
+            'title' => 'New Form To Approve',
+            'message' => 'New form requires approval.'
+        ];
+        Notification::send($approvalUser, new PrNotification($data));
+    }
+    
+    private function areaOwnerNotification($nik){
+        $approvalUser = User::where('nik', $nik)->first();
+        $data = [
+            'title' => 'New Form To Approve',
+            'message' => 'New form requires approval.'
+        ];
+        Notification::send($approvalUser, new PrNotification($data));
     }
 
     public function store(Request $request)
@@ -70,8 +105,6 @@ class HSEController extends Controller
 
     public function viewAllTable()
     {
-        // $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-        // ->get();
         $forms = Form::select('forms.id as id', 'supervisor', 'forms.created_at as created_at', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
         ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
@@ -297,16 +330,34 @@ class HSEController extends Controller
             $worker->clinic_recomendation = $request->input("clinicRecomendation{$index}");
             $worker->save();
         }
-        
+
         $form = Form::find($formId);
         $form->status = 'In Approval';
         $form->save(); 
+
+
+        // Send Notification to level 1
+        $approver = approver::where('level', 1)
+        ->pluck('name')
+        ->first();
+        if(strToLower($approver) === 'area owner'){
+            $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+            ->where('forms.id', $formId)
+            ->first();
+
+            $nik = hseLocation::where('name', $form->location)->pluck('nik');
+            $this->areaOwnerNotification($nik);
+        }else{
+            $this->approvalNotification(strToLower($approver));
+        }
+
         return redirect()->route('review.table');
     }
 
     public function approveForm(Request $request)
     {
         $user = Auth::user();
+
         $userRole =  strToLower($user->getRoleNames()->first());
         $approver = approver::where('role_name', $userRole)
         ->first();
@@ -343,7 +394,54 @@ class HSEController extends Controller
                 $form = Form::find($formId);
                 $form->status = 'Approved';
                 $form->save(); 
+
+                $user = User::find($form->user_id);
+
+                // Send Notification to user
+                $this->userNotification($form->user_id,'Approved');
+
+                // Send Email to User
+                $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                $toUser = User::find($form->user_id);
+                sendToUserJob::dispatch($toUser->email, $form, $projectExecutor, $comment);        
+
+            }else if($approvalDetail->count == 2){
+                
+                // Send Notification to level 3
+                $approver = approver::where('level', 3)
+                ->pluck('name')
+                ->first();
+                if(strToLower($approver) === 'area owner'){
+                    $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                    ->where('forms.id', $formId)
+                    ->first();
+    
+                    $nik = hseLocation::where('name', $form->location)->pluck('nik');
+                    $this->areaOwnerNotification($nik);
+                }else{
+                    $this->approvalNotification(strToLower($approver));
+                }
+                
+
+            }else if($approvalDetail->count == 1){
+
+                // Send Notification to level 2
+                $approver = approver::where('level', 2)
+                ->pluck('name')
+                ->first();
+                if(strToLower($approver) === 'area owner'){
+                    $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                    ->where('forms.id', $formId)
+                    ->first();
+    
+                    $nik = hseLocation::where('name', $form->location)->pluck('nik');
+                    $this->areaOwnerNotification($nik);
+                }else{
+                    $this->approvalNotification(strToLower($approver));
+                }
+
             }
+
             return redirect()->route('approval.table');
 
         }else if($action === 'reject'){
@@ -360,6 +458,17 @@ class HSEController extends Controller
                 $form = Form::find($formId);
                 $form->status = 'Rejected';
                 $form->save(); 
+
+                
+                // Send Notification to user
+                $this->userNotification($form->user_id,'Rejected');
+
+                
+                // Send Email to User
+                $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                $toUser = User::find($form->user_id);
+                sendToUserJob::dispatch($toUser->email, $form, $projectExecutor, $comment);  
+
                 return redirect()->route('approval.table');
             }
 
@@ -371,7 +480,6 @@ class HSEController extends Controller
 
     public function printReport(Request $request)
     {
-        // dd($request);
         $formId = $request->input('value'); 
 
         $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
@@ -435,5 +543,32 @@ class HSEController extends Controller
             'fireHazardControls', 'fireHazardControls_data',
             'workers', 'jsas'
         ));
+
+        // set_time_limit(300);
+
+        // $data = [
+        //     'form' => $form,
+        //     'potentialHazards' => $potentialHazards, 
+        //     'potentialHazards_data' => $potentialHazards_data,
+        //     'personalProtectEquipments' => $personalProtectEquipments, 
+        //     'personalProtectEquipments_data' => $personalProtectEquipments_data, 
+        //     'workEquipments' => $workEquipments, 
+        //     'workEquipments_data' => $workEquipments_data, 
+        //     'files' => $files,
+        //     'additionalWorkPermits' => $additionalWorkPermits, 
+        //     'additionalWorkPermits_data' => $additionalWorkPermits_data, 
+        //     'scaffs' => $scaffs, 
+        //     'testResult' => $testResult,
+        //     'fireHazardControls' => $fireHazardControls, 
+        //     'fireHazardControls_data' => $fireHazardControls_data,
+        //     'workers' => $workers, 
+        //     'jsas' => $jsas
+        // ];
+        
+        // $pdf = Pdf::loadView('hse.admin.form.reportForm', $data)->setPaper('A4', 'portrait');
+        
+        // $pdf->output();
+
+        // return response()->streamDownload(function() use ());
     }
 }
