@@ -9,32 +9,29 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class sendToUser extends Mailable
+class sendToApprover extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $user;
     protected $form;
     protected $detail;
-    protected $comment;
+    protected $role;
     
-    public function __construct($user, $form, $detail, $comment)
+    public function __construct($form, $detail, $role)
     {
-        $this->user = $user;
         $this->form = $form;
         $this->detail = $detail;
-        $this->comment = $comment;
+        $this->role = $role;
     }
 
     public function build(){
 
-        return $this->view('emails.sendToUser')
-                    ->subject("Your form has been ".$this->form->status)
+        return $this->view('emails.sendToApprover')
+                    ->subject("A new form needs your ".($this->form->status === "In Review" ? 'review' : 'approval'))
                     ->with([
                         'form' => $this->form, 
                         'detail' => $this->detail,
-                        'comment' => $this->comment,
-                        'user' => $this->user
+                        'role' => $this->role
                     ]);
     }
 }

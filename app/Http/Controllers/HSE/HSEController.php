@@ -33,6 +33,7 @@ use App\Notifications\PrNotification;
 use Illuminate\Support\Facades\Notification; 
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Jobs\sendToUserJob;
+use App\Jobs\sendToApproverJob;
 
 class HSEController extends Controller
 {
@@ -73,6 +74,31 @@ class HSEController extends Controller
             'message' => 'New form requires approval.'
         ];
         Notification::send($approvalUser, new PrNotification($data));
+    }
+
+    private function sendNotifAndEmailToApprover($formId, $level){
+        $approver = approver::where('level', $level)
+        ->pluck('name')
+        ->first();
+
+        $toUser = null;
+        $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+            ->where('forms.id', $formId)
+            ->first();
+
+        if(strToLower($approver) === 'area owner'){
+            
+            
+            $nik = hseLocation::where('name', $form->location)->pluck('nik');
+            $toUser = User::role($approver)->where('nik', $nik)->pluck('email')->toArray();
+            $this->areaOwnerNotification($nik); // send notification
+        }else{
+            $toUser = User::role($approver)->pluck('email')->toArray();
+            $this->approvalNotification(strToLower($approver)); //send notification
+        }
+
+        $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+        sendToApproverJob::dispatch($toUser, $form, $projectExecutor, $approver); // send email
     }
 
     public function store(Request $request)
@@ -211,6 +237,8 @@ class HSEController extends Controller
         ->select('master_id')
         ->get();
 
+        confirmDelete();
+        
         $scaffs = scaffoldingRiskControl_master::all();
         return view('hse.admin.form.reviewForm', compact('form','workers','permits','scaffs'));
     }
@@ -273,6 +301,8 @@ class HSEController extends Controller
         ->get();
 
         
+        confirmDelete();
+
         return view('hse.admin.form.approvalForm', 
         compact('form','potentialHazards', 'potentialHazards_data',
             'personalProtectEquipments', 'personalProtectEquipments_data', 
@@ -337,19 +367,7 @@ class HSEController extends Controller
 
 
         // Send Notification to level 1
-        $approver = approver::where('level', 1)
-        ->pluck('name')
-        ->first();
-        if(strToLower($approver) === 'area owner'){
-            $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-            ->where('forms.id', $formId)
-            ->first();
-
-            $nik = hseLocation::where('name', $form->location)->pluck('nik');
-            $this->areaOwnerNotification($nik);
-        }else{
-            $this->approvalNotification(strToLower($approver));
-        }
+        $this->sendNotifAndEmailToApprover($formId, 1);
 
         return redirect()->route('review.table');
     }
@@ -357,6 +375,13 @@ class HSEController extends Controller
     public function approveForm(Request $request)
     {
         $user = Auth::user();
+        
+        // $formId = $request->input('value');
+        // $form = Form::find($formId);
+        // $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+        // $toUser = User::role("engineering manager")->take(4)->pluck('email')->toArray();
+        // sendToApproverJob::dispatch($toUser, $form, $projectExecutor);   
+        // dd("test email");
 
         $userRole =  strToLower($user->getRoleNames()->first());
         $approver = approver::where('role_name', $userRole)
@@ -366,7 +391,6 @@ class HSEController extends Controller
         
         $comment = $request->input('comment');
         $action = $request->input('action'); // Ambil nilai action
-
         if ($action === 'approve') {
 
             if (trim($comment) !== '') {
@@ -403,48 +427,21 @@ class HSEController extends Controller
                 // Send Email to User
                 $projectExecutor = projectExecutor::where('form_id', $formId)->first();
                 $toUser = User::find($form->user_id);
-                sendToUserJob::dispatch($toUser->email, $form, $projectExecutor, $comment);        
+                sendToUserJob::dispatch($toUser, $form, $projectExecutor, $comment);        
 
             }else if($approvalDetail->count == 2){
                 
-                // Send Notification to level 3
-                $approver = approver::where('level', 3)
-                ->pluck('name')
-                ->first();
-                if(strToLower($approver) === 'area owner'){
-                    $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-                    ->where('forms.id', $formId)
-                    ->first();
-    
-                    $nik = hseLocation::where('name', $form->location)->pluck('nik');
-                    $this->areaOwnerNotification($nik);
-                }else{
-                    $this->approvalNotification(strToLower($approver));
-                }
+                // Send Notification and Email to level 3
+                $this->sendNotifAndEmailToApprover($formId, 3);
                 
-
             }else if($approvalDetail->count == 1){
 
-                // Send Notification to level 2
-                $approver = approver::where('level', 2)
-                ->pluck('name')
-                ->first();
-                if(strToLower($approver) === 'area owner'){
-                    $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-                    ->where('forms.id', $formId)
-                    ->first();
-    
-                    $nik = hseLocation::where('name', $form->location)->pluck('nik');
-                    $this->areaOwnerNotification($nik);
-                }else{
-                    $this->approvalNotification(strToLower($approver));
-                }
-
+                // Send Notification and Email to level 2
+                $this->sendNotifAndEmailToApprover($formId, 2); 
             }
-
-            return redirect()->route('approval.table');
-
-        }else if($action === 'reject'){
+        }
+        else if($action === 'reject')
+        {
             if (trim($comment) == '') {
                 return redirect()->back()->with("error", "Data tidak berhasil. Komentar tidak boleh kosong atau hanya spasi.");
             }else{
@@ -467,14 +464,12 @@ class HSEController extends Controller
                 // Send Email to User
                 $projectExecutor = projectExecutor::where('form_id', $formId)->first();
                 $toUser = User::find($form->user_id);
-                sendToUserJob::dispatch($toUser->email, $form, $projectExecutor, $comment);  
-
-                return redirect()->route('approval.table');
+                sendToUserJob::dispatch($toUser, $form, $projectExecutor, $comment);  
             }
 
         }
 
-        
+        return redirect()->route('approval.table');
         
     }
 

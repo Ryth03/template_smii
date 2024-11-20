@@ -7,17 +7,14 @@
             background-color: yellow;
             line-height: 0.5;
             padding: 5px;
-            padding-left:15px;
+            padding-left: 15px;
         }
         .table{
             border: 0;
             margin-left:5%;
         }
-        .text-red{
-            color: red;
-        }
-        .text-green{
-            color: green;
+        .link{
+            text-decoration:none;
         }
     </style>
 </head>
@@ -28,11 +25,19 @@
     </header>
     <main style="padding: 5px;">
         <br>
-        <p>Dear <strong>{{$user}}</strong>,</p>
-        @if($form->status === "Approved")
-            <p>We are pleased to inform you that your work permit has been approved.</p>
-        @elseif($form->status === "Rejected")
-            <p>We regret to inform you that your work permit has been rejected.</p>
+        <p>Dear <strong>{{$role}}</strong>,</p>
+        @if($form->status === "In Review")
+            <p>There is a Work Permit that requires your review.
+                <a href="{{ route('review.table') }}" class="link">
+                    Click here to review.
+                </a>
+            </p>
+        @elseif($form->status === "In Approval")
+            <p>There is a Work Permit that requires your approval. 
+                <a href="{{ route('approval.table') }}" class="link">
+                    Click here to approve.
+                </a>
+            </p>
         @endif
         <table class="table">
             <tbody>
@@ -69,29 +74,20 @@
                 <tr>
                     <td>Status</td>
                     <td>:</td>
-                    @if($form->status === 'Rejected')
-                        <td class="text-red">{{ $form->status }}</td>
-                    @elseif($form->status ==='Approved')
-                        <td class="text-green">{{ $form->status }}</td>
-                    @endif
+                    <td>{{ $form->status }}</td>
                 </tr>
-                @if($form->status === 'Rejected')
-                <tr>
-                    <td>Comment</td>
-                    <td>:</td>
-                    <td>{{ $comment }}</td>
-                </tr>
-                @endif
             </tbody>
         </table>
-        @if($form->status === 'Rejected')
-            <p>We appreciate your understanding and look forward to your revised submission.</p>
-        @elseif($form->status === 'Approved')
-            <p>Thank you for your cooperation, and we wish you a safe and successful completion of your tasks.</p>
+        @if($form->status === "In Review")
+            <p>Kindly review it at your earliest convenience so we can proceed.</p>
+        @elseif($form->status === "In Approval")
+            <p>Kindly approve it at your earliest convenience so we can proceed.</p>
         @endif
+        <p>Thank you for your attention.</p>
         <br>
         <p>Best regards,</p>
         <p>PT Sinar Meadow International Indonesia</p>
     </main>
+    
 </body>
 </html>

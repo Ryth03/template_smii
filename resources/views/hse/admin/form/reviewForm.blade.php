@@ -111,7 +111,7 @@
                             </div>
                             <div class="mt-1 grid grid-cols-3">
                                 <div class="flex flex-col">
-                                    <input class="form-check-input" type="checkbox" value="yes" id="penyimpanan{{$index}}ya" name="scaff{{$index}}" onclick="toggleCheckbox(this)">
+                                    <input class="form-check-input" type="checkbox" value="yes" id="penyimpanan{{$index}}ya" name="scaff{{$index}}" onclick="toggleCheckbox(this)" required>
                                     <label for="penyimpanan{{$index}}ya" style="padding-left:25px;">Ya</label>
                                 </div>
                                 <div class="flex">
@@ -190,28 +190,28 @@
                                 <label for="LEL" class="block text-md font-medium">Kadar Low Explosive Level (LEL)</label>
                             </div>
                             <div class="form-group flex items-center">
-                                <input type="number" id="LEL" name="LEL" class="form-control rounded-lg w-3/4">
+                                <input type="number" id="LEL" name="LEL" class="form-control rounded-lg w-3/4" required>
                                 <label for="LEL" class="block text-md font-medium ml-2">%</label>
                             </div>
                             <div class="form-group flex items-center">
                                 <label for="CO" class="block text-md font-medium">Kadar Carbon Monoxide (CO)</label>
                             </div>
                             <div class="form-group flex items-center">
-                                <input type="number" id="CO" name="CO" class="form-control rounded-lg w-3/4">
+                                <input type="number" id="CO" name="CO" class="form-control rounded-lg w-3/4" required>
                                 <label for="CO" class="block text-md font-medium ml-2">ppm</label>
                             </div>
                             <div class="form-group flex items-center">
                                 <label for="O2" class="block text-md font-medium">Kadar Oxygen (O₂)</label>
                             </div>
                             <div class="form-group flex items-center">
-                                <input type="number" id="O2" name="O2" class="form-control rounded-lg w-3/4">
+                                <input type="number" id="O2" name="O2" class="form-control rounded-lg w-3/4" required>
                                 <label for="O2" class="block text-md font-medium ml-2">%</label>
                             </div>
                             <div class="form-group flex items-center">
                                 <label for="H2S" class="block text-md font-medium">Kadar Hydrogen Sulfide (H₂S)</label>
                             </div>
                             <div class="form-group flex items-center">
-                                <input type="number" id="H2S" name="H2S" class="form-control rounded-lg w-3/4">
+                                <input type="number" id="H2S" name="H2S" class="form-control rounded-lg w-3/4" required>
                                 <label for="H2S" class="block text-md font-medium ml-2">ppm</label>
                             </div>
                         </div>
@@ -349,8 +349,21 @@ $(".validation-hse").steps({
         return form.validate().settings.ignore = ":disabled", form.valid()
     }
     , onFinished: function (event, currentIndex) {
-        swal("Success", "Your Form Submitted!.");
-        $("#form").submit();
+        // SweetAlert2 confirmation dialog for submit action
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#26D639',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#form").submit();
+            }
+        });
     }
 }), $(".validation-hse").validate({
     ignore: "input[type=hidden]"

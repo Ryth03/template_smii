@@ -946,24 +946,30 @@
                             <div class="grid md:grid-cols-16">
                                 <div>
                                     <div class="flex md:justify-center">
-                                        <label for="namaPekerjaan{{$index+1}}" class="block text-md font-medium">No. {{$index+1}}</label>
+                                        <label for="namaPekerjaan{{$index+1}}" class="block text-md font-bold">No. {{$index+1}}</label>
                                     </div>
                                 </div>
                                 <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
                                     <div class="md:col-span-4">
-                                        <div><label for="namaPekerjaan{{$index+1}}" class="block text-md font-medium">Nama Pekerjaan</label></div>
+                                        <div><label for="workStep{{$index+1}}" class="block text-md font-medium">Uraian Langkah Pekerjaan</label></div>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <input type="text" id="namaPekerjaan{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->job_name}}" readonly>
+                                        <input type="text" id="workStep{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->work_step}}" readonly>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <div><label for="bahayaPotensial{{$index+1}}" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
+                                        <div><label for="bahayaPotensial{{$index+1}}" class="block text-md font-medium">Bahaya</label></div>
                                     </div>
                                     <div class="md:col-span-4">
                                         <input type="text" id="bahayaPotensial{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->potential_danger}}" readonly>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <div><label for="pengendalianBahayaHirarki{{$index+1}}" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+                                        <div><label for="riskChance{{$index+1}}" class="block text-md font-medium">Risiko Yang Bisa Timbul</label></div>
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <input type="text" id="riskChance{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->risk_chance}}" readonly>
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <div><label for="pengendalianBahayaHirarki{{$index+1}}" class="block text-md font-medium">Tindakan Pencegahan / Pengendalian</label></div>
                                     </div>
                                     <div class="md:col-span-4">
                                         <input type="text" id="pengendalianBahayaHirarki{{$index+1}}" class="form-control rounded-lg w-full" value="{{$jsa->danger_control}}" readonly>
@@ -980,7 +986,7 @@
         
         <div class="my-4 py-4" style="background-color: #A78734"></div>
 
-        <form action="{{ route('approve.form.hse') }}" method="POST" class="w-full">
+        <form action="{{ route('approve.form.hse') }}" id="form" method="POST" class="w-full">
             @csrf
             <div id="aprove/reject" class="flex flex-col items-center">
                 <input type="hidden" name="value" value="{{ $form->form_id }}">
@@ -995,10 +1001,11 @@
                 @endif
                 <div class="w-full flex" style="justify-content: space-evenly;">
                     <div class="flex sm:!flex-row flex-col mt-2">
-                            <button type="submit" name="action" value="approve" class="m-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
+                            <input type="hidden" name="action" id="action" value="">
+                            <button type="button" name="action" value="approve" class="m-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn" onclick="submitForm('approve')">
                                 Approve
                             </button>
-                            <button type="submit" name="action" value="reject" class="mx-2 sm:!m-2 px-4 py-2 text-white rounded-lg hover:bg-red-600 btn bg-red-500 btn" onclick="validateForm(event)">
+                            <button type="button" name="action" value="reject" class="mx-2 sm:!m-2 px-4 py-2 text-white rounded-lg hover:bg-red-600 btn bg-red-500 btn" onclick="validateForm()">
                                 Reject
                             </button>
                     </div>
@@ -1013,6 +1020,25 @@
 
 @push('scripts')
 <script>
+function submitForm(value) {
+    // SweetAlert2 confirmation dialog for submit action
+    const input = document.getElementById('action')
+    input.value = value;
+    Swal.fire({
+        title: value === 'approve' ? "Do you want to approve?" : "Do you want to reject?",
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#26D639',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $("#form").submit();
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     sioSilo();
@@ -1196,14 +1222,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('Tanggal1').value = `${startYear} - ${endYear}`;
 });
 
-function validateForm(event) {
+function validateForm() {
     var comment = document.getElementById('comment').value.trim();
     var warning = document.getElementById('textarea-warning');
     if (comment === '') {
-        event.preventDefault(); // Mencegah form dikirim
         warning.classList.remove('hidden'); 
     }else{
         warning.classList.add('hidden'); 
+        submitForm('reject');
     }
 }
 </script>

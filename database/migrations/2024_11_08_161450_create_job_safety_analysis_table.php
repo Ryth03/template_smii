@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('jobSafetyAnalysis', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('form_id');
-            $table->string('job_name');
+            $table->string('work_step');
             $table->string('potential_danger');
+            $table->string('risk_chance');
             $table->string('danger_control');
             $table->timestamps();  
             $table->foreign('form_id')->references('id')->on('forms')->onDelete('cascade'); 

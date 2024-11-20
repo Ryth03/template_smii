@@ -48,6 +48,9 @@ use App\Models\QAD\RequisitionMaster;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelIgnition\Http\Requests\UpdateConfigRequest;
+use App\Http\Controllers\HSE\HSEController;
+use App\Http\Controllers\HSE\HSEFormController;
+use App\Http\Controllers\HSE\HSELocationController;
 
 
 
@@ -67,50 +70,45 @@ Route::get('/', function () {
     SEOMeta::setTitle('Intra SMII - Dashboard');
     return view('welcome');
 });
-
-
-use App\Http\Controllers\HSE\HSEController;
-Route::get('/review-table', [HSEController::class, 'reviewTable'])->name('review.table');
-Route::get('/approval-table', [HSEController::class, 'approvalTable'])->name('approval.table');
-Route::get('/viewAll-table', [HSEController::class, 'viewAllTable'])->name('viewAll.table');
-Route::get('/security-table', [HSEController::class, 'viewSecurityTable'])->name('securityPost.table');
-
-Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
-Route::POST('/approve', [HSEController::class, 'approvalForm'])->name('approval.form');
-Route::get('/approve', function () {
-    return view('hse.admin.form.approveForm');
-});
-
 Route::get('/register2', function () {
     return view('hse.register.registerForm');
 })->name('register.hse');
 
-// Form datatables
-use App\Http\Controllers\HSE\HSEFormController;
-Route::get('/hse', [HSEFormController::class, 'viewNewForm'])->name('permit.form');
-Route::post('/extend-form-hse', [HSEFormController::class, 'viewExtendForm'])->name('extend.form');
-Route::get('/dashboard-hse',  [HSEFormController::class, 'viewList'])->name('hse.dashboard');
-Route::post('/insert-form-hse', [HSEFormController::class, 'insertNewForm'])->name('hse.form.insert');
-Route::post('/insert-extend-form-hse', [HSEFormController::class, 'insertExtendForm'])->name('hse.form.extend');
-Route::post('/view-form-hse', [HSEFormController::class, 'viewDraftForm'])->name('view.form.hse');
-Route::post('/submit-form-hse', [HSEFormController::class, 'insertForm'])->name('submit.form.hse');
-Route::post('/update-form-hse', [HSEController::class, 'updateForm'])->name('update.form.hse');
-Route::delete('/delete-form-hse', [HSEFormController::class, 'deleteForm'])->name('delete.form.hse');
-Route::post('/approve-form-hse', [HSEController::class, 'approveForm'])->name('approve.form.hse');
-Route::post('/report', [HSEController::class, 'printReport'])->name('report.hse');
-
-use App\Http\Controllers\HSE\HSELocationController;
-Route::get('/location', [HSELocationController::class, 'viewLocation'])->name('location.hse');
-Route::put('/location/{locationId}/edit', [HSELocationController::class, 'locationUpdate'])->name('location.update');
-Route::delete('/location/{locationId}/delete', [HSELocationController::class, 'locationDelete'])->name('location.destroy');
-Route::post('/location/store', [HSELocationController::class, 'locationStore'])->name('location.store');
-
-Route::get('/test1', function () {
-    return view('dashboard.test1');
-});
-
-
 Route::middleware('auth')->group(function () {
+
+
+    Route::get('/review-table', [HSEController::class, 'reviewTable'])->name('review.table');
+    Route::get('/approval-table', [HSEController::class, 'approvalTable'])->name('approval.table');
+    Route::get('/viewAll-table', [HSEController::class, 'viewAllTable'])->name('viewAll.table');
+    Route::get('/security-table', [HSEController::class, 'viewSecurityTable'])->name('securityPost.table');
+    
+    Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
+    Route::POST('/approve', [HSEController::class, 'approvalForm'])->name('approval.form');
+    Route::get('/approve', function () {
+        return view('hse.admin.form.approveForm');
+    });
+
+    Route::get('/hse', [HSEFormController::class, 'viewNewForm'])->name('permit.form');
+    Route::post('/extend-form-hse', [HSEFormController::class, 'viewExtendForm'])->name('extend.form');
+    Route::get('/dashboard-hse',  [HSEFormController::class, 'viewList'])->name('hse.dashboard');
+    Route::post('/insert-form-hse', [HSEFormController::class, 'insertNewForm'])->name('hse.form.insert');
+    Route::post('/insert-extend-form-hse', [HSEFormController::class, 'insertExtendForm'])->name('hse.form.extend');
+    Route::post('/view-form-hse', [HSEFormController::class, 'viewDraftForm'])->name('view.form.hse');
+    Route::post('/submit-form-hse', [HSEFormController::class, 'insertForm'])->name('submit.form.hse');
+    Route::post('/update-form-hse', [HSEController::class, 'updateForm'])->name('update.form.hse');
+    Route::delete('/delete-form-hse', [HSEFormController::class, 'deleteForm'])->name('delete.form.hse');
+    Route::post('/approve-form-hse', [HSEController::class, 'approveForm'])->name('approve.form.hse');
+    Route::post('/report', [HSEController::class, 'printReport'])->name('report.hse');
+
+    Route::get('/location', [HSELocationController::class, 'viewLocation'])->name('location.hse');
+    Route::put('/location/{locationId}/edit', [HSELocationController::class, 'locationUpdate'])->name('location.update');
+    Route::delete('/location/{locationId}/delete', [HSELocationController::class, 'locationDelete'])->name('location.destroy');
+    Route::post('/location/store', [HSELocationController::class, 'locationStore'])->name('location.store');
+    
+    Route::get('/test1', function () {
+        return view('dashboard.test1');
+    });
+
     /* Dashboard */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard-finance', [DashboardController::class, 'index-finance'])->name('dashboard-finance');

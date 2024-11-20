@@ -536,19 +536,25 @@
                                 </div>
                                 <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
                                     <div class="md:col-span-4">
-                                        <div><label for="jobName1" class="block text-md font-medium">Nama Pekerjaan</label></div>
+                                        <div><label for="workStep1" class="block text-md font-medium">Uraian Langkah Pekerjaan</label></div>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <input type="text" id="jobName1" name="jobName[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+                                        <input type="text" id="workStep1" name="workStep[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <div><label for="potentialDanger1" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
+                                        <div><label for="potentialDanger1" class="block text-md font-medium">Bahaya</label></div>
                                     </div>
                                     <div class="md:col-span-4">
                                         <input type="text" id="potentialDanger1" name="potentialDanger[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <div><label for="dangerControl1" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+                                        <div><label for="riskChance1" class="block text-md font-medium">Risiko Yang Bisa Timbul</label></div>
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <input type="text" id="riskChance1" name="riskChance[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <div><label for="dangerControl1" class="block text-md font-medium">Tindakan Pencegahan / Pengendalian</label></div>
                                     </div>
                                     <div class="md:col-span-4">
                                         <input type="text" id="dangerControl1" name="dangerControl[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
@@ -1293,19 +1299,25 @@ addButtonPotentialDanger.addEventListener('click', () => {
     </div> 
     <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
         <div class="md:col-span-4">
-            <div><label for="jobName${rowCountPotentialDanger}" class="block text-md font-medium">Nama Pekerjaan</label></div>
+            <div><label for="workStep${rowCountPotentialDanger}" class="block text-md font-medium">Uraian Langkah Pekerjaan</label></div>
         </div>
         <div class="md:col-span-4">
-            <input type="text" id="jobName${rowCountPotentialDanger}" name="jobName[]" class="form-control rounded-lg w-full" placeholder="Input data">
+            <input type="text" id="workStep${rowCountPotentialDanger}" name="workStep[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
         </div>
         <div class="md:col-span-4">
-            <div><label for="potentialDanger${rowCountPotentialDanger}" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
+            <div><label for="potentialDanger${rowCountPotentialDanger}" class="block text-md font-medium">Bahaya</label></div>
         </div>
         <div class="md:col-span-4">
             <input type="text" id="potentialDanger${rowCountPotentialDanger}" name="potentialDanger[]" class="form-control rounded-lg w-full" placeholder="Input data">
         </div>
         <div class="md:col-span-4">
-            <div><label for="dangerControl${rowCountPotentialDanger}" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+            <div><label for="riskChance${rowCountPotentialDanger}" class="block text-md font-medium">Risiko Yang Bisa Timbul</label></div>
+        </div>
+        <div class="md:col-span-4">
+            <input type="text" id="riskChance${rowCountPotentialDanger}" name="riskChance[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+        </div>
+        <div class="md:col-span-4">
+            <div><label for="dangerControl${rowCountPotentialDanger}" class="block text-md font-medium">Tindakan Pencegahan / Pengendalian</label></div>
         </div>
         <div class="md:col-span-4">
             <input type="text" id="dangerControl${rowCountPotentialDanger}" name="dangerControl[]" class="form-control rounded-lg w-full" placeholder="Input data">

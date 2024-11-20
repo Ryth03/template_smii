@@ -30,6 +30,8 @@ use App\Models\HSE\scaffoldingRiskControl_data;
 use App\Models\HSE\hseLocation;
 use App\Notifications\PrNotification;
 use Illuminate\Support\Facades\Notification;
+use App\Models\HSE\approver;
+use App\Jobs\sendToApproverJob;
 
 class HSEFormController extends Controller
 {
@@ -50,6 +52,16 @@ class HSEFormController extends Controller
             'message' => 'New form awaiting your review.'
         ];
         Notification::send($hseUser, new PrNotification($data));
+    }
+
+    private function reviewEmail($formId){
+        $approver = approver::where('level', 1)
+        ->pluck('name')
+        ->first();
+        $toUser = User::role('hse')->pluck('email')->toArray();
+        $form = Form::find($formId);
+        $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+        sendToApproverJob::dispatch($toUser, $form, $projectExecutor, $approver); // send email
     }
 
     public function viewList()
@@ -85,6 +97,7 @@ class HSEFormController extends Controller
     public function insertNewForm(Request $request)
     {
         $draft = $request->input('action');
+        // dd($request);
         $form = null;
         if($draft){
             $form = Form::create([
@@ -200,15 +213,17 @@ class HSEFormController extends Controller
             }
         }
 
-        $job_name = $request->input('jobName');
+        $work_step = $request->input('workStep');
         $potential_danger = $request->input('potentialDanger');
+        $risk_chance = $request->input('riskChance');
         $danger_control = $request->input('dangerControl');
 
         foreach ($potential_danger as $key => $potentialDanger) {
             jobSafetyAnalysis::create([
                 'form_id' => $formId,
-                'job_name' => $job_name[$key],
+                'work_step' => $work_step[$key],
                 'potential_danger' => $potential_danger[$key],
+                'risk_chance' => $risk_chance[$key],
                 'danger_control' => $danger_control[$key]
             ]);
         }
@@ -235,6 +250,11 @@ class HSEFormController extends Controller
                 ]);
             }
         }
+
+        if(!$draft){
+            $this->reviewEmail($form->id);
+        }
+
         return redirect()->route('hse.dashboard');
     }
 
@@ -520,24 +540,25 @@ class HSEFormController extends Controller
         }
         
         // Job Safety Analysis
-        $job_name = $request->input('jobName');
+        $work_step = $request->input('workStep');
         $potential_danger = $request->input('potentialDanger');
+        $risk_chance = $request->input('riskChance');
         $danger_control = $request->input('dangerControl');
 
         $existingJsasPotentialDanger= jobSafetyAnalysis::where('form_id', $formId)
-        ->select('job_name')
+        ->select('work_step')
         ->get()
         ->toArray();
         $newJsasPotentialDanger=[];
         foreach ($potential_danger as $key => $potentialDanger) {
             $newJsasPotentialDanger[] = [
-                'job_name' => $job_name[$key]
+                'work_step' => $work_step[$key]
             ];
         }
         foreach ($existingJsasPotentialDanger as $existingDanger) {
             if(!in_array($existingDanger, $newJsasPotentialDanger)){
                 jobSafetyAnalysis::where('form_id', $formId)
-                    ->where('job_name', $existingDanger["job_name"])
+                    ->where('work_step', $existingDanger["work_step"])
                     ->delete();
             }
         }
@@ -547,10 +568,11 @@ class HSEFormController extends Controller
                 jobSafetyAnalysis::updateOrCreate(
                     [
                     'form_id' => $formId,
-                    'job_name' => $job_name[$key]
+                    'work_step' => $work_step[$key]
                     ],
                     [
                     'potential_danger' => $potential_danger[$key],
+                    'risk_chance' => $risk_chance[$key],
                     'danger_control' => $danger_control[$key]
                     ]
                 );
@@ -625,6 +647,7 @@ class HSEFormController extends Controller
             
             // Notification Review to hse
             $this->reviewNotification();
+            $this->reviewEmail($form->id);
 
             return redirect()->route('hse.dashboard');
         }
@@ -789,6 +812,7 @@ class HSEFormController extends Controller
 
         // Notification Review to hse
         $this->reviewNotification();
+        $this->reviewEmail($newForm->id);
 
         return redirect()->route('hse.dashboard');
     }

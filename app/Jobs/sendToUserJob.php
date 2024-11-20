@@ -15,13 +15,15 @@ class sendToUserJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $email;
+    protected $user;
     protected $form;
     protected $detail;
     protected $comment;
 
-    public function __construct($email, $form, $detail, $comment)
+    public function __construct($user, $form, $detail, $comment)
     {
-        $this->email = $email;
+        $this->email = $user->email;
+        $this->user = $user->name;
         $this->form = $form;
         $this->detail = $detail;
         $this->comment = $comment;
@@ -29,6 +31,6 @@ class sendToUserJob implements ShouldQueue
 
     public function handle(): void
     {
-        Mail::to($this->email)->send(new sendToUser($this->form, $this->detail, $this->comment));
+        Mail::to($this->email)->send(new sendToUser($this->user, $this->form, $this->detail, $this->comment));
     }
 }

@@ -557,7 +557,7 @@
                                         <label for="namaTenagaKerja1" class="font-medium">Nama Tenaga Kerja :</label>
                                     </div>
                                     <div class="col-span-3">
-                                        <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data">
+                                        <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                 </div>
                             </div>
@@ -612,20 +612,6 @@
                             @endforeach
                         </div>
                     </div>
-                    
-                    
-                    <div class="grid md:grid-cols-8" >
-                        <div class="md:col-span-3 my-2">
-                            <img src="{{ asset('assets\images\hse\Matriks HSE.jpg')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                        <div class="md:col-span-2 my-2">
-                            <img src="{{ asset('assets\images\hse\Kemungkinan Matriks.jpg')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                        <div class="md:col-span-3 my-2">
-                            <img src="{{ asset('assets\images\hse\Keparahan Matriks.png')}}" alt="Gambar Matriks" class="w-full" style="max-height:300px; object-fit: contain;">
-                        </div>
-                    </div>
-
                     <div class="border rounded-lg p-3 mt-4 md:mb-28">
                         <div id="potentialDangerGrid" class="grid gap-y-3">
                             <div class="grid md:grid-cols-16">
@@ -636,19 +622,25 @@
                                 </div>
                                 <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
                                     <div class="md:col-span-4">
-                                        <div><label for="jobName1" class="block text-md font-medium">Nama Pekerjaan</label></div>
+                                        <div><label for="workStep1" class="block text-md font-medium">Uraian Langkah Pekerjaan</label></div>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <input type="text" id="jobName1" name="jobName[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+                                        <input type="text" id="workStep1" name="workStep[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <div><label for="potentialDanger1" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
+                                        <div><label for="potentialDanger1" class="block text-md font-medium">Bahaya</label></div>
                                     </div>
                                     <div class="md:col-span-4">
                                         <input type="text" id="potentialDanger1" name="potentialDanger[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
                                     </div>
                                     <div class="md:col-span-4">
-                                        <div><label for="dangerControl1" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+                                        <div><label for="riskChance1" class="block text-md font-medium">Risiko Yang Bisa Timbul</label></div>
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <input type="text" id="riskChance1" name="riskChance[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <div><label for="dangerControl1" class="block text-md font-medium">Tindakan Pencegahan / Pengendalian</label></div>
                                     </div>
                                     <div class="md:col-span-4">
                                         <input type="text" id="dangerControl1" name="dangerControl[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
@@ -748,11 +740,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 addPotentialDangerButton.click();
             }
 
-            var jobNameText = document.getElementById("jobName"+(index+1))
-            jobNameText.value = jsa.job_name
+            var workStepText = document.getElementById("workStep"+(index+1))
+            workStepText.value = jsa.work_step
 
             var potentialDangerText = document.getElementById("potentialDanger"+(index+1))
             potentialDangerText.value = jsa.potential_danger;
+
+            var riskChanceText = document.getElementById("riskChance"+(index+1))
+            riskChanceText.value = jsa.work_step
 
             var dangerControlText = document.getElementById("dangerControl"+(index+1))
             dangerControlText.value = jsa.danger_control;
@@ -1524,19 +1519,25 @@ addButtonPotentialDanger.addEventListener('click', () => {
     </div> 
     <div class="md:col-span-15 grid md:grid-cols-12 md:grid-rows-2 md:grid-flow-col gap-x-4 gap-1">
         <div class="md:col-span-4">
-            <div><label for="jobName${rowCountPotentialDanger}" class="block text-md font-medium">Nama Pekerjaan</label></div>
+            <div><label for="workStep${rowCountPotentialDanger}" class="block text-md font-medium">Uraian Langkah Pekerjaan</label></div>
         </div>
         <div class="md:col-span-4">
-            <input type="text" id="jobName${rowCountPotentialDanger}" name="jobName[]" class="form-control rounded-lg w-full" placeholder="Input data">
+            <input type="text" id="workStep${rowCountPotentialDanger}" name="workStep[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
         </div>
         <div class="md:col-span-4">
-            <div><label for="potentialDanger${rowCountPotentialDanger}" class="block text-md font-medium">Bahaya Potensial / Konsekuensi (Apa yang menyebabkan bahaya)</label></div>
+            <div><label for="potentialDanger${rowCountPotentialDanger}" class="block text-md font-medium">Bahaya</label></div>
         </div>
         <div class="md:col-span-4">
             <input type="text" id="potentialDanger${rowCountPotentialDanger}" name="potentialDanger[]" class="form-control rounded-lg w-full" placeholder="Input data">
         </div>
         <div class="md:col-span-4">
-            <div><label for="dangerControl${rowCountPotentialDanger}" class="block text-md font-medium">Pengendalian (Gunakan Hirarki Pengendalian Bahaya)</label></div>
+            <div><label for="riskChance${rowCountPotentialDanger}" class="block text-md font-medium">Risiko Yang Bisa Timbul</label></div>
+        </div>
+        <div class="md:col-span-4">
+            <input type="text" id="riskChance${rowCountPotentialDanger}" name="riskChance[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+        </div>
+        <div class="md:col-span-4">
+            <div><label for="dangerControl${rowCountPotentialDanger}" class="block text-md font-medium">Tindakan Pencegahan / Pengendalian</label></div>
         </div>
         <div class="md:col-span-4">
             <input type="text" id="dangerControl${rowCountPotentialDanger}" name="dangerControl[]" class="form-control rounded-lg w-full" placeholder="Input data">
