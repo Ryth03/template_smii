@@ -266,11 +266,11 @@ class HSEFormController extends Controller
         $additionalWorkPermits = additionalWorkPermits_master::all();
         $fireHazardControls = fireHazardControl_master::all();
         $locations = hseLocation::pluck('name');
-        
+        $department = Auth::user()->company_department;
         confirmDelete();
         
         return view('hse.guest.permitForm'
-        ,compact("potentialHazards","personalProtectEquipments","workEquipments"
+        ,compact("department","potentialHazards","personalProtectEquipments","workEquipments"
         ,"additionalWorkPermits","fireHazardControls", "locations"));
     }
 
@@ -698,13 +698,17 @@ class HSEFormController extends Controller
     public function insertExtendForm(Request $request){
         $user = Auth::user();
 
-        $newForm = Form::create([
-            'user_id' => Auth::id(),
-            'status' => "In Review"
-        ]);
 
         $formId = $request->input('formId');
-        
+
+        $oldForm = Form::find($formId);
+        $extendFromFormId = $oldForm?->extend_from_form_id ?? $formId;
+        // dd(intval($extendFromFormId), gettype(intval($extendFromFormId)));
+        $newForm = Form::create([
+            'user_id' => Auth::id(),
+            'extend_from_form_id' => $extendFromFormId,
+            'status' => "In Review"
+        ]);
         
         // Pelaksana Pekerjaan
         $oldProject = projectExecutor::findOrFail($formId);

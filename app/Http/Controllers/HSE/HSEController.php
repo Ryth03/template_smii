@@ -86,7 +86,7 @@ class HSEController extends Controller
             ->where('forms.id', $formId)
             ->first();
 
-        if(strToLower($approver) === 'area owner'){
+        if(strToLower($approver) === 'pic location'){
             
             
             $nik = hseLocation::where('name', $form->location)->pluck('nik');
@@ -210,7 +210,7 @@ class HSEController extends Controller
             ->whereIn('forms.id',$approvalDetail)
             ->get();
         }
-        if($userRole === 'area owner'){
+        if($userRole === 'pic location'){
             $location = hseLocation::where('nik', $user->nik)->get()->pluck('name');
             $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
             ->where('status', 'In Approval')
@@ -394,16 +394,18 @@ class HSEController extends Controller
         if ($action === 'approve') {
 
             if (trim($comment) !== '') {
-                approvalDetail::create([
+                approvalDetail::updateOrCreate([
                     'form_id' => $formId,
-                    'approver_id' => $approver->id,
+                    'approver_id' => $approver->id
+                ],[
                     'status' => "Approved",
                     'comment' => $comment
                 ]);
             }else{
-                approvalDetail::create([
+                approvalDetail::updateOrCreate([
                     'form_id' => $formId,
-                    'approver_id' => $approver->id,
+                    'approver_id' => $approver->id
+                ],[
                     'status' => "Approved"
                 ]);
             }
@@ -446,9 +448,10 @@ class HSEController extends Controller
                 return redirect()->back()->with("error", "Data tidak berhasil. Komentar tidak boleh kosong atau hanya spasi.");
             }else{
                 $formId = $request->input('value'); 
-                approvalDetail::create([
+                approvalDetail::updateOrCreate([
                     'form_id' => $formId,
-                    'approver_id' => $approver->id,
+                    'approver_id' => $approver->id
+                ],[
                     'status' => "Rejected",
                     'comment' => $request->input('comment')
                 ]);
@@ -529,6 +532,11 @@ class HSEController extends Controller
         $jsas = jobSafetyAnalysis::where('form_id', $formId)
         ->get();
 
+        $approvalDetail = approvalDetail::where('approval_details.form_id', $formId)
+        ->leftJoin('approvers','approval_details.approver_id','=','approvers.id')
+        ->select('approvers.name as name','status','comment')
+        ->get();
+        // dd($approvalDetail);
         
         return view('hse.admin.form.reportForm', 
         compact('form','potentialHazards', 'potentialHazards_data',
@@ -536,7 +544,7 @@ class HSEController extends Controller
             'workEquipments', 'workEquipments_data', 'files',
             'additionalWorkPermits', 'additionalWorkPermits_data', 'scaffs', 'testResult',
             'fireHazardControls', 'fireHazardControls_data',
-            'workers', 'jsas'
+            'workers', 'jsas', 'approvalDetail'
         ));
 
         // set_time_limit(300);

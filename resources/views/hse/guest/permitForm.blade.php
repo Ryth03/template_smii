@@ -14,6 +14,9 @@
             border-color: unset;
             color: unset;
         }
+        input[type="text"] {
+            text-overflow: ellipsis;
+        }
         @media (min-width: 768px) {
             .md\:row-span-4 {
                 grid-row: span 4 / span 4;
@@ -153,6 +156,11 @@
                                     <option value="{{$location}}" class="w-3/4">{{$location}}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                            @elseif($title == "Nama Perusahaan / Departemen")
+                            <div class="form-group flex flex-col">
+                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
+                                <input type="text" id="{{$title}}" name="{{$title}}" class="form-control rounded-lg w-3/4" placeholder="Input data" value="{{$department}}" required>
                             </div>
                             @else
                             <div class="form-group flex flex-col">
@@ -666,14 +674,14 @@ $(".validation-hse").steps({
     , onFinished: function (event, currentIndex) {
         // SweetAlert2 confirmation dialog for submit action
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Apakah anda yakin?',
+            text: "Anda tidak akan bisa membatalkan ini!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#26D639',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, submit it!',
-            cancelButtonText: 'Cancel'
+            confirmButtonText: 'Ya!',
+            cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
                 $("#form").submit();

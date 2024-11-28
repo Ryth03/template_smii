@@ -30,6 +30,7 @@ class sendToApproverJob implements ShouldQueue
 
     public function handle(): void
     {
+        return;
         if(count($this->email) > 1){
             $firstEmail = array_shift($this->email);
             Mail::to($firstEmail)

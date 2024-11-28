@@ -49,6 +49,9 @@ Login
                                 <button class="btn btn-primary btn-block rounded-md text-white w-full"
                                     type="submit">Sign in</button>
                             </div>
+                            <div class="text-center mt-2">
+                                <a class="" href="{{route('register')}}">Register?</a>
+                            </div>
                         </div>
                     </form>
                 </div>

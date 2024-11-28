@@ -114,8 +114,14 @@
             justify-content:center;
         }
         .img-item{
-            width:auto;
-            height:auto;
+            width:200px;
+            height:200px;
+        }
+        .comment{
+            padding: 10px;
+        }
+        th, td {
+            width: 33%;
         }
     </style>
     <!-- Scripts -->
@@ -123,8 +129,6 @@
 </head>
 <body>
     
-    <div class="">
-        <div class="card" style="border-width:0px;">
             <div class="flex p-10 items-center gap-4 relative">
                 <img src="{{asset('assets/images/logo/logo.png')}}" alt="Gambar Sinar Meadow" class="h-auto" style="width:20%;">
                 <div class="absolute w-full">
@@ -1023,18 +1027,31 @@
 
             <div class="my-4 py-4" style="background-color: #A78734"></div>
             <div class="">
-                <table style="width:100%;">
+                <table style="width:100%; table-layout: fixed;">
                     <tbody>
                         <tr>
+                            @foreach($approvalDetail as $detail)
+                            @if($detail->name=="HSE")
                             <td class="">
-                                <img src="{{asset('assets/images/hse/hse-approved.png')}}" alt="hse-approved" class="img-item">
+                                <img src="{{asset('assets/images/hse/hse-'.strtolower($detail->status).'.png')}}" alt="hse-approved" class="img-item">
                             </td>
+                            @elseif($detail->name=="Engineering Manager")
                             <td class="">       
-                                <img src="{{asset('assets/images/hse/engineering-approved.png')}}" alt="engineering-manager-approved"class="img-item">
+                                <img src="{{asset('assets/images/hse/engineering-'.strtolower($detail->status).'.png')}}" alt="engineering-manager-approved"class="img-item">
                             </td>
+                            @elseif($detail->name=="PIC Location")
                             <td class="">       
-                                <img src="{{asset('assets/images/hse/pic-location-approved.png')}}" alt="pic-location-approved"class="img-item">
+                                <img src="{{asset('assets/images/hse/pic-location-'.strtolower($detail->status).'.png')}}" alt="pic-location-approved"class="img-item">
                             </td>
+                            @endif
+                            @endforeach
+                        </tr>
+                        <tr>
+                            @foreach($approvalDetail as $detail)
+                                <td class="comment">
+                                    <p>{{$detail->comment}}</p>
+                                </td>
+                            @endforeach
                         </tr>
                     </tbody>
                 </table>
@@ -1042,10 +1059,8 @@
                     Print
                 </button>
             </div>
-            
-        </div>
 
-    </div>
+    
 
 <script>
 

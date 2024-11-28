@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard HSE') }}
+                {{ __('Security Dashboard HSE') }}
         </h2>
     </x-slot>
     @push('css')
@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="box-body overflow-x-auto">
-        <table id="myTable" class="w-full table">
+        <table id="myTable" class=" w-full table table-bordered">
             <thead>
                 <tr>
                     <th class="py-3">No.</th>

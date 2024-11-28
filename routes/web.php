@@ -51,6 +51,7 @@ use Spatie\LaravelIgnition\Http\Requests\UpdateConfigRequest;
 use App\Http\Controllers\HSE\HSEController;
 use App\Http\Controllers\HSE\HSEFormController;
 use App\Http\Controllers\HSE\HSELocationController;
+use App\Http\Controllers\HSE\HSEApproverLevelController;
 
 
 
@@ -76,11 +77,14 @@ Route::get('/register2', function () {
 
 Route::middleware('auth')->group(function () {
 
-
-    Route::get('/review-table', [HSEController::class, 'reviewTable'])->name('review.table');
-    Route::get('/approval-table', [HSEController::class, 'approvalTable'])->name('approval.table');
+    // Admin HSE
+    Route::get('/dashboard-review', [HSEController::class, 'reviewTable'])->name('review.table');
+    Route::get('/dashboard-approval', [HSEController::class, 'approvalTable'])->name('approval.table');
     Route::get('/viewAll-table', [HSEController::class, 'viewAllTable'])->name('viewAll.table');
-    Route::get('/security-table', [HSEController::class, 'viewSecurityTable'])->name('securityPost.table');
+    Route::get('/dashboard-security', [HSEController::class, 'viewSecurityTable'])->name('securityPost.table');
+    Route::get('/help', function(){
+        return view('hse.guest.tutorial');
+    })->name('tutorial.hse');
     
     Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
     Route::POST('/approve', [HSEController::class, 'approvalForm'])->name('approval.form');
@@ -88,6 +92,7 @@ Route::middleware('auth')->group(function () {
         return view('hse.admin.form.approveForm');
     });
 
+    // USER HSE
     Route::get('/hse', [HSEFormController::class, 'viewNewForm'])->name('permit.form');
     Route::post('/extend-form-hse', [HSEFormController::class, 'viewExtendForm'])->name('extend.form');
     Route::get('/dashboard-hse',  [HSEFormController::class, 'viewList'])->name('hse.dashboard');
@@ -98,16 +103,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/update-form-hse', [HSEController::class, 'updateForm'])->name('update.form.hse');
     Route::delete('/delete-form-hse', [HSEFormController::class, 'deleteForm'])->name('delete.form.hse');
     Route::post('/approve-form-hse', [HSEController::class, 'approveForm'])->name('approve.form.hse');
-    Route::post('/report', [HSEController::class, 'printReport'])->name('report.hse');
 
     Route::get('/location', [HSELocationController::class, 'viewLocation'])->name('location.hse');
     Route::put('/location/{locationId}/edit', [HSELocationController::class, 'locationUpdate'])->name('location.update');
     Route::delete('/location/{locationId}/delete', [HSELocationController::class, 'locationDelete'])->name('location.destroy');
     Route::post('/location/store', [HSELocationController::class, 'locationStore'])->name('location.store');
     
-    Route::get('/test1', function () {
-        return view('dashboard.test1');
-    });
+    Route::get('/approver', [HSEApproverLevelController::class, 'index'])->name('approver.view.hse');
+    Route::put('/approver/{approverId}', [HSEApproverLevelController::class, 'update'])->name('approver.update.hse');
+
+    Route::post('/report', [HSEController::class, 'printReport'])->name('report.hse');
 
     /* Dashboard */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -119,28 +124,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile', [UserController::class, 'updateProfile'])->name('profile.updates');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::get('/get-data-master', [UserController::class, 'getDataMaster'])->name('get.master');
-
-    /*Inventory*/
-    /*get wsa inventory*/
-    Route::get('dashboard/inventory/wsa', [InventoryController::class, 'getDashboardInventory'])->name('dashboard.inventory.wsa');
-    /*inventory routes*/
-    Route::get('dashboard/inventory', [InventoryController::class, 'index'])->name('dashboard.inventory');
-
-
-    /*Production*/
-    /*get wsa production*/
-    Route::post('dashboard/production/get', [ProductionController::class, 'getProductions'])->name('dashboard.production.wsa');
-    /*production routes*/
-    Route::get('dashboard/production', [ProductionController::class, 'index'])->name('dashboard.production');
-
-
-    /*Sales*/
-    /*get wsa sales*/
-    Route::post('dashboard/sales/get', [SalesController::class, 'getSalesDashboard'])->name('dashboard.sales.wsa');
-    /*sales routes*/
-    Route::get('dashboard/sales', [SalesController::class, 'index'])->name('dashboard.sales');
 
     /*Locked */
     Route::get('locked', [LockScreenController::class, 'show'])
@@ -157,56 +140,11 @@ Route::middleware('auth')->group(function () {
     })->name('notifications.count');
 
 
-    /*standard production*/
-    Route::get('dashboard/standard-production/', [ProductionController::class, 'standardProduction'])->name('dashboard.production.standard');
-    Route::post('dashboard/standard-production/', [ProductionController::class, 'storeStandardProductions'])->name('dashboard.production.standard.store');
-    Route::put('dashboard/standard-production/update/{standardproduction}', [ProductionController::class, 'updateStandardProductions'])->name('dashboard.standard-production.update');
-    Route::delete('dashboard/standard-production/destroy/{standardproduction}', [ProductionController::class, 'destroyStandardProductions'])->name('dashboard.standard-production.destroy');
-
-    /*standard shipment*/
-    Route::post('dashboard/standard-shipment', [SalesController::class, 'getShipment'])->name('dashboard.standardshipment.wsa');
-
-    Route::get('dashboard/standard-shipment', [SalesController::class, 'shipmentindex'])->name('dashboard.shipmentindex');
-    Route::post('dashboard/standard-shipment/store', [SalesController::class, 'shipmentstore'])->name('dashboard.shipmentstore');
-    Route::put('dashboard/standard-shipment/{standardshipment}', [SalesController::class, 'shipmentupdate'])->name('dashboard.shipmentupdate');
-    Route::delete('dashboard/standard-shipment/{standardshipment}', [SalesController::class, 'shipmentdelete'])->name('dashboard.shipmentdelete');
-
-    /*standard warehouse*/
-    Route::get('dashboard/standard-warehouse', [InventoryController::class, 'warehouseindex'])->name('dashboard.warehouseindex');
-    Route::post('dashboard/standard-warehouse', [InventoryController::class, 'warehousestore'])->name('dashboard.warehousestore');
-    Route::put('dashboard/standard-warehouse/{standardwarehouse}', [InventoryController::class, 'warehouseupdate'])->name('dashboard.warehouseupdate');
-    Route::delete('dashboard/standard-warehouse/{standardwarehouse}', [InventoryController::class, 'warehousedelete'])->name('dashboard.warehousedelete');
-
-    Route::post('dashboard/inventory/wsa', [InventoryController::class, 'getDashboardInventory'])->name('dashboard.inventory.wsa');
-    /*inventory routes*/
-    Route::get('dashboard/inventory', [InventoryController::class, 'index'])->name('dashboard.inventory');
-
-    /*Dashboard Warehouse*/
-    Route::get('dashboard/dashboard-warehouse', function(){
-        return view("dashboard.dashboardWarehouse");
-    })->name('dashboard.dashboardWarehouse');
-    /*Dashboard Sales*/
-    Route::get('dashboard/dashboard-sales', [SalesController::class, 'dashboardSales'])->name('dashboard.dashboardSales');
-    /*Dashboard Production*/
-    Route::get('dashboard/dashboard-production', function(){
-        return view("dashboard.dashboardProduction");
-    })->name('dashboard.dashboardProduction');
-    /*Dashboard Inventory*/
-    Route::get('dashboard/dashboard-inventory', [InventoryController::class, 'dashboardInventory'])->name('dashboard.dashboardInventory');
-
-    /*Dashboard Route Get Filter*/
-    Route::get('/get-dashboard-production', [ProductionController::class, 'dashboardProduction']);
-    Route::get('/bar-data', [ProductionController::class, 'getBarData']);
-    Route::get('/data-filter', [ProductionController::class, 'filterData']);
-    /* Dashboard Route Get Filter Warehouse */
-    Route::get('/area-data', [InventoryController::class, 'getAreaData']);
-    Route::get('/warehouse-data-filter', [InventoryController::class, 'warehouseFilterData']);
-    Route::get('/warehouse-dispatch-filter', [InventoryController::class, 'warehouseAreaDispatch']);
 });
 
 
 
-Route::group(['middleware' => ['role:super-admin|admin']], function () {
+Route::group(['middleware' => ['role:super-admin|admin|hse']], function () {
 
     Route::resource('permissions', PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);

@@ -27,11 +27,13 @@
             data-modal-target="createNewForm" data-modal-toggle="createNewForm">
                 Create New Form
             </button>
-        <!-- </a> -->
     </div>
     @endcan
+    <div class="mx-2 my-4">
+        <a href="{{ route('tutorial.hse')}}" style="text-decoration: underline;">Panduan pengisian form</a>
+    </div>
     <div class="table-responsive">
-        <table id="myTable" class=" w-full display table table-bordered">
+        <table id="myTable" class=" w-full table table-bordered">
         <thead>
             <tr>
                 <th class="px-2 py-3">No.</th>
@@ -60,7 +62,7 @@
                             @csrf
                             <input type="hidden" name="value" value="{{ $form->id }}">
                             <button type="submit" class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
-                                Lihat Form
+                                View Form
                             </button>
                         </form>
                         @endif
@@ -112,15 +114,15 @@
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 flex flex-col items-center text-xl">
                     <div class="form-group flex flex-col w-full">
-                        <label class="text-white">Buat Form</label>
+                        <label class="text-white">Create New Form</label>
                         <a href="{{route('permit.form')}}" class="self-center">
                             <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
-                                New Form
+                                Buat form baru
                             </button>
                         </a>
                     </div>
                     <div class="form-group w-full">
-                        <label class="text-white">Perpanjang Form</label>
+                        <label class="text-white">Extend Form</label>
                         <form action="{{route('extend.form')}}" method="POST" class="flex flex-col">
                             @csrf
                             <select name="value" id="value" class="form-select rounded-lg" required>
@@ -130,7 +132,7 @@
                                 @endforeach
                             </select>
                             <button  class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn self-center">
-                                Extend Form
+                                Perpanjang formulir
                             </button>
                         </form>
                     </div>

@@ -30,7 +30,7 @@ class HSELocationController extends Controller
     }
 
     public function locationUpdate(Request $request, $locationId){
-        // dd($request, $locationId);
+        
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:hse_locations,name,'. $locationId,
             'pic' => 'required|string|max:255',

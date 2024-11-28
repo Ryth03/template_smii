@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('extend_from_form_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->string('status');
             $table->timestamps();

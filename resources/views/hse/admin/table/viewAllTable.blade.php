@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard HSE') }}
+                {{ __('List Forms HSE') }}
         </h2>
     </x-slot>
     @push('css')
@@ -22,7 +22,7 @@
 <div class="box">
     <div class="box-header flex justify-center items-center">
         <div class="text-3xl font-medium">
-            Forms List
+            List of Forms
         </div>
     </div>
     <div class="box-body overflow-x-auto">
@@ -30,7 +30,7 @@
             <thead>
                 <tr>
                     <th class="px-2 py-3">No.</th>
-                    <th class="px-2 py-3">Penanggung Jawab Lapangan</th>
+                    <th class="px-2 py-3">Supervisor</th>
                     <th class="px-2 py-3">Date Created</th>
                     <th class="px-2 py-3">Date Updated</th>
                     <th class="px-2 py-3">Status</th>
@@ -56,7 +56,7 @@
                             @if($form->status == "In Approval")
                                 {{ $form->count }}/3
                             @endif
-                            @if($form->status == "Approved")
+                            @if($form->status == "Approved" || $form->status == "Rejected")
                                 <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
                                 @csrf
                                     <input type="hidden" name="value" value="{{$form->id}}">

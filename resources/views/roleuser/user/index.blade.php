@@ -192,8 +192,7 @@
                         @csrf
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
-                                <label class="form-label text-white text-xl">NIK<span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label text-white text-xl">NIK</label>
                                 <div class="controls">
                                     <input type="text" name="nik" id="nik"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"

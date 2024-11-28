@@ -35,6 +35,7 @@ class UserController extends Controller
         $departments = Department::all();
         $roles = Role::pluck('name', 'name')->all();
         $userRoles = $user->roles->pluck('name', 'name')->all();
+        confirmDelete();
         return view('roleuser.user.index', \compact('users', 'positions', 'roles', 'userRoles', 'departments'));
     }
 
@@ -48,7 +49,7 @@ class UserController extends Controller
     {
         // \dd($request->all());
         $request->validate([
-            'nik' => 'required|min:4|max:6|unique:users,nik',
+            // 'nik' => 'required|min:4|max:6|unique:users,nik',
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -330,10 +331,5 @@ class UserController extends Controller
                 'message' => 'Terjadi kesalahan tak terduga. Silakan coba lagi.'
             ], 500);
         }
-    }
-
-    public function getDataMaster()
-    {
-        return \view('page.wsa-getmstr');
     }
 }

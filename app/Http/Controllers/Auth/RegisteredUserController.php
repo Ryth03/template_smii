@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -59,7 +60,7 @@ class RegisteredUserController extends Controller
         // ]);
 
         // event(new Registered($user));
-
+        $user->assignRole('user');
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);

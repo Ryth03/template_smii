@@ -43,16 +43,6 @@ class DatabaseSeeder extends Seeder
          Permission::create(['name' => 'update user']);
          Permission::create(['name' => 'delete user']);
 
-         Permission::create(['name' => 'view product']);
-         Permission::create(['name' => 'create product']);
-         Permission::create(['name' => 'update product']);
-         Permission::create(['name' => 'delete product']);
-
-         Permission::create(['name' => 'view finance']);
-         Permission::create(['name' => 'create finance']);
-         Permission::create(['name' => 'update finance']);
-         Permission::create(['name' => 'delete finance']);
-
          Permission::create(['name' => 'view department']);
          Permission::create(['name' => 'create department']);
          Permission::create(['name' => 'update department']);
@@ -66,26 +56,7 @@ class DatabaseSeeder extends Seeder
          Permission::create(['name' => 'view level']);
          Permission::create(['name' => 'create level']);
          Permission::create(['name' => 'update level']);
-         Permission::create(['name' => 'delete level']);
-
-         Permission::create(['name' => 'view dashboard Finance']);
-         Permission::create(['name' => 'view dashboard Sales & Marketing']);
-         Permission::create(['name' => 'view dashboard Supply Chain']);
-         Permission::create(['name' => 'view dashboard HCD']);
-         Permission::create(['name' => 'view dashboard Engineering & Maintainance']);
-         Permission::create(['name' => 'view dashboard Manufacturing']);
-         Permission::create(['name' => 'view dashboard QM & HSE']);
-         Permission::create(['name' => 'view dashboard R&D']);
-
-
-         Permission::create(['name' => 'view requisition']);
-         Permission::create(['name' => 'get data master']);
-         Permission::create(['name' => 'view browse requisition']);
-         Permission::create(['name' => 'create maintenance requisition']);
-         Permission::create(['name' => 'update maintenance requisition']);
-         Permission::create(['name' => 'delete maintenance requisition']);
-         Permission::create(['name' => 'print maintenance requisition']);
-         
+         Permission::create(['name' => 'delete level']);         
 
          Permission::create(['name' => 'view user dashboard hse']);
          Permission::create(['name' => 'create form hse']);
@@ -94,7 +65,8 @@ class DatabaseSeeder extends Seeder
          Permission::create(['name' => 'view security dashboard hse']);
          Permission::create(['name' => 'view all form hse']);
          Permission::create(['name' => 'edit location hse']);
-
+         Permission::create(['name' => 'edit approver hse']);
+         
 
          //create departements
 
@@ -142,7 +114,7 @@ class DatabaseSeeder extends Seeder
         $userRole = Role::create(['name' => 'user']);
         $hseRole = Role::create(['name' => 'hse']);
         $emRole = Role::create(['name' => 'engineering manager']);
-        $aoRole = Role::create(['name' => 'area owner']);
+        $aoRole = Role::create(['name' => 'pic location']);
         $securityRole = Role::create(['name' => 'security']);
 
         // Lets give all permission to super-admin role.
@@ -151,7 +123,7 @@ class DatabaseSeeder extends Seeder
         $superAdminRole->givePermissionTo($allPermissionNames);
 
         // Let's give few permissions to admin role.
-        $hseRole->givePermissionTo(['view user dashboard hse', 'create form hse', 'review form hse', 'approve form hse', 'view security dashboard hse', 'view all form hse', 'edit location hse']);
+        $hseRole->givePermissionTo($allPermissionNames);
         
         $emRole->givePermissionTo(['approve form hse']);
         
@@ -169,6 +141,7 @@ class DatabaseSeeder extends Seeder
                 ], [
                     'name' => 'Super Admin',
                     'username' => 'super',
+                    'company_department' => 'PT Sinar Meadow International Indonesia',
                     'nik' => 'AG1111',
                     'email' => 'superadmin@gmail.com',
                     'password' => Hash::make ('password'),
@@ -180,26 +153,12 @@ class DatabaseSeeder extends Seeder
         $superAdminUser->assignRole($superAdminRole);
 
 
-        $userUser = User::firstOrCreate([
-            'email' => 'user@gmail.com',
-        ], [
-            'name' => 'User',
-            'username' => 'User',
-            'email' => 'user@gmail.com',
-            'password' => Hash::make ('password'),
-            'email_verified_at' => now(),
-            'position_id' => 1,
-            'department_id' => 1,
-        ]);
-
-        $userUser->assignRole($userRole);
-
-
         $hseUser = User::firstOrCreate([
             'email' => 'hse@gmail.com',
         ], [
-            'name' => 'HSE',
-            'username' => 'HSE Admin',
+            'name' => 'HSE Admin',
+            'username' => 'HSE',
+            'company_department' => 'PT Sinar Meadow International Indonesia',
             'email' => 'hse@gmail.com',
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
@@ -215,6 +174,7 @@ class DatabaseSeeder extends Seeder
         ], [
             'name' => 'Engineering Manager',
             'username' => 'Engineering Manager',
+            'company_department' => 'PT Sinar Meadow International Indonesia',
             'email' => 'engineering.manager@gmail.com',
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
@@ -228,9 +188,10 @@ class DatabaseSeeder extends Seeder
         $aoUser = User::firstOrCreate([
             'email' => 'area.owner@gmail.com',
         ], [
-            'name' => 'Area Owner',
-            'username' => 'Area Owner',
-            'email' => 'area.owner@gmail.com',
+            'name' => 'PIC Location',
+            'username' => 'PIC Location',
+            'company_department' => 'PT Sinar Meadow International Indonesia',
+            'email' => 'pic.location@gmail.com',
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
             'position_id' => 1,
@@ -245,6 +206,7 @@ class DatabaseSeeder extends Seeder
         ], [
             'name' => 'Security',
             'username' => 'Security',
+            'company_department' => 'PT Sinar Meadow International Indonesia',
             'email' => 'security@gmail.com',
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
@@ -253,6 +215,22 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $securityUser->assignRole($securityRole);
+
+
+        $userUser = User::firstOrCreate([
+            'email' => 'user@gmail.com',
+        ], [
+            'name' => 'User',
+            'username' => 'User',
+            'company_department' => 'PT Sinar Meadow International Indonesia',
+            'email' => 'user@gmail.com',
+            'password' => Hash::make ('password'),
+            'email_verified_at' => now(),
+            'position_id' => 1,
+            'department_id' => 1,
+        ]);
+
+        $userUser->assignRole($userRole);
 
 
         $names = [
@@ -281,6 +259,7 @@ class DatabaseSeeder extends Seeder
                 'name' => $name[0],
                 'username' => $name[0],
                 'nik' => $name[1],
+                'company_department' => 'PT Sinar Meadow International Indonesia',
                 'email' => strtolower(str_replace(' ', '.', $name[0]) . '@gmail.com'),
                 'password' => Hash::make ('password'),
                 'email_verified_at' => now(),
@@ -371,7 +350,7 @@ class DatabaseSeeder extends Seeder
 
 
         // masukin data approver 
-        $approver_datas  = ["HSE", "Engineering Manager", "Area Owner"];
+        $approver_datas  = ["HSE", "Engineering Manager", "PIC Location"];
         foreach ($approver_datas as $index => $item) {
             approver::create(
                 [

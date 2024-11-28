@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard HSE') }}
+                {{ __('Review HSE') }}
         </h2>
     </x-slot>
     @push('css')
@@ -22,11 +22,11 @@
 <div class="box">
     <div class="box-header flex justify-center items-center">
         <div class="text-3xl font-medium">
-            Review List
+            Review Dashboard
         </div>
     </div>
     <div class="box-body overflow-x-auto">
-        <table id="myTable" class="w-full table">
+        <table id="myTable" class=" w-full table table-bordered">
             <thead>
                 <tr>
                     <th class="py-3">No.</th>

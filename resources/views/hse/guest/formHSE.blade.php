@@ -827,14 +827,14 @@ $(".validation-hse").steps({
     , onFinished: function (event, currentIndex) {
         // SweetAlert2 confirmation dialog for submit action
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Apakah anda yakin?',
+            text: "Anda tidak akan bisa membatalkan ini!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#26D639',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, submit it!',
-            cancelButtonText: 'Cancel'
+            confirmButtonText: 'Ya!',
+            cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
                 $("#form").submit();

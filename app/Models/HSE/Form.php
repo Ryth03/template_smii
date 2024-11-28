@@ -10,6 +10,7 @@ class Form extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
+        'extend_from_form_id',
         'status'
     ];
     

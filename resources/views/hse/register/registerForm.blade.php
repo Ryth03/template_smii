@@ -14,23 +14,23 @@
                     <div class="login-main" style="background: rgba(255, 255, 255, 0.527); backdrop-filter: blur(10px); border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); max-width: 450px; width:100%;">
                         <form class="theme-form" method="POST" action="" >
                             @csrf
-                            <h3 class="font-bold text-4xl text-center" style="color:#c0a01f">Register HSE</h3>
+                            <h3 class="font-bold text-4xl text-center" style="color:#c0a01f">Register Form</h3>
                             <p class="mt-10 text-center" style="color: #141412">Register to continue to HSE Form.</p>
 
                             <!-- Name -->
                             <div class="relative w-full mt-4">
-                                <label for="input-label" class="block text-lg font-medium mb-2 text-gray-700">Nama</label>
+                                <label for="input-label" class="block text-lg font-medium mb-2 text-gray-700">Name</label>
                                 <input type="text" name="name" id="name"
                                     class="border-1 py-2 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none border-gray-300 bg-gray-100 focus:bg-white dark:border-gray-700 dark:focus:ring-gray-600"
-                                    placeholder="Masukan Nama">
+                                    placeholder="Masukan Nama" required>
                             </div>
 
                             <!-- Company/Department -->
                             <div class="relative w-full mt-4">
-                                <label for="company_department" class="block text-lg font-medium mb-2 text-gray-700">Perusahaan / Departemen</label>
+                                <label for="company_department" class="block text-lg font-medium mb-2 text-gray-700">Company / Department</label>
                                 <input type="text" name="company_department" id="company_department"
                                     class="border-1 py-2 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none border-gray-300 bg-gray-100 focus:bg-white dark:border-gray-700 dark:focus:ring-gray-600"
-                                    placeholder="Masukan Perusahaan / Departemen">
+                                    placeholder="Masukan Perusahaan / Departemen" required>
                             </div>
 
                             <!-- email -->
@@ -38,7 +38,7 @@
                                 <label for="email" class="block text-lg font-medium mb-2 text-gray-700">E-mail</label>
                                 <input type="text" name="email" id="email"
                                     class="border-1 py-2 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none border-gray-300 bg-gray-100 focus:bg-white dark:border-gray-700 dark:focus:ring-gray-600"
-                                    placeholder="Masukan E-mail">
+                                    placeholder="Masukan E-mail" required>
                             </div>
 
                             <!-- password -->
@@ -47,6 +47,7 @@
                                 <x-text-input id="password" class="border-1 rounded w-full py-2 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-10 font-mono js-password"
                                     type="password"
                                     name="password"
+                                    placeholder="*********"
                                     required autocomplete="new-password" />
 
                                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
@@ -57,23 +58,18 @@
                             <div class="relative w-full">
                                 <x-text-input id="password_confirmation" class="border-1 rounded w-full py-2 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-10 font-mono js-password"
                                 type="password"
+                                placeholder="*********"
                                 name="password_confirmation" required autocomplete="new-password" />
-                            </div>
-                            
-
-                            
-                            <!-- Modal -->
-                            <div>
-                                <button type="button" class="mt-7 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-base px-3 py-3 text-center"
-
-                                data-modal-target="createDepartmentModal" data-modal-toggle="createDepartmentModal">
-                                Perjanjian Kerja Kontraktor
-                                </button>
                             </div>
 
                             <div class="mt-10">
                                 <input type="checkbox" id="termsAgreement" name="termsAgreement" required>
-                                <label for="termsAgreement" class="text-gray-900 dark:text-white">Saya setuju dengan Perjanjian Kerja Kontraktor</label>
+                                <label for="termsAgreement" class="text-gray-900 dark:text-white">
+                                    I agree with the 
+                                    <a href="#termsAgreement" style="text-decoration: underline;" data-modal-target="createDepartmentModal" data-modal-toggle="createDepartmentModal">
+                                        Contractor's Employment Agreement
+                                    </a>
+                                </label>
                             </div>
 
                             <div class="form-group mt-5">
@@ -119,11 +115,11 @@
                     <div class="p-4 md:p-5">
                         <div class="text-justify  text-gray-900 dark:text-white">
                             <label for="department_name" class="block mb-2 font-medium">
-                                PIHAK KEDUA berkewajiban :
+                                <strong>PIHAK KEDUA</strong> (kontraktor/vendor) berkewajiban :
                             </label>
                             <ol class="p-2.5 space-y-4 list-decimal">
-                                <li>Melaporkan dan menyerahkan fotocopy KTP / Identitas Diri yang berlaku kepada PIHAK PERTAMA</li>
-                                <li>Selama melakukan pekerjaan di area PT SMII wajib memakai APD Standar seperti :
+                                <li>Melaporkan dan menyerahkan fotocopy KTP / Identitas Diri yang berlaku kepada <strong>PIHAK PERTAMA</strong></li>
+                                <li>Selama melakukan pekerjaan di area PT Sinar Meadow International Indonesia wajib memakai APD Standar seperti :
                                     <br>
                                     <ol class="list-inside" style="list-style-type: lower-alpha;">
                                         <li>Helm</li>
@@ -133,35 +129,50 @@
                                         <li>Baju berlengan</li>
                                     </ol>
                                 </li>
-                                <li>Mentaati semua persyaratan yang tertuang dalam surat ijin kerja dan yang di persyaratkan oleh pihak pertama</li>
-                                <li>Mentaati semua peraturan umum yang berlaku di PT SMII</li>
-                                <li>Memperhatikan dan mematuhi setiap rambu yang dipasang di area PT SMII</li>
-                                <li>Pengawasan proyek wajib berada di area proyek selama aktivitas berlangsung</li>
+                                <li>Mentaati semua persyaratan yang tertuang dalam surat ijin kerja dan yang di persyaratkan oleh <strong>PIHAK PERTAMA</strong></li>
+                                <li>Mentaati semua peraturan umum yang berlaku di PT Sinar Meadow International Indonesia</li>
+                                <li>Memperhatikan dan mematuhi setiap rambu yang dipasang di area PT Sinar Meadow International Indonesia</li>
+                                <li>Pengawas proyek wajib berada di area proyek selama aktivitas berlangsung</li>
                                 <li>Menyiapkan alat proteksi kebakaran khusus pekerjaan hot work dan listrik</li>
-                                <li>Melaporkan kepada pihak PT SMII jika terjadi kecelakaan kerja</li>
+                                <li>Melaporkan kepada pihak PT Sinar Meadow International Indonesia jika terjadi kecelakaan kerja</li>
                                 <li>Dilarang meninggalkan area kerja dalam kondisi kotor dan berantakan</li>
-                                <li>Menjaga kebersihan di lingkungan PT SMII, dengan membuang sampah di tempat sampah yang telah disediakan </li>
+                                <li>Menjaga kebersihan di lingkungan PT Sinar Meadow International Indonesia, dengan membuang sampah di tempat sampah yang telah disediakan </li>
                             </ol>
 
                             <label for="department_name" class="block mt-3 mb-2 font-medium ">
-                                PIHAK Pertama berkewajiban :
+                                <strong>PIHAK PERTAMA</strong> (PT Sinar Meadow International) berkewajiban :
                             </label>
                             <ol class="p-2.5 space-y-4 list-decimal">
-                                <li>Memberikan safety induction diawal proyek sebelum pekerjaan dimulai kepada pihak kedua</li>
+                                <li>Memberikan safety induction diawal proyek sebelum pekerjaan dimulai kepada <strong>PIHAK KEDUA</strong></li>
                                 <li>Melakukan pengawasan dilapangan secara berkala di area proyek</li>
-                                <li>Apabila dalam melakukan aktivitas pekerjaan di area PT SMII dengan sengaja tidak mematuhi peraturan / tata-tertib point 1-10 
-                                    maka pihak pertama berhak memberikan sanksi kepada pihak kontraktor atau karyawannya yang melanggar.
-                                    <br>
-                                    adapun sanksi yang berlaku sebagai berikut :
+                                <li>Apabila dalam melakukan aktivitas pekerjaan di area PT Sinar Meadow International Indonesia <strong><strong>PIHAK KEDUA</strong></strong> dengan sengaja tidak mematuhi peraturan / tata-tertib point 1-10 
+                                    maka <strong>PIHAK PERTAMA</strong> berhak memberikan sanksi kepada sebagai berikut :
                                     <br>
                                     <ol class="list-inside" style="list-style-type: lower-alpha;">
                                         <li>Teguran lisan (dari HSE dan Security)</li>
-                                        <li>Denda paling tinggi sebesar 1.000.000 (dari finance)</li>
+                                        <li>Pekerjaan dihentikan sementara</li>
                                         <li>Kontraktor dan atau karyawan diblacklist / dikeluarkan saat itu juga</li>
                                     </ol>
                                 </li>
                             </ol>
-                            <div class="block mt-3 mb-2 font-medium">
+                            <div class="block mt-3 mb-2">
+                            CATATAN :
+                            <br>
+                            Jika <strong>PIHAK KEDUA</strong> lalai dalam melakukan KEWAJIBANNYA sehingga:
+                                <ol class="list-inside" style="list-style-type: lower-alpha;">
+                                    <li>
+                                        Menimbulkan Kecelakaan Kerja yang berdampak kematian bagi pekerja <strong>PIHAK PERTAMA</strong> maupun KEDUA
+                                    </li>
+                                    <li>
+                                        Kerusakaan asset/property milik <strong>PIHAK PERTAMA</strong>
+                                    </li>
+                                    <li>
+                                    Pencemeran lingkungan di sekitar area perusahaan <strong>PIHAK PERTAMA</strong>
+                                    </li>
+                                </ol>
+                            Maka sepenuhnya menjadi tanggung jawab <strong>PIHAK PERTAMA</strong> dalam menanggulangi masalah
+                            </div>
+                            <div class="block mt-3 mb-2">
                                 Demikian perjanjian ini dibuat serta disetujui masing - masing pihak yang bersangkutan, 
                                 dan guna dipatuhi sepenuhnya dengan itikad serta jiwa kerjasama sebaik-baiknya.
                             </div>
