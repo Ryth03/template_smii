@@ -38,11 +38,11 @@
 <ol class="list-inside" style="list-style-type: number; margin-left:10px; margin-top: 10px;">
     @for ($i = 1; $i <= 25; $i++)
         @if(isset($texts[$i-1]))
-            <li class="text-lg">{{ $texts[$i-1] }}</li>
+            <li class="text-xl font-medium">{{ $texts[$i-1] }}</li>
         @endif
         <img src="{{asset('assets/images/hse/gambar'.$i.'.jpg')}}" alt="gambar" style="margin-top:5px; margin-bottom: 20px;">
     @endfor
 </ol>
-<a href="{{ route('hse.dashboard') }}" class="text-xl">Kembali ke dashboard</a>
+<a href="{{ route('hse.dashboard') }}" class="text-2xl font-medium underline">Kembali ke dashboard</a>
 </div>
 </x-app-layout>

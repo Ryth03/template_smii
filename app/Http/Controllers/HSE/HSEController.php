@@ -45,6 +45,7 @@ class HSEController extends Controller
         $this->middleware('permission:approve form hse', ['only' =>['approvalTable']]);
         $this->middleware('permission:approve form hse', ['only' =>['approvalForm']]);
         $this->middleware('permission:approve form hse', ['only' =>['approveForm']]);
+        $this->middleware('permission:view all form hse', ['only' =>['viewAllTable']]);
     }
 
     private function userNotification($user_id, $status){
@@ -131,10 +132,10 @@ class HSEController extends Controller
 
     public function viewAllTable()
     {
-        $forms = Form::select('forms.id as id', 'supervisor', 'forms.created_at as created_at', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
+        $forms = Form::select('forms.id as id', 'supervisor', 'location', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
         ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
-        ->groupBy('supervisor','forms.created_at', 'forms.updated_at', 'forms.status', 'forms.id')
+        ->groupBy('supervisor','location', 'forms.updated_at', 'forms.status', 'forms.id')
         ->orderBy('forms.id', 'asc')
         ->get();
         return view('hse.admin.table.viewAllTable', compact('forms'));

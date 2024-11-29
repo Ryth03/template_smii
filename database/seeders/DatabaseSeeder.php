@@ -66,6 +66,7 @@ class DatabaseSeeder extends Seeder
          Permission::create(['name' => 'view all form hse']);
          Permission::create(['name' => 'edit location hse']);
          Permission::create(['name' => 'edit approver hse']);
+         Permission::create(['name' => 'job evaluation hse']);
          
 
          //create departements
@@ -125,7 +126,7 @@ class DatabaseSeeder extends Seeder
         // Let's give few permissions to admin role.
         $hseRole->givePermissionTo($allPermissionNames);
         
-        $emRole->givePermissionTo(['approve form hse']);
+        $emRole->givePermissionTo(['approve form hse', 'job evaluation hse']);
         
         $aoRole->givePermissionTo(['approve form hse']);
         

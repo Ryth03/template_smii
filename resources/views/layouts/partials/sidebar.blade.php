@@ -38,9 +38,9 @@
             </ul>
         </li>
         
-        @can('view all form hse')
+        @canany(['view all form hse', 'job evaluation hse'])
         <li
-            class="{{ request()->is('viewAll-table') || request()->is('location') || request()->is('approver')  ? 'current' : '' }}">
+            class="{{ request()->is('viewAll-table') || request()->is('location') || request()->is('approver') || request()->is('job-eval*')  ? 'current' : '' }}">
             <a href="#" style="font-size: 18px;">
                 <i data-feather="check-circle" style="width: 18px; height: 18px;"></i>
                 HSE Management
@@ -61,19 +61,14 @@
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Approval Level</a>
                 </li>
                 @endcan
-                @can('view all form hse')
-                <li><a href="" class="{{ request()->is('level*') ? 'current' : '' }}"><i
+                @can('job evaluation hse')
+                <li><a href="{{ route('jobEvaluation.table') }}" class="{{ request()->is('job-evaluation') ? 'current' : '' }}"><i
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Job Evaluation</a>
                 </li>
                 @endcan
-                @can('view all form hse')
-                <li><a href="" class="{{ request()->is('level*') ? 'current' : '' }}"><i
+                @can('job evaluation hse')
+                <li><a href="{{ route('jobEvaluationReport.table') }}" class="{{ request()->is('job-evaluation-report') ? 'current' : '' }}"><i
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Evaluation Report</a>
-                </li>
-                @endcan
-                @can('view register form')
-                <li><a href="{{ route('register.hse') }}" class="{{ request()->is('level*') ? 'current' : '' }}"><i
-                            class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Register Form</a>
                 </li>
                 @endcan
             </ul>

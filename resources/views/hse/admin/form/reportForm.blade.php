@@ -1058,6 +1058,10 @@
                 <button name="action" value="approve" class="m-2 px-4 py-2 text-xl bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn print-none" onclick="window.print()">
                     Print
                 </button>
+                
+                <button name="action" class="m-2 px-4 py-2 text-xl bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn print-none" onclick="window.history.back()">
+                    Back
+                </button>
             </div>
 
     

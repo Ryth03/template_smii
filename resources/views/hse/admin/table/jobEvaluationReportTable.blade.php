@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('List Forms HSE') }}
+                {{ __('Job Evaluation Report') }}
         </h2>
     </x-slot>
     @push('css')
@@ -20,7 +20,7 @@
 <div class="box">
     <div class="box-header flex justify-center items-center">
         <div class="text-3xl font-medium">
-            List of Forms
+            Job Evaluation Report
         </div>
     </div>
     <div class="box-body overflow-x-auto">
@@ -28,10 +28,10 @@
             <thead>
                 <tr>
                     <th class="px-2 py-3">No.</th>
-                    <th class="px-2 py-3">Supervisor</th>
+                    <th class="px-2 py-3">Company / Department</th>
                     <th class="px-2 py-3">Location</th>
-                    <th class="px-2 py-3">Date Updated</th>
-                    <th class="px-2 py-3">Status</th>
+                    <th class="px-2 py-3">Date</th>
+                    <th class="px-2 py-3">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,31 +39,25 @@
                 <tr>
                     <td>
                         {{ $index +1 }}
-                    </td><td>
-                        {{ $form->supervisor}}
+                    </td>
+                    <td>
+                        {{ $form->company_department }}
                     </td>
                     <td>
                         {{ $form->location }}
                     </td>
                     <td>
-                        {{ $form->updated_at }}
+                        {{ $form->start_date }} - {{ $form->end_date }}
                     </td>
                     <td>
-                        <div class="{{$form->status == 'Approved' ? 'text-green-400' : ($form->status == 'Rejected' ? 'text-red-400' : ($form->status == 'In Review' ? 'text-yellow-400' : ($form->status == 'In Approval' ? 'text-blue-400' : 'text-gray-400')))}}">
-                            {{ $form->status }}
-                            @if($form->status == "In Approval")
-                                {{ $form->count }}/3
-                            @endif
-                            @if($form->status == "Finished" || $form->status == "Rejected")
-                                <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
-                                @csrf
-                                    <input type="hidden" name="value" value="{{$form->id}}">
-                                    <button class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-                                        <div>Report</div>
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
+                        
+                        <form action="{{ route('jobEvaluateReport.form') }}" method="POST" style="display: inline;">
+                        @csrf
+                            <input type="hidden" name="formId" value="{{$form->id}}">
+                            <button class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
+                                <div>View Report</div>
+                            </button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

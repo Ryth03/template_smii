@@ -52,7 +52,7 @@ use App\Http\Controllers\HSE\HSEController;
 use App\Http\Controllers\HSE\HSEFormController;
 use App\Http\Controllers\HSE\HSELocationController;
 use App\Http\Controllers\HSE\HSEApproverLevelController;
-
+use App\Http\Controllers\HSE\JobEvaluationController;
 
 
 
@@ -71,21 +71,24 @@ Route::get('/', function () {
     SEOMeta::setTitle('Intra SMII - Dashboard');
     return view('welcome');
 });
-Route::get('/register2', function () {
-    return view('hse.register.registerForm');
-})->name('register.hse');
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/help', function(){
+        return view('hse.guest.tutorial');
+    })->name('tutorial.hse');
 
     // Admin HSE
     Route::get('/dashboard-review', [HSEController::class, 'reviewTable'])->name('review.table');
     Route::get('/dashboard-approval', [HSEController::class, 'approvalTable'])->name('approval.table');
     Route::get('/viewAll-table', [HSEController::class, 'viewAllTable'])->name('viewAll.table');
     Route::get('/dashboard-security', [HSEController::class, 'viewSecurityTable'])->name('securityPost.table');
-    Route::get('/help', function(){
-        return view('hse.guest.tutorial');
-    })->name('tutorial.hse');
+    Route::get('/job-evaluation', [JobEvaluationController::class, 'viewJobEvaluation'])->name('jobEvaluation.table');
+    Route::get('/job-evaluation-report', [JobEvaluationController::class, 'viewJobEvaluationReport'])->name('jobEvaluationReport.table');
     
+    Route::POST('/job-evaluate-report-form', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
+    Route::POST('/job-evaluate-form', [JobEvaluationController::class, 'evaluateJob'])->name('jobEvaluate.form');
+    Route::POST('/job-evaluate', [JobEvaluationController::class, 'evaluate'])->name('evaluate');
     Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
     Route::POST('/approve', [HSEController::class, 'approvalForm'])->name('approval.form');
     Route::get('/approve', function () {

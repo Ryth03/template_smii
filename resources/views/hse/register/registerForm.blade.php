@@ -4,6 +4,9 @@
             color: unset;
             background-color: unset;
         }
+        [type="checkbox"]+label:before{
+            border-color:black;
+        }
     </style>
     <form method="POST" action="{{ route('register') }}">
         @csrf
@@ -89,7 +92,7 @@
             class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative p-4 w-full max-w-lg max-h-full">
                 <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 font-sans">
                     <!-- Modal header -->
                     <div class="flex flex-col p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <div class="flex items-center justify-between">
@@ -115,13 +118,12 @@
                     <div class="p-4 md:p-5">
                         <div class="text-justify  text-gray-900 dark:text-white">
                             <label for="department_name" class="block mb-2 font-medium">
-                                <strong>PIHAK KEDUA</strong> (kontraktor/vendor) berkewajiban :
+                                <strong>PIHAK KEDUA</strong> (Kontraktor / Vendor) berkewajiban:
                             </label>
-                            <ol class="p-2.5 space-y-4 list-decimal">
-                                <li>Melaporkan dan menyerahkan fotocopy KTP / Identitas Diri yang berlaku kepada <strong>PIHAK PERTAMA</strong></li>
-                                <li>Selama melakukan pekerjaan di area PT Sinar Meadow International Indonesia wajib memakai APD Standar seperti :
-                                    <br>
-                                    <ol class="list-inside" style="list-style-type: lower-alpha;">
+                            <ol class="p-2.5 space-y-2.5 list-decimal">
+                                <li>Melaporkan dan menyerahkan fotocopy KTP / Identitas Diri yang berlaku kepada <strong>PIHAK PERTAMA</strong>.</li>
+                                <li>Selama melakukan pekerjaan di area PT Sinar Meadow International Indonesia wajib memakai APD Standar, seperti:
+                                    <ol class="pl-2.5 list-inside" style="list-style-type: lower-alpha;">
                                         <li>Helm</li>
                                         <li>Rompi</li>
                                         <li>Sepatu</li>
@@ -129,48 +131,43 @@
                                         <li>Baju berlengan</li>
                                     </ol>
                                 </li>
-                                <li>Mentaati semua persyaratan yang tertuang dalam surat ijin kerja dan yang di persyaratkan oleh <strong>PIHAK PERTAMA</strong></li>
-                                <li>Mentaati semua peraturan umum yang berlaku di PT Sinar Meadow International Indonesia</li>
-                                <li>Memperhatikan dan mematuhi setiap rambu yang dipasang di area PT Sinar Meadow International Indonesia</li>
-                                <li>Pengawas proyek wajib berada di area proyek selama aktivitas berlangsung</li>
-                                <li>Menyiapkan alat proteksi kebakaran khusus pekerjaan hot work dan listrik</li>
-                                <li>Melaporkan kepada pihak PT Sinar Meadow International Indonesia jika terjadi kecelakaan kerja</li>
-                                <li>Dilarang meninggalkan area kerja dalam kondisi kotor dan berantakan</li>
-                                <li>Menjaga kebersihan di lingkungan PT Sinar Meadow International Indonesia, dengan membuang sampah di tempat sampah yang telah disediakan </li>
+                                <li>Mentaati semua persyaratan yang tertuang dalam surat ijin kerja dan yang di persyaratkan oleh <strong>PIHAK PERTAMA</strong>.</li>
+                                <li>Mentaati semua peraturan umum yang berlaku di PT Sinar Meadow International Indonesia.</li>
+                                <li>Memperhatikan dan mematuhi setiap rambu yang dipasang di area PT Sinar Meadow International Indonesia.</li>
+                                <li>Pengawas proyek wajib berada di area proyek selama aktivitas berlangsung.</li>
+                                <li>Menyiapkan alat proteksi kebakaran khusus pekerjaan hot work dan listrik.</li>
+                                <li>Melaporkan kepada pihak PT Sinar Meadow International Indonesia jika terjadi kecelakaan kerja.</li>
+                                <li>Dilarang meninggalkan area kerja dalam kondisi kotor dan berantakan.</li>
+                                <li>Menjaga kebersihan di lingkungan PT Sinar Meadow International Indonesia, dengan membuang sampah di tempat sampah yang telah disediakan.</li>
                             </ol>
 
                             <label for="department_name" class="block mt-3 mb-2 font-medium ">
-                                <strong>PIHAK PERTAMA</strong> (PT Sinar Meadow International) berkewajiban :
+                                <strong>PIHAK PERTAMA</strong> (PT Sinar Meadow International) berkewajiban:
                             </label>
-                            <ol class="p-2.5 space-y-4 list-decimal">
-                                <li>Memberikan safety induction diawal proyek sebelum pekerjaan dimulai kepada <strong>PIHAK KEDUA</strong></li>
-                                <li>Melakukan pengawasan dilapangan secara berkala di area proyek</li>
-                                <li>Apabila dalam melakukan aktivitas pekerjaan di area PT Sinar Meadow International Indonesia <strong><strong>PIHAK KEDUA</strong></strong> dengan sengaja tidak mematuhi peraturan / tata-tertib point 1-10 
-                                    maka <strong>PIHAK PERTAMA</strong> berhak memberikan sanksi kepada sebagai berikut :
+                            <ol class="p-2.5 space-y-2.5 list-decimal">
+                                <li>Memberikan safety induction diawal proyek sebelum pekerjaan dimulai kepada <strong>PIHAK KEDUA</strong>.</li>
+                                <li>Melakukan pengawasan dilapangan secara berkala di area proyek.</li>
+                                <li>Apabila dalam melakukan aktivitas pekerjaan di area PT Sinar Meadow International Indonesia <strong>PIHAK KEDUA</strong> dengan sengaja tidak mematuhi peraturan / tata-tertib point 1-10, 
+                                    maka <strong>PIHAK PERTAMA</strong> berhak memberikan sanksi sebagai berikut:
                                     <br>
-                                    <ol class="list-inside" style="list-style-type: lower-alpha;">
-                                        <li>Teguran lisan (dari HSE dan Security)</li>
-                                        <li>Pekerjaan dihentikan sementara</li>
-                                        <li>Kontraktor dan atau karyawan diblacklist / dikeluarkan saat itu juga</li>
+                                    <ol class="pl-2.5 list-inside" style="list-style-type: lower-alpha;">
+                                        <li>Teguran lisan (dari HSE dan Security).</li>
+                                        <li>Pekerjaan dihentikan sementara.</li>
+                                        <li>Kontraktor dan atau karyawan diblacklist / dikeluarkan saat itu juga.</li>
                                     </ol>
                                 </li>
                             </ol>
                             <div class="block mt-3 mb-2">
-                            CATATAN :
-                            <br>
-                            Jika <strong>PIHAK KEDUA</strong> lalai dalam melakukan KEWAJIBANNYA sehingga:
-                                <ol class="list-inside" style="list-style-type: lower-alpha;">
-                                    <li>
-                                        Menimbulkan Kecelakaan Kerja yang berdampak kematian bagi pekerja <strong>PIHAK PERTAMA</strong> maupun KEDUA
-                                    </li>
-                                    <li>
-                                        Kerusakaan asset/property milik <strong>PIHAK PERTAMA</strong>
-                                    </li>
-                                    <li>
-                                    Pencemeran lingkungan di sekitar area perusahaan <strong>PIHAK PERTAMA</strong>
-                                    </li>
-                                </ol>
-                            Maka sepenuhnya menjadi tanggung jawab <strong>PIHAK PERTAMA</strong> dalam menanggulangi masalah
+                                <div style="border-top: 1px dashed; padding-top: 10px;">CATATAN :</div>
+                                <div>
+                                    Jika <strong>PIHAK KEDUA</strong> lalai dalam melakukan KEWAJIBANNYA sehingga:
+                                        <ol class="pl-2.5 list-inside" style="list-style-type: lower-alpha;">
+                                            <li>Menimbulkan Kecelakaan Kerja yang berdampak kematian bagi pekerja <strong>PIHAK PERTAMA</strong> maupun <strong>PIHAK KEDUA</strong>.</li>
+                                            <li>Kerusakaan asset/property milik <strong>PIHAK PERTAMA</strong>.</li>
+                                            <li>Pencemeran lingkungan di sekitar area perusahaan <strong>PIHAK PERTAMA</strong>.</li>
+                                        </ol>
+                                    Maka sepenuhnya menjadi tanggung jawab <strong>PIHAK PERTAMA</strong> dalam menanggulangi masalah.
+                                </div> 
                             </div>
                             <div class="block mt-3 mb-2">
                                 Demikian perjanjian ini dibuat serta disetujui masing - masing pihak yang bersangkutan, 

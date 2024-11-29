@@ -13,8 +13,6 @@
         table.dataTable thead .sorting_desc:before,
         table.dataTable thead .sorting_desc:after  {
             bottom: 0.5em !important; 
-            /* Menghapus margin-bottom */
-            /* padding-bottom: 0px; Menyesuaikan padding jika diperlukan */
         }
     </style>
     @endpush
