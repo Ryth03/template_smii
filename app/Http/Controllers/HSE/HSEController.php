@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Notification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Jobs\sendToUserJob;
 use App\Jobs\sendToApproverJob;
+use App\Jobs\sendReminderToUserJob;
 
 class HSEController extends Controller
 {
@@ -132,12 +133,13 @@ class HSEController extends Controller
 
     public function viewAllTable()
     {
-        $forms = Form::select('forms.id as id', 'supervisor', 'location', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
+        $forms = Form::select('forms.id as id', 'supervisor', 'location', 'forms.updated_at as updated_at', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"))
         ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
-        ->groupBy('supervisor','location', 'forms.updated_at', 'forms.status', 'forms.id')
+        ->groupBy('supervisor','location', 'forms.updated_at', 'forms.status', 'forms.id', 'start_date', 'end_date')
         ->orderBy('forms.id', 'asc')
         ->get();
+        confirmDelete();
         return view('hse.admin.table.viewAllTable', compact('forms'));
     }
 
@@ -574,5 +576,16 @@ class HSEController extends Controller
         // $pdf->output();
 
         // return response()->streamDownload(function() use ());
+    }
+
+    public function sendReminderToUser(Request $request)
+    {
+        $form = Form::find($request->input("formId"));
+        // Send Email Reminder to User
+        $projectExecutor = projectExecutor::where('form_id', $form->id)->first();
+        $toUser = User::find($form->user_id);
+        sendReminderToUserJob::dispatch($toUser, $form, $projectExecutor); 
+
+        return redirect()->route('viewAll.table');
     }
 }

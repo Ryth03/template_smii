@@ -13,41 +13,24 @@ class sendReminderToUser extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
+    protected $user;
+    protected $form;
+    protected $detail;
+
+    public function __construct($user, $form, $detail)
     {
-        //
+        $this->user = $user;
+        $this->form = $form;
+        $this->detail = $detail;
     }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Send Reminder To User',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
+    public function build(){
+        return $this->view('emails.sendReminderToUser')
+                    ->subject("Reminder of your Work Permit")
+                    ->with([
+                        'form' => $this->form, 
+                        'detail' => $this->detail,
+                        'user' => $this->user
+                    ]);
     }
 }

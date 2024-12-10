@@ -108,6 +108,15 @@ class JobEvaluationController extends Controller
 
         $eval = jobEvaluation::where('form_id',$formId)->first();
         
+        // Sementara
+        $eval->total_rating = $eval->hse_rating;
+        $eval->save();
+        $form = Form::find($formId);
+        $form->status = "Finished";
+        $form->save();
+        return redirect()->route('viewAll.table');
+        // Sementara
+
         if(!is_null($eval->hse_rating) && !is_null($eval->engineering_rating)){
             $eval->total_rating = ($eval->hse_rating + $eval->engineering_rating)/2;
             $eval->save();

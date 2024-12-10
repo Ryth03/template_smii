@@ -71,7 +71,6 @@
 
     function submitForm(button) {
         // SweetAlert2 confirmation dialog for submit action
-        const input = document.getElementById('action')
         Swal.fire({
             title: "Konfirmasi",
             text: "Apakah pekerjaan sudah selesai?",

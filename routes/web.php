@@ -53,6 +53,7 @@ use App\Http\Controllers\HSE\HSEFormController;
 use App\Http\Controllers\HSE\HSELocationController;
 use App\Http\Controllers\HSE\HSEApproverLevelController;
 use App\Http\Controllers\HSE\JobEvaluationController;
+use App\Http\Controllers\HSE\FormStateController;
 
 
 
@@ -86,6 +87,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/job-evaluation', [JobEvaluationController::class, 'viewJobEvaluation'])->name('jobEvaluation.table');
     Route::get('/job-evaluation-report', [JobEvaluationController::class, 'viewJobEvaluationReport'])->name('jobEvaluationReport.table');
     
+    Route::POST('/send-reminder', [HSEController::class, 'sendReminderToUser'])->name('reminder.send');
+    Route::POST('/finished-work', [FormStateController::class, 'finishedWork'])->name('finished.work');
     Route::POST('/job-evaluate-report-form', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
     Route::POST('/job-evaluate-form', [JobEvaluationController::class, 'evaluateJob'])->name('jobEvaluate.form');
     Route::POST('/job-evaluate', [JobEvaluationController::class, 'evaluate'])->name('evaluate');
