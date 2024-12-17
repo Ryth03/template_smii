@@ -114,7 +114,7 @@
                             @if($title == "No HP")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="number" id="{{$title}}" name="{{$title}}" placeholder="Input data" value="{{$form->hp_number}}" class="form-control rounded-lg w-3/4" required>
+                                <input type="number" id="{{$title}}" name="{{$title}}" placeholder="Input data" value="{{preg_replace('/[^0-9]/', '', $form->hp_number)}}" class="form-control rounded-lg w-3/4" required>
                             </div>
                             @elseif($title == "Tanggal Mulai Pelaksanaan")
                             <div class="form-group flex flex-col">

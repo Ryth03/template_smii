@@ -54,6 +54,7 @@ use App\Http\Controllers\HSE\HSELocationController;
 use App\Http\Controllers\HSE\HSEApproverLevelController;
 use App\Http\Controllers\HSE\JobEvaluationController;
 use App\Http\Controllers\HSE\FormStateController;
+use App\Http\Controllers\HSE\Dashboard\DashboardHSE;
 
 
 
@@ -79,9 +80,14 @@ Route::middleware('auth')->group(function () {
         return view('hse.guest.tutorial');
     })->name('tutorial.hse');
 
+    // Dashboard
+    Route::get('/dashboard/hse/leaderboard', [DashboardController::class, 'getLeaderboardData'])->name('leaderboard.dashboard.hse');
+    Route::get('/dashboard/hse/chart', [DashboardController::class, 'getChartData'])->name('chart.dashboard.hse');
+    Route::get('/dashboard/security', [DashboardController::class, 'getSecurityData'])->name('security.dashboard.data');
+
     // Admin HSE
-    Route::get('/dashboard-review', [HSEController::class, 'reviewTable'])->name('review.table');
-    Route::get('/dashboard-approval', [HSEController::class, 'approvalTable'])->name('approval.table');
+    Route::get('/reviews', [HSEController::class, 'reviewTable'])->name('review.table');
+    Route::get('/approvals', [HSEController::class, 'approvalTable'])->name('approval.table');
     Route::get('/viewAll-table', [HSEController::class, 'viewAllTable'])->name('viewAll.table');
     Route::get('/dashboard-security', [HSEController::class, 'viewSecurityTable'])->name('securityPost.table');
     Route::get('/job-evaluation', [JobEvaluationController::class, 'viewJobEvaluation'])->name('jobEvaluation.table');

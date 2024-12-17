@@ -1092,13 +1092,17 @@ body.dark-skin {
 .dark-skin .box[class*=bg-] .apexcharts-legend-text {
   color: #bfbfbf !important; }
 .dark-skin .apexcharts-canvas text {
-  fill: #5e6278 !important; }
+  fill: #D6D2FF !important; }
 .dark-skin .apexcharts-canvas g line {
   stroke: #5e6278 !important; }
 .dark-skin .apexcharts-canvas g line[stroke="transparent"] {
   stroke: transparent !important; }
 .dark-skin .apexcharts-legend-text {
   color: #5e6278 !important; }
+.dark-skin .apexcharts-menu{
+  background-color:#24243E;
+}
+
 
 .dark-skin {
   /*widget-testimonial*/ }
@@ -1213,18 +1217,40 @@ body.dark-skin {
     background-color: #171e32;
     color: #b4b7bc; }
   .dark-skin .apexcharts-tooltip.apexcharts-theme-light {
-    border: 1px solid #171e32;
-    background: rgba(23, 30, 50, 0.96); }
+    /* border: 1px solid #171e32; */
+    background: rgba(59, 59, 102, 0.96); }
   .dark-skin .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
-    border: 1px solid #171e32;
+    /* border: 1px solid #171e32; */
     background: rgba(23, 30, 50, 0.96); }
-  .dark-skin .apexcharts-legend .apexcharts-legend-series:last-child .apexcharts-legend-marker {
-    display: none; }
+  .dark-skin .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-series-group.apexcharts-active  {
+    /* border: 1px solid #171e32; */
+    background-color: rgba(59, 59, 102, 0.96); }
+  .dark-skin .apexcharts-canvas .apexcharts-tooltip .apexcharts-tooltip-text-y-label {
+    color: #9ca3af;
+  }
+  .dark-skin .apexcharts-canvas .apexcharts-tooltip .apexcharts-tooltip-text-y-value {
+    color: #fff;
+  }
+  /* .dark-skin .apexcharts-legend .apexcharts-legend-series:last-child .apexcharts-legend-marker {
+    display: none; } */
   .dark-skin .project-load.bg-gray-100 {
     background-color: #171e32 !important; }
   .dark-skin .apex-charts-spark .apexcharts-area-series.apexcharts-plot-series .apexcharts-series path {
     fill: transparent !important; }
-
+  .dark-skin .apexcharts-bar-series .apexcharts-series:first-of-type path{
+    /* fill: #0070C4;  */
+    filter: brightness(0.7);
+  }
+  .dark-skin .apexcharts-bar-series .apexcharts-series:first-of-type path:hover{
+    filter: brightness(0.8);
+  }
+  .dark-skin .apexcharts-bar-series .apexcharts-series:nth-of-type(2) path{
+    filter: brightness(0.7);
+  }
+  .dark-skin .apexcharts-bar-series .apexcharts-series:nth-of-type(2) path:hover{
+    filter: brightness(0.8);
+  }
+  
 /*# sourceMappingURL=skin_color.css.map */
 @media only screen and (max-width: 1440px) {
                      .image-1{

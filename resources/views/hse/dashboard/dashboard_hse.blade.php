@@ -1,6 +1,14 @@
 
 @push('css')
+<!-- <style src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/4.2.0/apexcharts.min.css"></style> -->
+
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/4.2.0/apexcharts.min.css"> -->
 <style>
+    @media (min-width: 1024px) {
+        .lg\:grid-cols-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        }
+    }
     .table-striped thead th:nth-child(1) {
         color: #28a745;
     }
@@ -14,7 +22,7 @@
     .table-striped thead th{
         background-color: #f1e6d2;
     }
-    .dark .table-striped thead th{
+    .dark-skin .table-striped thead th{
         background-color: #3f2177;
     } 
 
@@ -37,37 +45,42 @@
     }
 
     /* Custom Scroll saat light mode */
-    .dark .scrollable-content::-webkit-scrollbar { /* Ukuran scrollbar*/
+    .dark-skin .scrollable-content::-webkit-scrollbar { /* Ukuran scrollbar*/
         width: 8px;
         height: 8px;
     }
-    .dark .scrollable-content::-webkit-scrollbar-track { /* Track scrollbar  */
+    .dark-skin .scrollable-content::-webkit-scrollbar-track { /* Track scrollbar  */
         background: inherit; /* Latar belakang  */
         border: 1px solid #323B40;
     }
-    .dark .scrollable-content::-webkit-scrollbar-thumb { /* Thumb scrollbar */
+    .dark-skin .scrollable-content::-webkit-scrollbar-thumb { /* Thumb scrollbar */
         background: #0CC3AB; 
     }
-    .dark .scrollable-content::-webkit-scrollbar-thumb:hover { /* Thumb scrollbar saat hover */
+    .dark-skin .scrollable-content::-webkit-scrollbar-thumb:hover { /* Thumb scrollbar saat hover */
         background: #0DB5A0;
     }
 </style>
 @endpush
 
-<div class="grid md:grid-cols-3">
-    @php 
-        $titles = ["Active Jobs", "Ending Soon", "Work Evaluation"]
-    @endphp
+<div class="grid sm:grid-cols-2 ">
     <!--  Leaderboard -->
     <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">Active Jobs</h4>
+        <h4 class="card-title flex justify-center" data-toggle="tooltip" title="Hooray!" placement="top">  
+        @if (auth()->user()->can('view all form hse'))
+            <a class="underline" href="{{ route('viewAll.table') }}">
+                Active
+            </a>
+        @else
+            Active
+        @endif
+        </h4>
         <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
             <table id="activeTable" class="table table-striped w-full" style="position: relative;">
                 <thead style="position: sticky; top:0px">
                     <tr>
                         <th>No.</th>
-                        <th>Nama</th>
-                        <th>Tanggal</th>
+                        <th>Name</th>
+                        <th>End Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,38 +97,15 @@
     </div>
 
     <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">Ending Soon</h4>
+        <h4 class="card-title flex justify-center" data-toggle="tooltip" title="Hooray!">
+            Rating
+        </h4>
         <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="endingTable" class="table table-striped w-full" style="position: relative;">
+            <table id="ratingTable" class="table table-striped w-full" style="position: relative;">
                 <thead style="position: sticky; top:0px">
                     <tr>
                         <th>No.</th>
-                        <th>Nama</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    @for($j = 0; $j<=5 ; $j++)
-                    <tr class="">
-                        <td>{{$j+1}}</td>
-                        <td>PT Sinar Meadow International Indonesia</td>
-                        <td>In Progress</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">Work Evaluation</h4>
-        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="evaluationTable" class="table table-striped w-full" style="position: relative;">
-                <thead style="position: sticky; top:0px">
-                    <tr>
-                        <th>No.</th>
-                        <th>Nama</th>
+                        <th>Name</th>
                         <th>Rating</th>
                     </tr>
                 </thead>
@@ -132,10 +122,114 @@
             </table>
         </div>
     </div>
+
 </div>
-<button class="btn bg-blue-300" onClick="getLeaderboardData('activeTable')">Table Kiri</button>
-<button class="btn bg-blue-300" onClick="getLeaderboardData('endingTable')">Table Tengah</button>
-<button class="btn bg-blue-300" onClick="getLeaderboardData('evaluationTable')">Table Kanan</button>
+
+<div class="grid md:grid-cols-3 sm:grid-cols-2 ">
+
+    
+    <div class="card card-body mx-2" style="border-radius: 10px;">
+        <h4 class="card-title flex justify-center">
+            @if (auth()->user()->can('review form hse'))
+                <a class="underline" href="{{ route('review.table') }}">
+                    Review
+                </a>
+            @else
+                Review
+            @endif
+        </h4>
+        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
+            <table id="reviewTable" class="table table-striped w-full" style="position: relative;">
+                <thead style="position: sticky; top:0px">
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    @for($j = 0; $j<=5 ; $j++)
+                    <tr class="">
+                        <td>{{$j+1}}</td>
+                        <td>PT Sinar Meadow International Indonesia</td>
+                        <td>In Progress</td>
+                    </tr>
+                    @endfor
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card card-body mx-2" style="border-radius: 10px;">
+        <h4 class="card-title flex justify-center">
+            @if (auth()->user()->can('approve form hse'))
+                <a class="underline" href="{{ route('approval.table') }}">
+                    Approval
+                </a>
+            @else
+                Approval
+            @endif
+        </h4>
+        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
+            <table id="approvalTable" class="table table-striped w-full" style="position: relative;">
+                <thead style="position: sticky; top:0px">
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    @for($j = 0; $j<=5 ; $j++)
+                    <tr class="">
+                        <td>{{$j+1}}</td>
+                        <td>PT Sinar Meadow International Indonesia</td>
+                        <td>In Progress</td>
+                    </tr>
+                    @endfor
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card card-body mx-2" style="border-radius: 10px;">
+        <h4 class="card-title flex justify-center">
+            <a class="underline" href="{{ route('jobEvaluation.table') }}">
+                Need Evaluation
+            </a>
+        </h4>
+        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
+            <table id="evaluationTable" class="table table-striped w-full" style="position: relative;">
+                <thead style="position: sticky; top:0px">
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    @for($j = 0; $j<=5 ; $j++)
+                    <tr class="">
+                        <td>{{$j+1}}</td>
+                        <td>PT Sinar Meadow International Indonesia</td>
+                        <td>In Progress</td>
+                    </tr>
+                    @endfor
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<button class="btn bg-blue-500" onClick="getLeaderboardData('activeTable')">Table Active</button>
+<button class="btn bg-blue-500" onClick="getLeaderboardData('reviewTable')">Table Review</button>
+<button class="btn bg-blue-500" onClick="getLeaderboardData('approvalTable')">Table Approval</button>
+<button class="btn bg-blue-500" onClick="getLeaderboardData('evaluationTable')">Table Evaluation</button>
+<button class="btn bg-blue-500" onClick="getLeaderboardData('ratingTable')">Table Rating</button>
+
 <div>
     <div class="card">
         <div class="card-body">
@@ -154,22 +248,25 @@
     </div>
 </div>
     
+
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3/dist/apexcharts.min.js"></script>
+ <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/4.2.0/apexcharts.min.js"></script> -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         
     });
     window.addEventListener('load', () => {
-        // getChartData();
+        getLeaderboardData('activeTable');
+        getLeaderboardData('reviewTable');
+        getLeaderboardData('approvalTable');
+        getLeaderboardData('evaluationTable');
+        getLeaderboardData('ratingTable');
+        getChartData();
     });
 
     // Inisialisasi grafik
     var months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     var stackedBarOptions = {
-        title: {
-            text: 'Permit Form',
-        },
         series: [
             {
                 name: 'Created',
@@ -185,12 +282,26 @@
                 emphasis: {
                     focus: 'series'
                 },
+                
                 data: [120, 132, 101, 134, 90, 230, 210]
             }
         ],
         chart: {
             type: 'bar',
             height: 350,
+            stacked: false,
+            foreColor: '#b0bac2', // Text color for dark mode
+            toolbar: {
+                show: true,
+                tools: {
+                    download: true,
+                    selection: false,
+                    zoom: true,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
+                }
+            }
         },
         plotOptions: {
             bar: {
@@ -199,10 +310,9 @@
         },
         dataLabels: {
           enabled: true,
-          offsetX: -6,
           style: {
             fontSize: '12px',
-            colors: ['#fff']
+            colors: ['#3c3d54']
           }
         },
         xaxis: {
@@ -246,14 +356,19 @@
                 console.log(response);
                 const table = document.querySelector(`#${id} tbody`);
                 table.innerHTML = '';
-                response.forEach(function(data, index){
-                    table.innerHTML += `
-                            <td>${index+1}</td>
-                            <td>${data.company_department}</td>
-                            <td>${data.extra}</td>
-                        
-                    `;
-                })
+                if(response.length > 0){
+                    response.forEach(function(data, index){
+                        table.innerHTML += `
+                                <td>${index+1}</td>
+                                <td>${data.company_department}</td>
+                                <td>${data.extra}</td>
+                            
+                        `;
+                    })
+                }
+                else{
+                    table.innerHTML += `<td class="text-center" colspan="3">No Data Available</td>`;
+                }
             }
         });
     }

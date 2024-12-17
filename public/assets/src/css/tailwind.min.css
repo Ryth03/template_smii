@@ -972,22 +972,22 @@ input:checked+.toggle-bg {
     padding: 0
 }
 
-.apexcharts-canvas .apexcharts-tooltip-series-group.apexcharts-active {
-    background-color: #fff !important;
+/* .apexcharts-canvas .apexcharts-tooltip-series-group.apexcharts-active {
+    background-color: #fff;
     color: #6b7280 !important;
     padding-bottom: .75rem;
     padding-left: .75rem;
     padding-right: .75rem
-}
+} */
 
-.dark .apexcharts-canvas .apexcharts-tooltip-series-group.apexcharts-active {
-    background-color: #374151 !important;
+/* .dark .apexcharts-canvas .apexcharts-tooltip-series-group.apexcharts-active {
+    background-color: #374151;
     color: #9ca3af !important
-}
+} */
 
-.apexcharts-canvas .apexcharts-tooltip-series-group.apexcharts-active:first-of-type {
+/* .apexcharts-canvas .apexcharts-tooltip-series-group.apexcharts-active:first-of-type {
     padding-top: .75rem
-}
+} */
 
 .apexcharts-canvas .apexcharts-legend {
     padding: 0 !important

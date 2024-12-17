@@ -40,7 +40,7 @@
         @if(isset($texts[$i-1]))
             <li class="text-xl font-medium">{{ $texts[$i-1] }}</li>
         @endif
-        <img src="{{asset('assets/images/hse/gambar'.$i.'.jpg')}}" alt="gambar" style="margin-top:5px; margin-bottom: 20px;">
+        <img src="{{asset('assets/images/hse/gambar'.$i.'.jpg')}}" alt="gambar" style="margin-top:5px; margin-bottom: 20px;" loading="lazy">
     @endfor
 </ol>
 <a href="{{ route('hse.dashboard') }}" class="text-2xl font-medium underline">Kembali ke dashboard</a>

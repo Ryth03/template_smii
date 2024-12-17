@@ -161,6 +161,7 @@ class HSEController extends Controller
         $idList = uploadFile::leftJoin('forms', 'forms.id', '=', 'uploadfiles.form_id')
         ->where('status', "Approved")
         ->pluck('uploadfiles.form_id');
+        
         return view('hse.admin.table.securityPostTable', compact('forms', 'files', 'idList'));
     }
 

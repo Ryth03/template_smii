@@ -2,8 +2,19 @@
     @section('title')
 Dashboard
     @endsection
+    @if(auth()->user()->hasRole('hse'))
+        @include('hse.dashboard.dashboard_hse')
+    @endif
+    
+    @if(auth()->user()->hasRole('engineering manager'))
+        @include('hse.dashboard.dashboard_em')
+    @endif
 
-    {{-- @include('dashboard.dashboard')
+    @if(auth()->user()->hasRole('security'))
+        @include('hse.dashboard.dashboard_security')
+    @endif
+
+    {{-- @include('hse.guest.dashboard')
     @can('view dashboard Finance')
         @include('dashboard.dashboardInventory')
     @endcan

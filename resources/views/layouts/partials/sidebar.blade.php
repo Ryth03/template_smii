@@ -10,37 +10,29 @@
     <ul id="main-menu" class="sm sm-blue">
         <li
             class="{{ request()->is('dashboard*')  ? 'current' : '' }}">
-            <a href="#" style="font-size: 18px;">
+            <a href="{{ route('dashboard') }}" style="font-size: 18px;">
                 <i data-feather="home" style="width: 18px; height: 18px;"></i>
                 Dashboard
             </a>
-            <ul>
-            @can('view user dashboard hse')
-            <li><a href="{{ route('hse.dashboard') }}"
-                class="{{ request()->is('dashboard-hse') ? 'current' : '' }}"><i class="icon-Commit"><span
-                class="path1"></span><span class="path2"></span></i>User Dashboard</a></li>
-            @endcan
-            @can('review form hse')
-            <li><a href="{{ route('review.table') }}"
-                class="{{ request()->is('dashboard-review') ? 'current' : '' }}"><i class="icon-Commit"><span
-                class="path1"></span><span class="path2"></span></i>Review Dashboard</a></li>
-            @endcan
-            @can('approve form hse')
-            <li><a href="{{ route('approval.table') }}" class="{{ request()->is('dashboard-approval') ? 'current' : '' }}"><i
-                class="icon-Commit"><span class="path1"></span><span
-                class="path2"></span></i>Approval Dashboard</a></li>
-            @endcan
-            @can('view security dashboard hse')
-            <li><a href="{{ route('securityPost.table') }}" class="{{ request()->is('dashboard-security') ? 'current' : '' }}"><i
-                class="icon-Commit"><span class="path1"></span><span
-                class="path2"></span></i>Security Post Dashboard</a></li>
-            @endcan
-            </ul>
+            @if(auth()->user()->hasRole('hse') || auth()->user()->hasRole('engineering manager'))
+                <ul>
+                @can('view user dashboard hse')
+                <li><a href="{{ route('hse.dashboard') }}"
+                    class="{{ request()->is('dashboard-hse') ? 'current' : '' }}"><i class="icon-Commit"><span
+                    class="path1"></span><span class="path2"></span></i>User Dashboard</a></li>
+                @endcan
+                @can('view security dashboard hse')
+                <li><a href="{{ route('securityPost.table') }}" class="{{ request()->is('dashboard-security') ? 'current' : '' }}"><i
+                    class="icon-Commit"><span class="path1"></span><span
+                    class="path2"></span></i>Security Post Dashboard</a></li>
+                @endcan
+                </ul>
+            @endif
         </li>
         
-        @canany(['view all form hse', 'job evaluation hse'])
+        @canany(['view all form hse', 'job evaluation hse', 'approve form hse'])
         <li
-            class="{{ request()->is('viewAll-table') || request()->is('location') || request()->is('approver') || request()->is('job-eval*')  ? 'current' : '' }}">
+            class="{{ request()->is('viewAll-table') || request()->is('reviews') || request()->is('approvals') || request()->is('location') || request()->is('approver') || request()->is('job-eval*')  ? 'current' : '' }}">
             <a href="#" style="font-size: 18px;">
                 <i data-feather="check-circle" style="width: 18px; height: 18px;"></i>
                 HSE Management
@@ -50,6 +42,16 @@
                 <li><a href="{{ route('viewAll.table') }}" class="{{ request()->is('viewAll-table') ? 'current' : '' }}"><i
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All Work Permit</a>
                 </li>
+                @endcan
+                @can('review form hse')
+                <li><a href="{{ route('review.table') }}"
+                    class="{{ request()->is('reviews') ? 'current' : '' }}"><i class="icon-Commit"><span
+                    class="path1"></span><span class="path2"></span></i>Reviews</a></li>
+                @endcan
+                @can('approve form hse')
+                <li><a href="{{ route('approval.table') }}" class="{{ request()->is('approvals') ? 'current' : '' }}"><i
+                    class="icon-Commit"><span class="path1"></span><span
+                    class="path2"></span></i>Approvals</a></li>
                 @endcan
                 @can('edit location hse')
                 <li><a href="{{ route('location.hse') }}" class="{{ request()->is('location') ? 'current' : '' }}"><i

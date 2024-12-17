@@ -36017,9 +36017,9 @@ th.fc-day-header {
   left: 40px;
 }
 
-.apexcharts-canvas {
+/* .apexcharts-canvas {
   margin: 0 auto;
-}
+} */
 
 .sticky-toolbar {
   width: 50px;
@@ -36396,13 +36396,13 @@ th.fc-day-header {
   line-height: 30px;
 }
 
-.apexcharts-datalabels-group text[dominant-baseline="auto"]:first-child {
+/* .apexcharts-datalabels-group text[dominant-baseline="auto"]:first-child {
   dominant-baseline: central;
-}
+} */
 
-.apexcharts-datalabels-group text[dominant-baseline="auto"]:nth-child(2) {
+/* .apexcharts-datalabels-group text[dominant-baseline="auto"]:nth-child(2) {
   dominant-baseline: text-after-edge;
-}
+} */
 
 .gaung-ch {
   min-height: 220px;
@@ -36860,21 +36860,21 @@ th.fc-day-header {
   padding: 20px 20px 10px;
 }
 
-.box[class*=bg] .apexcharts-canvas text {
+/* .box[class*=bg] .apexcharts-canvas text {
   fill: #ffffff !important;
-}
+} */
 
-.box[class*=bg] .apexcharts-canvas g line [stroke="#e0e0e0"] {
+/* .box[class*=bg] .apexcharts-canvas g line [stroke="#e0e0e0"] {
   stroke: #ffffff !important;
-}
+} */
 
-.apexcharts-canvas text {
+/* .apexcharts-canvas text {
   fill: #b6b6c4 !important;
-}
+} */
 
-.apexcharts-canvas g line [stroke="#e0e0e0"] {
+/* .apexcharts-canvas g line [stroke="#e0e0e0"] {
   stroke: #f0f3f6 !important;
-}
+} */
 
 .irs-from,
 .irs-to,
@@ -46383,11 +46383,11 @@ button.btn.dropdown-toggle:after {
   flex-grow: 1;
 }
 
-.apex-charts text {
+/* .apex-charts text {
   font-family: "Poppins", sans-serif;
   fill: #7f839a;
   font-weight: 500;
-}
+} */
 
 .list-group-item {
   padding: 0.5rem 1.5rem;

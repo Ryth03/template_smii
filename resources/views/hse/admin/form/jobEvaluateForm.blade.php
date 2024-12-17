@@ -63,7 +63,7 @@
             </li>
             @endforeach
         </ol>
-    <button class="btn btn-primary btn-block rounded-md text-white"
+    <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
     type="submit">Submit</button>
 </form>
 </x-app-layout>

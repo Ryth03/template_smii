@@ -82,10 +82,10 @@ class HSEFormController extends Controller
             ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
             ->where('start_date', '<=', $today)
             ->where('end_date', '>=', $today)
-            ->where('status', "Approved")
-            ->select('forms.id as id', 'project_executors.location as location', 'project_executors.start_date as start_date', 'project_executors.end_date as end_date')
+            ->where('status', "Finished")
+            ->select('forms.id as id', 'project_executors.location as location', 'project_executors.start_date as start_date', 'project_executors.end_date as end_date', 'status')
             ->get();
-            // dd($extendValue);
+            // dd($extendValue, $today);
 
             return view('hse.guest.dashboard', compact('forms','extendValue'));
         }
