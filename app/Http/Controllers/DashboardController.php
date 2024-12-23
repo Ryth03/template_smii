@@ -12,11 +12,13 @@ use App\Models\HSE\approvalDetail;
 use App\Models\HSE\approver;
 use App\Models\HSE\hseLocation;   
 use App\Models\HSE\uploadFile;
+use App\Models\HSE\extendedFormLog;  
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        confirmDelete();
         return view('dashboard');
     }
 
@@ -54,7 +56,6 @@ class DashboardController extends Controller
             ->whereRaw('LOWER(status) = ?', ['in review'])
             ->orderBy('forms.created_at','ASC')
             ->select("company_department", "status as extra")
-            ->limit(10)
             ->get();
         }
         elseif($category === 'approvalTable'){
@@ -110,11 +111,28 @@ class DashboardController extends Controller
             }
         }
         elseif($category === 'evaluationTable'){
-            $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+            
+            $user = Auth::user();
+            $forms= Form::select("company_department", "forms.status as extra")
+            ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+            ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
             ->whereRaw('LOWER(status) = ?', ['in evaluation'])
-            ->orderBy('forms.created_at','ASC')
-            ->select("company_department", "forms.status as extra")
-            ->limit(10)
+            ->orderBy('forms.created_at', 'asc');
+
+            if($user->hasRole("hse")){
+                $forms = $forms->whereNull('hse_rating')->get();
+            }else if($user->hasRole("engineering manager")){
+                $forms = $forms->whereNull('engineering_rating')->get();
+            }else{
+                return redirect()->route('dashboard');
+            }
+        
+        }elseif($category === 'overdueTable'){
+            $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+            ->where('end_date', '<', $today)
+            ->whereRaw('LOWER(status) = ?', ['approved'])
+            ->orderBy('start_date','ASC')
+            ->select("company_department", DB::raw("'Overdue' as extra"))
             ->get();
         }
         
@@ -187,5 +205,53 @@ class DashboardController extends Controller
             'files' => $files,
             'hasFileList' => $hasFileList
         ]);
+    }
+
+    public function getDashboardUser(Request $request){
+        $user = Auth::user();
+        $forms;
+        if($user){
+            if ($user->hasRole('hse') || $user->hasRole('engineering manager')) {
+                $forms = Form::select('forms.id as id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"))
+                ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+                ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
+                ->groupBy('company_department', 'location', 'forms.status', 'forms.id', 'start_date', 'end_date')
+                ->orderBy('forms.id', 'asc')
+                ->get();
+            }else{
+                $forms = Form::where('user_id', $user->id)
+                ->select('company_department','location','start_date', 'end_date','forms.id as id', 'forms.user_id as user_id', 'forms.created_at as created_at', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
+                ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+                ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
+                ->groupBy( 'forms.id','company_department','user_id','location','start_date', 'end_date','forms.created_at', 'forms.updated_at', 'forms.status')
+                ->orderBy('forms.id', 'desc')
+                ->get(); 
+            }
+            
+
+            return response()->json($forms);
+        }
+        return response()->json("No Data");
+    }
+
+    public function getExtendForms(Request $request){
+        
+        $today = Carbon::today();
+        $user = Auth::user();
+        if($user){
+            $extendedForms = extendedFormLog::where('status', 'In Approval')->pluck('form_id');
+            $forms = Form::where('user_id', $user->id)
+            ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+            ->where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->where('status', "Approved")
+            ->whereNotIn('forms.id', $extendedForms)
+            ->select('forms.id as id', 'project_executors.location as location', 'project_executors.start_date as start_date', 'project_executors.end_date as end_date', 'status')
+            ->get();
+
+            return response()->json($forms);
+        }
+
+        return response()->json('test');
     }
 }

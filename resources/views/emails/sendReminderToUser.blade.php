@@ -21,6 +21,10 @@
         }
         .link{
             text-decoration:none;
+            color: #B30D0D;
+        }
+        .link:hover{
+            color: #911C1C;
         }
     </style>
 </head>

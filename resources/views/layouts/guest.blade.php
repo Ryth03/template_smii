@@ -8,7 +8,7 @@
 
     <link rel="icon" href="{{ url('assets/images/sinarmeadow.png') }}">
 
-    <title>{{ 'INTRA SMII' }} - @yield('title')</title>
+    <title>{{ 'HSE' }} - @yield('title')</title>
 
 <!-- Vendors Style-->
 <link rel="stylesheet" href="{{ asset('assets') }}/src/css/vendors_css.css">

@@ -25,7 +25,6 @@ class sendToApprover extends Mailable
     }
 
     public function build(){
-
         return $this->view('emails.sendToApprover')
                     ->subject("A new form needs your ".($this->form->status === "In Review" ? 'review' : 'approval'))
                     ->with([

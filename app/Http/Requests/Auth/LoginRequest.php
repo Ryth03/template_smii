@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'exists:users,email','min:10'],
+            'email-nik' => ['required', 'string', 'min:5'],
             'password' => ['required', 'string', 'min:8'],
         ];
     }
@@ -40,13 +40,29 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+        
+        if(strpos($this->input('email-nik'), '@') ){
+            if (! Auth::attempt([
+                    'email' => $this->input('email-nik'), // Ganti dengan nama input 'email-nik'
+                    'password' => $this->input('password')
+                ], $this->boolean('remember'))) {
+                RateLimiter::hit($this->throttleKey());
+    
+                throw ValidationException::withMessages([
+                    'email-nik' => trans('auth.failed'),
+                ]); 
+            }
+        }else{
+            if (! Auth::attempt([
+                    'nik' => $this->input('email-nik'), // Ganti dengan nama input 'email-nik'
+                    'password' => $this->input('password')
+                ], $this->boolean('remember'))) {
+                RateLimiter::hit($this->throttleKey());
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
+                throw ValidationException::withMessages([
+                    'email-nik' => trans('auth.failed'),
+                ]); 
+            }
         }
 
         RateLimiter::clear($this->throttleKey());

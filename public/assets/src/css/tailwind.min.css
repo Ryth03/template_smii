@@ -5178,6 +5178,11 @@ input:checked+.toggle-bg {
     color: rgb(194 120 3/var(--tw-text-opacity))
 }
 
+.text-yellow-600 {
+    --tw-text-opacity: 1;
+    color: rgb(202 138 4 / var(--tw-text-opacity))
+}
+
 .text-yellow-700 {
     --tw-text-opacity: 1;
     color: rgb(142 75 16/var(--tw-text-opacity))

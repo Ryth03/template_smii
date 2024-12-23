@@ -1,301 +1,206 @@
-
 @push('css')
 <style>
-    .table-striped thead th:nth-child(1) {
-        color: #28a745;
-    }
-    .table-striped thead th:nth-child(2) {
-        color: #007bff;
-    }
-    .table-striped thead th:nth-child(3) {
-        color:#FF8C00;
-    }
-
-    .table-striped thead th{
-        background-color: #f1e6d2;
-    }
-    .dark .table-striped thead th{
-        background-color: #3f2177;
-    } 
-
-
-    /* Custom Scroll saat light mode */
-    .scrollable-content::-webkit-scrollbar { /* Ukuran scrollbar*/
-        width: 7px;
-        height: 7px;
-    }
-    .scrollable-content::-webkit-scrollbar-track { /* Track scrollbar  */
-        background: white; /* Latar belakang  */
-        border-radius: 10px;
-    }
-    .scrollable-content::-webkit-scrollbar-thumb { /* Thumb scrollbar */
-        background: #0CC3AB; 
-        border-radius: 10px;
-    }
-    .scrollable-content::-webkit-scrollbar-thumb:hover { /* Thumb scrollbar saat hover */
-        background: #0DB5A0;
-    }
-
-    /* Custom Scroll saat light mode */
-    .dark .scrollable-content::-webkit-scrollbar { /* Ukuran scrollbar*/
-        width: 8px;
-        height: 8px;
-    }
-    .dark .scrollable-content::-webkit-scrollbar-track { /* Track scrollbar  */
-        background: inherit; /* Latar belakang  */
-        border: 1px solid #323B40;
-    }
-    .dark .scrollable-content::-webkit-scrollbar-thumb { /* Thumb scrollbar */
-        background: #0CC3AB; 
-    }
-    .dark .scrollable-content::-webkit-scrollbar-thumb:hover { /* Thumb scrollbar saat hover */
-        background: #0DB5A0;
+    table.dataTable thead .sorting:before, 
+    table.dataTable thead .sorting:after, 
+    table.dataTable thead .sorting_asc:before, 
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc:after  {
+        bottom: 0.5em !important; 
+        /* Menghapus margin-bottom */
+        /* padding-bottom: 0px; Menyesuaikan padding jika diperlukan */
     }
 </style>
 @endpush
 
-<div class="grid md:grid-cols-3">
-    @php 
-        $titles = ["Active Jobs", "Ending Soon", "Work Evaluation"]
-    @endphp
-    <!--  Leaderboard -->
-    <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">Active Jobs</h4>
-        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="activeTable" class="table table-striped w-full" style="position: relative;">
-                <thead style="position: sticky; top:0px">
-                    <tr>
-                        <th>No.</th>
-                        <th>Nama</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for($j = 0; $j<=5 ; $j++)
-                    <tr class="">
-                        <td>{{$j+1}}</td>
-                        <td>PT Sinar Meadow International Indonesia</td>
-                        <td>In Progress</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
-        </div>
+<div class="card mt-20 p-2">
+    @can('create form hse')
+    <div class="mx-2 my-4">
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn"
+            data-modal-target="createNewForm" data-modal-toggle="createNewForm">
+                Create New Form
+            </button>
     </div>
-
-    <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">Ending Soon</h4>
-        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="endingTable" class="table table-striped w-full" style="position: relative;">
-                <thead style="position: sticky; top:0px">
-                    <tr>
-                        <th>No.</th>
-                        <th>Nama</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    @for($j = 0; $j<=5 ; $j++)
-                    <tr class="">
-                        <td>{{$j+1}}</td>
-                        <td>PT Sinar Meadow International Indonesia</td>
-                        <td>In Progress</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
-        </div>
+    @endcan
+    <div class="mx-2 my-4">
+        <a href="{{ route('tutorial.hse')}}" style="text-decoration: underline;">Panduan pengisian form</a>
     </div>
-
-    <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">Work Evaluation</h4>
-        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="evaluationTable" class="table table-striped w-full" style="position: relative;">
-                <thead style="position: sticky; top:0px">
-                    <tr>
-                        <th>No.</th>
-                        <th>Nama</th>
-                        <th>Rating</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    @for($j = 0; $j<=5 ; $j++)
-                    <tr class="">
-                        <td>{{$j+1}}</td>
-                        <td>PT Sinar Meadow International Indonesia</td>
-                        <td>In Progress</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
-        </div>
+    <div class="table-responsive">
+        <table id="myTable" class=" w-full table table-bordered" style="width:100%;">
+        <thead>
+            <tr>
+                <th class="px-2 py-3">No.</th>
+                <th class="px-2 py-3">Status</th>
+                <th class="px-2 py-3">Action</th>
+                <th class="px-2 py-3">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        </table>
     </div>
 </div>
-<button class="btn bg-blue-300" onClick="getLeaderboardData('activeTable')">Table Kiri</button>
-<button class="btn bg-blue-300" onClick="getLeaderboardData('endingTable')">Table Tengah</button>
-<button class="btn bg-blue-300" onClick="getLeaderboardData('evaluationTable')">Table Kanan</button>
-<div>
-    <div class="card">
-        <div class="card-body">
-            <div class="flex justify-between">
-                <h4 class="card-title">Permit Form Bar Chart</h4>
-                <select id="yearFilterChart" class="form-select filter-select"
-                    aria-label="Filter by Year" onChange="getChartData()">
-                    <option value="" disabled>Select year</option>
-                    <!-- <option value="2023">2023</option> -->
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                </select>
+
+    {{-- Modal Terms --}}
+    <div id="createNewForm" tabindex="-1" aria-hidden="true"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-lg max-h-full" style="margin-top: 5%">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <!-- Modal header -->
+                <div class="flex flex-col p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Create Form
+                        </h3>
+                        <button type="button"
+                            class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            data-modal-hide="createNewForm">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewbox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Modal body -->
+                <div class="p-4 md:p-5 flex flex-col items-center text-xl">
+                    <div class="form-group flex flex-col w-full">
+                        <label class="text-white">Create New Form</label>
+                        <a href="{{route('permit.form')}}" class="self-center">
+                            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
+                                Buat form baru
+                            </button>
+                        </a>
+                    </div>
+                    <div class="form-group w-full">
+                        <label class="text-white">Extend Form</label>
+                        <form action="{{route('extend.form')}}" method="POST" class="flex flex-col">
+                            @csrf
+                            <select name="value" id="value" class="form-select rounded-lg" required>
+                            </select>
+                            <button  class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn self-center">
+                                Perpanjang formulir
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div id="stackedBarChart"></div>
         </div>
     </div>
-</div>
-    
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3/dist/apexcharts.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        
-    });
     window.addEventListener('load', () => {
-        // getChartData();
+        getExtendForms();
     });
+    $(document).ready(function() {
+        $('#myTable').DataTable({
+            processing: true,
+            ajax: {
+                url: '{{ route("user.dashboard.data") }}', // Endpoint to fetch data
+                type: 'GET',
+                dataSrc: function (response) {
+                    return response;
+                }
+            },
+            columns: [
+                { data: null, render: function(data, type, row, meta) { return meta.row + 1; } },
+                { data: 'status', name: 'status', render: function(data, type, row) {
+                        let statusClass = '';
+                        let statusText = data;
+                        
+                        if (data === 'Approved') {
+                            statusClass = 'text-green-400';
+                        } else if (data === 'Rejected') {
+                            statusClass = 'text-red-400';
+                        } else if (data === 'In Review') {
+                            statusClass = 'text-yellow-400';
+                        } else if (data === 'In Approval') {
+                            statusClass = 'text-blue-400';
+                        } else if (data === 'In Evaluation') {
+                            statusClass = 'text-yellow-600';
+                        }else if (data === 'Finished') {
+                            statusClass = 'text-green-600';
+                        } else {
+                            statusClass = 'text-gray-400';
+                        }
 
-    // Inisialisasi grafik
-    var months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    var stackedBarOptions = {
-        title: {
-            text: 'Permit Form',
-        },
-        series: [
-            {
-                name: 'Created',
-                type: 'bar',
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [320, 332, 301, 334, 390, 330, 320]
-            },
-            {
-                name: 'Finished',
-                type: 'bar',
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [120, 132, 101, 134, 90, 230, 210]
-            }
-        ],
-        chart: {
-            type: 'bar',
-            height: 350,
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false, // Ubah dari true ke false
-            },
-        },
-        dataLabels: {
-          enabled: true,
-          offsetX: -6,
-          style: {
-            fontSize: '12px',
-            colors: ['#fff']
-          }
-        },
-        xaxis: {
-            type: 'category',
-            categories: months
-        },
-        legend: {
-            position: 'right',
-            offsetY: 40
-        },
-        fill: {
-            opacity: 1
-        },
-        responsive: [{
-            breakpoint: 768,
-            options: {
-                plotOptions: {
-                    bar: {
-                        horizontal: false // Pastikan ini juga diatur ke false
+                        if (data === 'In Approval') {
+                            return `<div class="${statusClass}">${statusText} ${row.count}/3</div>`;
+                        } else {
+                            return `<div class="${statusClass}">${statusText}</div>`;
+                        }
                     }
                 },
-                legend: {
-                    position: 'bottom',
-                    offsetY: 0
-                }
-            }
-        }]
-    };
-    
-    var stackedBarChart = new ApexCharts(document.querySelector("#stackedBarChart"), stackedBarOptions);
-    stackedBarChart.render();
-
-    function getLeaderboardData(id){
-        $.ajax({
-            url: '{{ route('leaderboard.dashboard.hse') }}', // Route untuk mencari ide
-            type: 'GET',
-            data: { 
-                category: id
-            },
-            success: function(response) {
-                console.log(response);
-                const table = document.querySelector(`#${id} tbody`);
-                table.innerHTML = '';
-                response.forEach(function(data, index){
-                    table.innerHTML += `
-                            <td>${index+1}</td>
-                            <td>${data.company_department}</td>
-                            <td>${data.extra}</td>
+                { data: null, name: 'view', render: function(data, type, row, meta) {
+                        if(row.status === "Draft"){
+                            return `
+                            <form action="{{ route('view.form.hse') }}" method="POST" style="display: inline;">
+                                @csrf
+                                <input type="hidden" name="value" value="${row.id}">
+                                <button type="submit" class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 btn">
+                                    View Form
+                                </button>
+                            </form>
+                            `;
+                        }
                         
-                    `;
-                })
+                        return ``;
+                    }
+                },
+                { data: null, name: 'delete', render: function(data, type, row, meta) {
+                        if(row.status === "Draft"){
+                            return `
+                            <form id="deleteForm${row.id}" action="{{ route('delete.form.hse') }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <input type="hidden" name="value" value="${row.id}">
+                                <button type="button" class="text-red-600" onClick="confirmDelete(${row.id})">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                </button>
+                            </form>
+                            `;
+                        }
+                        return ``;
+                    }
+                }
+            ]
+        });
+    });
+
+    function confirmDelete(id){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('deleteForm' + id).submit();
             }
         });
     }
 
-    function getChartData(){
-        const yearSelect = document.getElementById('yearFilterChart').value;
-        console.log("Year: ",yearSelect);
+    function getExtendForms(){
         $.ajax({
-            url: '{{ route('chart.dashboard.hse') }}', // Route untuk mencari ide
+            url: '{{ route('user.dashboard.extends') }}', // Route untuk mencari ide
             type: 'GET',
-            data: { 
-                year: yearSelect
-            },
             success: function(response) {
-                console.log(response);
-                stackedBarChart.updateOptions({
-                    xaxis: {
-                        type: 'year',
-                        categories: response.months
-                    },
-                    series: [
-                        {
-                            name: 'Created',
-                            type: 'bar',
-                            emphasis: {
-                                focus: 'series'
-                            },
-                            data: response.formsCreated
-                        },
-                        {
-                            name: 'Finished',
-                            type: 'bar',
-                            emphasis: {
-                                focus: 'series'
-                            },
-                            data: response.formsFinished
-                        }
-                    ]
+                var select = document.getElementById('value');
+                select.innerHTML+=`<option value="" selected disabled>Pilih Lokasi</option>`;
+                response.forEach(function(data, index){
+                    select.innerHTML += `
+                        <option value="${data.id}">${data.location} (${data.start_date} - ${data.end_date})</option>
+                    `;
                 });
             }
         });
     }
-
 </script>
 @endpush

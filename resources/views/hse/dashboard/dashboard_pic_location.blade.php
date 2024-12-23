@@ -62,12 +62,12 @@
 </style>
 @endpush
 
-<div class="grid sm:grid-cols-2 ">
+<div class="grid md:grid-cols-3 sm:grid-cols-2 ">
     <!--  Leaderboard -->
     <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center" data-toggle="tooltip" title="Hooray!" placement="top">  
+        <h4 class="card-title flex justify-center">  
         @if (auth()->user()->can('view all form hse'))
-            <a class="underline" href="{{ route('hse.dashboard') }}">
+            <a class="underline" href="{{ route('viewAll.table') }}">
                 Active
             </a>
         @else
@@ -123,43 +123,6 @@
         </div>
     </div>
 
-</div>
-
-<div class="grid lg:grid-cols-4 sm:grid-cols-2 ">
-    
-    <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">
-            @if (auth()->user()->can('review form hse'))
-                <a class="underline" href="{{ route('review.table') }}">
-                    Review
-                </a>
-            @else
-                Review
-            @endif
-        </h4>
-        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="reviewTable" class="table table-striped w-full" style="position: relative;">
-                <thead style="position: sticky; top:0px">
-                    <tr>
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    @for($j = 0; $j<=5 ; $j++)
-                    <tr class="">
-                        <td>{{$j+1}}</td>
-                        <td>PT Sinar Meadow International Indonesia</td>
-                        <td>In Progress</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
-        </div>
-    </div>
-
     <div class="card card-body mx-2" style="border-radius: 10px;">
         <h4 class="card-title flex justify-center">
             @if (auth()->user()->can('approve form hse'))
@@ -172,65 +135,6 @@
         </h4>
         <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
             <table id="approvalTable" class="table table-striped w-full" style="position: relative;">
-                <thead style="position: sticky; top:0px">
-                    <tr>
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    @for($j = 0; $j<=5 ; $j++)
-                    <tr class="">
-                        <td>{{$j+1}}</td>
-                        <td>PT Sinar Meadow International Indonesia</td>
-                        <td>In Progress</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">
-            <a class="underline" href="{{ route('hse.dashboard') }}">
-                Need Evaluation
-            </a>
-        </h4>
-        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="evaluationTable" class="table table-striped w-full" style="position: relative;">
-                <thead style="position: sticky; top:0px">
-                    <tr>
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    @for($j = 0; $j<=5 ; $j++)
-                    <tr class="">
-                        <td>{{$j+1}}</td>
-                        <td>PT Sinar Meadow International Indonesia</td>
-                        <td>In Progress</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    
-    <div class="card card-body mx-2" style="border-radius: 10px;">
-        <h4 class="card-title flex justify-center">
-            <a class="underline" href="{{ route('hse.dashboard') }}">
-                Overdue
-            </a>
-        </h4>
-        <div class="table-responsive scrollable-content" style="max-height: 300px; overflow-y: auto;">
-            <table id="overdueTable" class="table table-striped w-full" style="position: relative;">
                 <thead style="position: sticky; top:0px">
                     <tr>
                         <th>No.</th>
@@ -275,13 +179,13 @@
 @push('scripts')
  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/4.2.0/apexcharts.min.js"></script> -->
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        
+    });
     window.addEventListener('load', () => {
         getLeaderboardData('activeTable');
-        getLeaderboardData('reviewTable');
-        getLeaderboardData('approvalTable');
-        getLeaderboardData('evaluationTable');
         getLeaderboardData('ratingTable');
-        getLeaderboardData('overdueTable');
+        getLeaderboardData('approvalTable');
         getChartData();
     });
 
@@ -390,6 +294,7 @@
                 else{
                     table.innerHTML += `<td class="text-center" colspan="3">No Data Available</td>`;
                 }
+                
             }
         });
     }

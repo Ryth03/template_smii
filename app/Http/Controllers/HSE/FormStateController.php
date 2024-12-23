@@ -16,7 +16,14 @@ class FormStateController extends Controller
         $form = Form::find($request->input('formId'));
         $form->status = "In Evaluation";
         $form->save();
+        jobEvaluation::updateOrCreate(
+            ['form_id' => $form->id],
+            [
+                'hse_rating' => null,
+                'engineering_rating' => null,
+                'total_rating' => null
+            ]
+        );
         return redirect()->route('viewAll.table');
-        // dd($request, $form);
     }
 }

@@ -31,7 +31,6 @@ class sendToUserJob implements ShouldQueue
 
     public function handle(): void
     {
-        return;
         Mail::to($this->email)->send(new sendToUser($this->user, $this->form, $this->detail, $this->comment));
     }
 }

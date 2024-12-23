@@ -18,8 +18,8 @@ class FormSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         // Menambahkan form secara banyak
-        for ($i = 1; $i <= 150; $i++) {
-            $createdDate = $faker->dateTimeBetween('2024-11-01', '2025-01-31');
+        for ($i = 1; $i <= 200; $i++) {
+            $createdDate = $faker->dateTimeBetween('2024-01-01', '2025-12-31');
             $updatedDate = (clone $createdDate);
             DB::table('forms')->updateOrInsert(
             ['id' => $i],
@@ -42,7 +42,7 @@ class FormSeeder extends Seeder
             ['form_id' => $form->id], // Kondisi pencarian (form_id)
             [
                 'company_department' => $faker->company, // Acak nama perusahaan/departemen
-                'hp_number' => $faker->phoneNumber, // Nomor telepon acak
+                'hp_number' => $faker->numerify('08###########'), // Nomor telepon acak
                 'start_date' => Carbon::parse($form->created_at)->addDays(7), // Tanggal mulai
                 'end_date' => Carbon::parse($form->created_at)->addDays(14), // Tanggal selesai
                 'supervisor' => $faker->name, // Nama supervisor acak
@@ -57,17 +57,29 @@ class FormSeeder extends Seeder
         }
 
         foreach($forms as $form){
-            $rating1 = $faker->randomFloat(1, 0, 5);
-            $rating2 = $faker->randomFloat(1, 0, 5);
-            DB::table('job_evaluations')->updateOrInsert(
-            ['form_id' => $form->id], 
-            [
-                'hse_rating' => $rating1, // Angka acak dengan 2 desimal antara 0 dan 10
-                'engineering_rating' => $rating2, // Angka acak dengan 2 desimal antara 0 dan 10
-                'total_rating' => ($rating1 + $rating2)/2,
-                'created_at' => now(), // Timestamp untuk created_at
-                'updated_at' => now(), // Timestamp untuk updated_at
-            ]);
+            if($form->status === 'In Evaluation'){
+                DB::table('job_evaluations')->updateOrInsert(
+                ['form_id' => $form->id], 
+                [
+                    'hse_rating' => null,
+                    'engineering_rating' => null,
+                    'total_rating' => null,
+                    'created_at' => now(), // Timestamp untuk created_at
+                    'updated_at' => now(), // Timestamp untuk updated_at
+                ]);
+            }else if($form->status === 'Finished'){
+                $rating1 = $faker->randomFloat(1, 0, 5);
+                $rating2 = $faker->randomFloat(1, 0, 5);
+                DB::table('job_evaluations')->updateOrInsert(
+                ['form_id' => $form->id], 
+                [
+                    'hse_rating' => $rating1, // Angka acak dengan 2 desimal antara 0 dan 10
+                    'engineering_rating' => $rating2, // Angka acak dengan 2 desimal antara 0 dan 10
+                    'total_rating' => ($rating1 + $rating2)/2,
+                    'created_at' => now(), // Timestamp untuk created_at
+                    'updated_at' => now(), // Timestamp untuk updated_at
+                ]);
+            }
         }
         
     }

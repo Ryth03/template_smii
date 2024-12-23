@@ -139,6 +139,8 @@
                                 <li>Melaporkan kepada pihak PT Sinar Meadow International Indonesia jika terjadi kecelakaan kerja.</li>
                                 <li>Dilarang meninggalkan area kerja dalam kondisi kotor dan berantakan.</li>
                                 <li>Menjaga kebersihan di lingkungan PT Sinar Meadow International Indonesia, dengan membuang sampah di tempat sampah yang telah disediakan.</li>
+                                <li>Melampirkan SIO asli yang terdaftar dalam aplikasi Teman K3.</li>
+                                <li>Melampirkan SILO yang masih berlaku.</li>
                             </ol>
 
                             <label for="department_name" class="block mt-3 mb-2 font-medium ">

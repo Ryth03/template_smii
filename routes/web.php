@@ -70,8 +70,7 @@ use App\Http\Controllers\HSE\Dashboard\DashboardHSE;
 */
 
 Route::get('/', function () {
-    SEOMeta::setTitle('Intra SMII - Dashboard');
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::middleware('auth')->group(function () {
@@ -84,6 +83,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/hse/leaderboard', [DashboardController::class, 'getLeaderboardData'])->name('leaderboard.dashboard.hse');
     Route::get('/dashboard/hse/chart', [DashboardController::class, 'getChartData'])->name('chart.dashboard.hse');
     Route::get('/dashboard/security', [DashboardController::class, 'getSecurityData'])->name('security.dashboard.data');
+    Route::get('/dashboard/user/data', [DashboardController::class, 'getDashboardUser'])->name('user.dashboard.data');
+    Route::get('/dashboard/user/extends', [DashboardController::class, 'getExtendForms'])->name('user.dashboard.extends');
+    Route::get('/dashboard-hse', function(){
+        confirmDelete();
+        return view('hse.guest.dashboard');
+    })->name('hse.dashboard');
 
     // Admin HSE
     Route::get('/reviews', [HSEController::class, 'reviewTable'])->name('review.table');
@@ -96,7 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::POST('/send-reminder', [HSEController::class, 'sendReminderToUser'])->name('reminder.send');
     Route::POST('/finished-work', [FormStateController::class, 'finishedWork'])->name('finished.work');
     Route::POST('/job-evaluate-report-form', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
-    Route::POST('/job-evaluate-form', [JobEvaluationController::class, 'evaluateJob'])->name('jobEvaluate.form');
+    Route::POST('/job-evaluate-form', [JobEvaluationController::class, 'evaluateForm'])->name('jobEvaluate.form');
     Route::POST('/job-evaluate', [JobEvaluationController::class, 'evaluate'])->name('evaluate');
     Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
     Route::POST('/approve', [HSEController::class, 'approvalForm'])->name('approval.form');
@@ -107,7 +112,6 @@ Route::middleware('auth')->group(function () {
     // USER HSE
     Route::get('/hse', [HSEFormController::class, 'viewNewForm'])->name('permit.form');
     Route::post('/extend-form-hse', [HSEFormController::class, 'viewExtendForm'])->name('extend.form');
-    Route::get('/dashboard-hse',  [HSEFormController::class, 'viewList'])->name('hse.dashboard');
     Route::post('/insert-form-hse', [HSEFormController::class, 'insertNewForm'])->name('hse.form.insert');
     Route::post('/insert-extend-form-hse', [HSEFormController::class, 'insertExtendForm'])->name('hse.form.extend');
     Route::post('/view-form-hse', [HSEFormController::class, 'viewDraftForm'])->name('view.form.hse');

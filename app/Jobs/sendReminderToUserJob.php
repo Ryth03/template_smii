@@ -29,11 +29,6 @@ class sendReminderToUserJob implements ShouldQueue
 
     public function handle(): void
     {
-        // dd($this->email,
-        // $this->user,
-        // $this->form,
-        // $this->detail);
-        // return;
         Mail::to($this->email)->send(new sendReminderToUser($this->user, $this->form, $this->detail));
     }
 }

@@ -33,6 +33,8 @@
             <p>We are pleased to inform you that your work permit has been approved.</p>
         @elseif($form->status === "Rejected")
             <p>We regret to inform you that your work permit has been rejected.</p>
+        @elseif($form->status === "Extended")
+            <p>We are pleased to inform you that your request has been approved.</p>
         @endif
         <table class="table">
             <tbody>
@@ -73,6 +75,8 @@
                         <td class="text-red">{{ $form->status }}</td>
                     @elseif($form->status ==='Approved')
                         <td class="text-green">{{ $form->status }}</td>
+                    @elseif($form->status ==='Extended')
+                        <td class="text-green">Approved</td>
                     @endif
                 </tr>
                 @if($form->status === 'Rejected')
@@ -86,7 +90,7 @@
         </table>
         @if($form->status === 'Rejected')
             <p>We appreciate your understanding and look forward to your revised submission.</p>
-        @elseif($form->status === 'Approved')
+        @elseif($form->status === 'Approved' || $form->status === 'Extended')
             <p>Thank you for your cooperation, and we wish you a safe and successful completion of your tasks.</p>
         @endif
         <br>

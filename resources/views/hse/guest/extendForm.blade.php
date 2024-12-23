@@ -1,9 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard HSE') }}
-        </h2>
-    </x-slot>
+    @section('title')
+        Extend Form
+    @endsection
     @push('css')
     <style>
         [type="checkbox"]+label, [type="radio"]:not(:checked)+label, [type="radio"]:checked+label, [type="date"] {
@@ -113,42 +111,42 @@
                         @foreach($workTitle as $title)
                             @if($title == "No HP")
                             <div class="form-group flex flex-col">
-                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="number" id="{{$title}}" name="{{$title}}" placeholder="Input data" value="{{$form->hp_number}}" class="form-control rounded-lg w-3/4" required disabled>
+                                <label class="block text-md font-medium">{{$title}}</label>
+                                <input type="number" placeholder="Input data" value="{{$form->hp_number}}" class="form-control rounded-lg w-3/4 text-gray-500" required disabled>
                             </div>
                             @elseif($title == "Tanggal Mulai Pelaksanaan")
                             <div class="form-group flex flex-col">
-                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="date" id="{{$title}}" name="{{$title}}" value="{{$form->start_date}}" class="form-control flex rounded-lg w-3/4"  onchange="ubahTanggal()" required>
+                                <label class="block text-md font-medium">{{$title}}</label>
+                                <input type="date" value="{{$form->start_date}}" class="form-control flex rounded-lg w-3/4 text-gray-500"  readonly required>
 
                             </div>
                             @elseif($title == "Tanggal Berakhir Pelaksanaan")
                             <div class="form-group flex flex-col">
-                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="date" id="{{$title}}" name="{{$title}}" value="{{$form->end_date}}" class="form-control flex rounded-lg w-3/4" readonly required>
+                                <label class="block text-md font-medium">{{$title}}</label>
+                                <input type="date" value="{{$form->end_date}}" class="form-control flex rounded-lg w-3/4 text-gray-500" readonly required>
                             </div>
                             @elseif($title == "Jam Mulai Kerja" || $title == "Jam Berakhir Kerja")
                             <div class="form-group flex flex-col">
-                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="time" id="{{$title}}" name="{{$title}}" value="{{$title == 'Jam Mulai Kerja' ? $form->start_time : $form->end_time}}" class="form-control flex rounded-lg w-3/4" required>                                    
+                                <label class="block text-md font-medium">{{$title}}</label>
+                                <input type="time" value="{{$title == 'Jam Mulai Kerja' ? $form->start_time : $form->end_time}}" class="form-control flex rounded-lg w-3/4 text-gray-500" readonly required>                                    
                             </div>
                             @elseif($title == "Penjelasan Pekerjaan")
                             <div class="form-group flex flex-col md:col-span-3">
-                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <textarea name="{{$title}}" id="{{$title}}" class="form-control w-3/4" style="resize: none;" rows="4" placeholder="Penjelasaan..." required disabled>{{$form->work_description}}</textarea>
+                                <label class="block text-md font-medium">{{$title}}</label>
+                                <textarea class="form-control w-3/4 text-gray-500" style="resize: none;" rows="4" placeholder="Penjelasaan..." required disabled>{{$form->work_description}}</textarea>
                             </div>
                             @elseif($title == "Jumlah Tenaga Kerja")
                             <div class="form-group flex flex-col">
-                                <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
+                                <label class="block text-md font-medium">{{$title}}</label>
                                 <div class="flex w-3/4 items-center">
-                                    <input type="number" id="{{$title}}" name="{{$title}}" value="{{$form->workers_count}}" class="form-control rounded-lg w-3/4" placeholder="Input data" required disabled>
-                                    <label for="{{$title}}" class="p-2">orang</label>
+                                    <input type="number" value="{{$form->workers_count}}" class="form-control rounded-lg w-3/4 text-gray-500" placeholder="Input data" required disabled>
+                                    <label class="p-2">orang</label>
                                 </div>
                             </div>
                             @elseif($title == "Lokasi Pekerjaan")
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <select name="{{$title}}" id="{{$title}}" class="form-select rounded-lg w-3/4" required disabled>
+                                <select name="{{$title}}" id="{{$title}}" class="form-select rounded-lg w-3/4 text-gray-500" required disabled>
                                     <option value="" disabled>Pilih Lokasi</option>
                                     @foreach($locations as $location)
                                     <option value="{{$location}}" class="w-3/4"
@@ -163,10 +161,55 @@
                             @else
                             <div class="form-group flex flex-col">
                                 <label for="{{$title}}" class="block text-md font-medium">{{$title}}</label>
-                                <input type="text" id="{{$title}}" name="{{$title}}" value="{{$title == 'Nama Perusahaan / Departemen' ? $form->company_department : ($title == 'Penanggung Jawab Lapangan' ? $form->supervisor : '')}}" class="form-control rounded-lg w-3/4" placeholder="Input data" required disabled>
+                                <input type="text" value="{{$title == 'Nama Perusahaan / Departemen' ? $form->company_department : ($title == 'Penanggung Jawab Lapangan' ? $form->supervisor : '')}}" class="form-control rounded-lg w-3/4 text-gray-500" placeholder="Input data" required disabled>
                             </div>
                             @endif
                         @endforeach
+                        <div class="form-group flex flex-col">
+                            <label for="Tanggal Mulai Pelaksanaan" class="block text-md font-medium">Tanggal Mulai Pelaksanaan Baru</label>
+                            <input type="date" id="Tanggal Mulai Pelaksanaan" name="Tanggal Mulai Pelaksanaan" class="form-control flex rounded-lg w-3/4" onchange="ubahTanggal()" readonly required>
+                        </div>
+                        <div class="form-group flex flex-col">
+                            <label class="block text-md font-medium">Tanggal Berakhir Pelaksanaan Baru</label>
+                            <input type="date" id="Tanggal Berakhir Pelaksanaan" name="Tanggal Berakhir Pelaksanaan" class="form-control flex rounded-lg w-3/4" readonly required>
+                        </div>
+                        
+                        <div class="flex" style="justify-content: space-around;">
+                            <div class="form-check flex flex-col p-1">
+                                <input type="file" name="uploadSIO[]" id="SIO" class="form-control w-3/4 hidden" onchange="fileChange(this,'SIO')" multiple/>
+                                <label for="SIO" style="cursor: pointer;">
+                                    Input file SIO
+                                    <i class="fa-solid fa-file-arrow-up"></i>
+                                </label>
+                            </div>
+                            <div class="form-check flex flex-col p-1" >
+                                <input type="file" name="uploadSILO[]" id="SILO" class="form-control w-3/4 hidden" onchange="fileChange(this,'SILO')" multiple/>
+                                <label for="SILO" style="cursor: pointer;">
+                                    Input file SILO
+                                    <i class="fa-solid fa-file-arrow-up"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <table id="sioSiloTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tipe</th>
+                                        <th>Nama</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="sioFile" style="border-top: 1px solid black">
+                                        <th>Sio</th>
+                                        <td class="break-all whitespace-normal p-2"></td>
+                                    </tr>
+                                    <tr id="siloFile" style="border-top: 1px solid black">
+                                        <th>Silo</th>
+                                        <td class="break-all whitespace-normal p-2"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 
                 </div>
@@ -178,6 +221,16 @@
 
 @push('scripts')
 <script>
+    window.onload = function() {
+        var endDate = "<?php echo $form->end_date; ?>";
+        var date = new Date(endDate);
+        date.setDate(date.getDate() + 1); // Menambahkan 1 hari
+        
+        // Format tanggal baru (YYYY-MM-DD) untuk disetel ke input
+        endDate = date.toISOString().split('T')[0];  // Mengambil hanya bagian YYYY-MM-DD
+        document.getElementById("Tanggal Mulai Pelaksanaan").value = endDate; // Asign date ke element
+        ubahTanggal(); // Jalankan untuk mengubah tanggal end_date
+    };
 var form = $(".validation-hse").show();
 
 function ubahTanggal() {
@@ -206,6 +259,38 @@ function ubahTanggal() {
         document.getElementById("Tanggal Berakhir Pelaksanaan").value = nextDate.toISOString().split('T')[0];
     } else {
         document.getElementById('Tanggal Berakhir Pelaksanaan').value = '';
+    }
+};
+
+function fileChange(input, tipe) {
+    const files = input.files;
+    const sioFile = document.getElementById('sioFile');
+    const siloFile = document.getElementById('siloFile');
+    var text = "";
+    var count = 1;
+    for (const file of files) {
+        if(count==1){
+            text += `<li>${file.name}</li>`;
+        }
+        else{
+            text += `<li>${file.name}</li>`;
+        }
+        count++;
+    }
+    if(tipe=="SIO"){
+        sioFile.innerHTML=`
+            <th>Sio</th>
+            <td class="break-all whitespace-normal p-2">
+                ${text}
+            </td>
+        `;
+    }else if(tipe=="SILO"){
+        siloFile.innerHTML=`
+            <th>Silo</th>
+            <td class="break-all whitespace-normal p-2">
+                ${text}
+            </td>
+        `;
     }
 };
 

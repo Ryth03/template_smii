@@ -1,9 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('List Forms HSE') }}
-        </h2>
-    </x-slot>
+    @section('title')
+        View All
+    @endsection
     @push('css')
     <style>
         table.dataTable thead .sorting:before, 
@@ -24,36 +22,38 @@
         </div>
     </div>
     <div class="box-body overflow-x-auto">
-        <table id="myTable" class="w-full table">
+        <table id="myTable" class="table table-striped" style="width:100%;">
             <thead>
                 <tr>
-                    <th class="px-2 py-3">No.</th>
-                    <th class="px-2 py-3">Supervisor</th>
+                    <th data-priority="1" class="px-2 py-3">Company / Department</th>
                     <th class="px-2 py-3">Location</th>
-                    <th class="px-2 py-3">Date Updated</th>
+                    <th class="px-2 py-3">Date</th>
                     <th class="px-2 py-3">Status</th>
+                    <th class="px-2 py-3">Action</th>
                 </tr>
             </thead>
             <tbody>
             @foreach ($forms as $index => $form)
                 <tr>
                     <td>
-                        {{ $index +1 }}
-                    </td><td>
-                        {{ $form->supervisor}}
+                        {{ $form->company_department}}
                     </td>
                     <td>
                         {{ $form->location }}
                     </td>
                     <td>
-                        {{ $form->updated_at }}
+                        {{ $form->start_date }} - {{ $form->end_date }}
                     </td>
                     <td>
-                        <div class="{{$form->status == 'Approved' ? 'text-green-400' : ($form->status == 'Rejected' ? 'text-red-400' : ($form->status == 'In Review' ? 'text-yellow-400' : ($form->status == 'In Approval' ? 'text-blue-400' : 'text-gray-400')))}} flex justify-between items-center">
+                        <span class="{{$form->status == 'Approved' ? 'text-green-400' : ($form->status == 'Rejected' ? 'text-red-400' : ($form->status == 'In Review' ? 'text-yellow-400' : ($form->status == 'In Approval' ? 'text-blue-400' : ($form->status == 'In Evaluation' ? 'text-yellow-600' : ($form->status == 'Finished' ? 'text-green-600' : 'text-gray-400')))))}}">
                             {{ $form->status }}
                             @if($form->status == "In Approval")
                                 {{ $form->count }}/3
                             @endif
+                        </span>
+                    </td>
+                    <td>
+                        @if(auth()->user()->hasRole('hse'))
                             @if($form->status == "Rejected")
                                 <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
                                 @csrf
@@ -71,7 +71,7 @@
                                     @csrf
                                         <input type="hidden" name="formId" value="{{$form->id}}">
                                         <button type="button" class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick="sendEmail(this)">
-                                            <div>Send Email Reminder</div>
+                                            <div>Send Reminder</div>
                                         </button>
                                     </form>
                                 @endif
@@ -79,7 +79,7 @@
                                 @csrf
                                     <input type="hidden" name="formId" value="{{$form->id}}">
                                     <button type="button" class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick="isWorkFinished(this)">
-                                        <div>Finished</div>
+                                        <div>Finish</div>
                                     </button>
                                 </form>
                             @elseif($form->status == "In Evaluation")
@@ -106,7 +106,7 @@
                                     </button>
                                 </form>
                             @endif
-                        </div>
+                        @endif
                     </td>
                 </tr>
             @endforeach
@@ -157,7 +157,7 @@
 
     $(document).ready(function() {
         $('#myTable').DataTable({
-           
+            responsive: true
         });
     });
 </script>

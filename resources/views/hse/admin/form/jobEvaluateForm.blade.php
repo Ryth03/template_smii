@@ -1,9 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Job Evaluate') }}
-        </h2>
-    </x-slot>
+    @section('title')
+        Evaluate Job
+    @endsection
     @push('css')
     <style>
         @media (min-width: 640px) {
@@ -18,7 +16,7 @@
     @endpush
 <form action="{{ route('evaluate')}}" id="form" method="POST">
 @csrf
-<input type="hidden" name="formId" value="{{$formId}}">
+<input type="hidden" name="formId" value="{{$form->id}}">
     <div>
         Perusahaan / Departemen : {{$form->company_department}}
     </div>
@@ -31,16 +29,6 @@
     <div>
         Penjelasan Pekerjaan : {{$form->work_description}}
     </div>
-
-    @php
-        $questions = [
-            "Kepatuhan penggunaan APD",
-            "Kepatuhan terhadap rambu yang dipasang di area",
-            "Peralatan kerja / perlengkapan kerja yang digunakan",
-            "Kesesuaian pekerjaan dengan JSA",
-            "Kedisiplinan dalam menjaga area pekerjaan tetap bersih"
-            ]
-    @endphp
 
         <ol class="pl-5 list-outside list-decimal space-y-4 my-10">
             @foreach($questions as $index => $question)

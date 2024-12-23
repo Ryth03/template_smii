@@ -13,7 +13,7 @@
     <link rel="manifest" href="{{ asset('/manifest.json') }}"> --}}
     <link rel="icon" href="{{ url('assets/images/sinarmeadow.png') }}">
 
-    <title>{{ 'INTRA SMII' }} - @yield('title')</title>
+    <title>{{ 'HSE' }} - @yield('title')</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

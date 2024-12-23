@@ -30,7 +30,7 @@
     <header class="flex p-10 items-center gap-4 relative">
         <img src="{{asset('assets/images/logo/logo.png')}}" alt="Gambar Sinar Meadow" class="h-auto" style="width:20%;">
         <div class="absolute w-full">
-            <p class="text-2xl text-center">Report Permit Form HSE</p>
+            <p class="text-2xl text-center">Rating Overview</p>
         </div>
     </header>
 
@@ -86,8 +86,6 @@
         </button>
     </div>
 
-
-    
 
 </body>
 </html>

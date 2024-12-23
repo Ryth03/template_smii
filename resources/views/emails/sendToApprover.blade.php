@@ -15,6 +15,10 @@
         }
         .link{
             text-decoration:none;
+            color: #B30D0D;
+        }
+        .link:hover{
+            color: #911C1C;
         }
     </style>
 </head>
@@ -32,7 +36,7 @@
                     Click here to review.
                 </a>
             </p>
-        @elseif($form->status === "In Approval")
+        @elseif($form->status === "In Approval" || $form->status === "In Approval (Extend)")
             <p>There is a Work Permit that requires your approval. 
                 <a href="{{ route('approval.table') }}" class="link">
                     Click here to approve.
@@ -80,7 +84,7 @@
         </table>
         @if($form->status === "In Review")
             <p>Kindly review it at your earliest convenience so we can proceed.</p>
-        @elseif($form->status === "In Approval")
+        @elseif($form->status === "In Approval" || $form->status === "In Approval (Extend)")
             <p>Kindly approve it at your earliest convenience so we can proceed.</p>
         @endif
         <p>Thank you for your attention.</p>

@@ -19,7 +19,7 @@
                 @can('view user dashboard hse')
                 <li><a href="{{ route('hse.dashboard') }}"
                     class="{{ request()->is('dashboard-hse') ? 'current' : '' }}"><i class="icon-Commit"><span
-                    class="path1"></span><span class="path2"></span></i>User Dashboard</a></li>
+                    class="path1"></span><span class="path2"></span></i>View Forms</a></li>
                 @endcan
                 @can('view security dashboard hse')
                 <li><a href="{{ route('securityPost.table') }}" class="{{ request()->is('dashboard-security') ? 'current' : '' }}"><i

@@ -158,7 +158,7 @@
 
     <div class="card card-body mx-2" style="border-radius: 10px;">
         <h4 class="card-title flex justify-center">
-            <a class="underline" href="{{ route('jobEvaluation.table') }}">
+            <a class="underline" href="{{ route('hse.dashboard') }}">
                 Need Evaluation
             </a>
         </h4>
@@ -185,12 +185,6 @@
         </div>
     </div>
 </div>
-
-
-<button class="btn bg-blue-500" onClick="getLeaderboardData('activeTable')">Table Active</button>
-<button class="btn bg-blue-500" onClick="getLeaderboardData('approvalTable')">Table Approval</button>
-<button class="btn bg-blue-500" onClick="getLeaderboardData('evaluationTable')">Table Evaluation</button>
-<button class="btn bg-blue-500" onClick="getLeaderboardData('ratingTable')">Table Rating</button>
 
 <div>
     <div class="card">

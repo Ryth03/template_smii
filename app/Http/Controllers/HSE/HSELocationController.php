@@ -50,7 +50,7 @@ class HSELocationController extends Controller
     public function locationDelete(Request $request, $locationId){
 
         $location = hseLocation::findOrFail($locationId);
-        // dd($request,$locationId, $location, "delete");
+        
 
         if ($location) {
             $location->delete();
@@ -67,7 +67,7 @@ class HSELocationController extends Controller
         $selectedValue = json_decode($request->input('pic'), true);
         $nik = $selectedValue['nik'];
         $name = $selectedValue['name'];
-        // dd($request, $nik, $name);
+        
         $request->validate([
             'name' => 'required|string|max:255|unique:hse_locations,name,'
         ]);

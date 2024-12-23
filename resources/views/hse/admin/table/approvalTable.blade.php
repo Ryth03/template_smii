@@ -1,9 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Approval HSE') }}
-        </h2>
-    </x-slot>
+    @section('title')
+        Approval
+    @endsection
     @push('css')
     <style>
         table.dataTable thead .sorting:before, 
@@ -52,7 +50,7 @@
                     <td>
                         <form action="{{ route('approval.form') }}" method="POST" style="display: inline;">
                             @csrf
-                            <input type="hidden" name="value" value="{{ $form->form_id }}">
+                            <input type="hidden" name="value" value="{{ $form->id }}">
                             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                                 Awaiting Approval
                             </button>

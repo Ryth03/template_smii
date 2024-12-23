@@ -28,6 +28,8 @@ use App\Models\HSE\uploadFile;
 use App\Models\HSE\scaffoldingRiskControl_master;
 use App\Models\HSE\scaffoldingRiskControl_data;
 use App\Models\HSE\hseLocation;
+use App\Models\HSE\extendedFormLog;
+use App\Models\HSE\extendedFilesLog;
 use App\Notifications\PrNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Models\HSE\approver;
@@ -58,46 +60,39 @@ class HSEFormController extends Controller
         $approver = approver::where('level', 1)
         ->pluck('name')
         ->first();
-        $toUser = User::role('hse')->pluck('email')->toArray();
+        $toUser = User::role(strToLower($approver))->pluck('email')->toArray();
         $form = Form::find($formId);
         $projectExecutor = projectExecutor::where('form_id', $formId)->first();
         sendToApproverJob::dispatch($toUser, $form, $projectExecutor, $approver); // send email
     }
 
+    private function extendFormNotif($formId){
+        $hseUser = User::role('hse')->get();
+        $data = [
+            'title' => 'New Form To Extend',
+            'message' => 'A form awaiting your approval.'
+        ];
+        Notification::send($hseUser, new PrNotification($data));
+
+        $approver = approver::where('role_name', 'hse')
+        ->pluck('name')
+        ->first();
+        $toUser = User::role('hse')->pluck('email')->toArray();
+        $newForm = collect();
+        $newForm->status = 'In Approval (Extend)';
+        $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+        sendToApproverJob::dispatch($toUser, $newForm, $projectExecutor, $approver); // send email
+    }
+
     public function viewList()
     {
-        $user = Auth::user();
-        if($user){
-            $forms = Form::where('user_id', $user->id)
-            ->select('forms.id as id', 'forms.created_at as created_at', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
-            ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-            ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
-            ->groupBy('forms.id','forms.created_at', 'forms.updated_at', 'forms.status')
-            ->orderBy('forms.id', 'asc')
-            ->get(); 
-
-            $today = Carbon::today();
-
-            $extendValue = Form::where('user_id', $user->id)
-            ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-            ->where('start_date', '<=', $today)
-            ->where('end_date', '>=', $today)
-            ->where('status', "Finished")
-            ->select('forms.id as id', 'project_executors.location as location', 'project_executors.start_date as start_date', 'project_executors.end_date as end_date', 'status')
-            ->get();
-            // dd($extendValue, $today);
-
-            return view('hse.guest.dashboard', compact('forms','extendValue'));
-        }
-        else{
-
-        }
+        return redirect()->route('dashboard');
     }
 
     public function insertNewForm(Request $request)
     {
         $draft = $request->input('action');
-        // dd($request);
+        
         $form = null;
         if($draft){
             $form = Form::create([
@@ -235,7 +230,7 @@ class HSEFormController extends Controller
                     'form_id' => $formId,
                     'type' => "SIO",
                     'file_name' => $file->getClientOriginalName(),
-                    'file_location' => "public/hseFile/".$formId."/SIO/". $file->getClientOriginalName()
+                    'file_location' => "/storage/hseFile/".$formId."/SIO/". $file->getClientOriginalName()
                 ]);
             }
         }
@@ -246,7 +241,7 @@ class HSEFormController extends Controller
                     'form_id' => $formId,
                     'type' => "SILO",
                     'file_name' => $file->getClientOriginalName(),
-                    'file_location' => "public/hseFile/".$formId."/SILO/". $file->getClientOriginalName()
+                    'file_location' => "/storage/hseFile/".$formId."/SILO/". $file->getClientOriginalName()
                 ]);
             }
         }
@@ -603,7 +598,7 @@ class HSEFormController extends Controller
                     'form_id' => $formId,
                     'type' => "SIO",
                     'file_name' => $file->getClientOriginalName(),
-                    'file_location' => "public/hseFile/".$formId."/SIO/". $file->getClientOriginalName()
+                    'file_location' => "/storage/hseFile/".$formId."/SIO/". $file->getClientOriginalName()
                 ]);
             }
         }
@@ -631,7 +626,7 @@ class HSEFormController extends Controller
                     'form_id' => $formId,
                     'type' => "SILO",
                     'file_name' => $file->getClientOriginalName(),
-                    'file_location' => "public/hseFile/".$formId."/SILO/". $file->getClientOriginalName()
+                    'file_location' => "/storage/hseFile/".$formId."/SILO/". $file->getClientOriginalName()
                 ]);
             }
         }
@@ -682,8 +677,6 @@ class HSEFormController extends Controller
         ->where('forms.id', $formId)
         ->first();      
 
-        // dd($formId);
-
         if($form->user_id != $user->id){
             return $this->viewList();
         }
@@ -696,128 +689,91 @@ class HSEFormController extends Controller
     }
 
     public function insertExtendForm(Request $request){
+        // $path = $file[0]->storeAs("public/hseFile/16/SIO", $file[0]->getClientOriginalName());
+        // $url = Storage::url($path);
+        
         $user = Auth::user();
-
-
         $formId = $request->input('formId');
+        $form = Form::find($formId);
 
-        $oldForm = Form::find($formId);
-        $extendFromFormId = $oldForm?->extend_from_form_id ?? $formId;
-        // dd(intval($extendFromFormId), gettype(intval($extendFromFormId)));
-        $newForm = Form::create([
-            'user_id' => Auth::id(),
-            'extend_from_form_id' => $extendFromFormId,
-            'status' => "In Review"
-        ]);
-        
-        // Pelaksana Pekerjaan
-        $oldProject = projectExecutor::findOrFail($formId);
-        if($oldProject){
-            $newProject = $oldProject->replicate();
-            $newProject->form_id = $newForm->id;
-            $newProject->start_date = $request->input('Tanggal_Mulai_Pelaksanaan');
-            $newProject->end_date = $request->input('Tanggal_Berakhir_Pelaksanaan');
-            $newProject->start_time = $request->input('Jam_Mulai_Kerja');
-            $newProject->end_time = $request->input('Jam_Berakhir_Kerja');
-            $newProject->save();
-        }
+        if($user->id === $form->user_id && $form->status === 'Approved'){
 
-        // Potensi Bahaya di Area Kerja
-        $oldPotentials = potentialHazardsInWorkplace_data::where('form_id', $formId)->get();
-        if($oldPotentials){
-            foreach($oldPotentials as $oldPotential){
-                $newPotential = $oldPotential->replicate();
-                $newPotential->form_id = $newForm->id;
-                $newPotential->save();
-            }
-        }
+            $formDetail = projectExecutor::where('form_id', $formId)->first();
+            $extendedForm = extendedFormLog::create([
+                'form_id' => $formId,
+                'start_date_before' => $formDetail->start_date,
+                'end_date_before' => $formDetail->start_date,
+                'start_date_after' => $request->input('Tanggal_Mulai_Pelaksanaan'),
+                'end_date_after' => $request->input('Tanggal_Berakhir_Pelaksanaan'),
+                'status' => 'In Approval'
+            ]);
 
-        // Alat Pelindung Diri (APD)
-        $oldProtectiveEquipments = personalProtectiveEquipment_data::where('form_id', $formId)->get();
-        if($oldProtectiveEquipments){
-            foreach($oldProtectiveEquipments as $oldEquipment){
-                $newEquipment = $oldEquipment->replicate();
-                $newEquipment->form_id = $newForm->id;
-                $newEquipment->save();
-            }
-        }
-        
-        // Daftar Peralatan Kerja
-        $oldEquipments = workEquipments_data::where('form_id', $formId)->get();
-        if($oldEquipments){
-            foreach($oldEquipments as $oldEquipment){
-                $newEquipment = $oldEquipment->replicate();
-                $newEquipment->form_id = $newForm->id;
-                $newEquipment->save();
-            }
-        }
+            if ($request->hasFile('uploadSIO')) {
+                $oldFileNames = [];
+                $newFileNames = [];
 
-        // Pengendali Bahaya Kebakaran
-        $oldFireHazards = fireHazardControl_data::where('form_id', $formId)->get();
-        if($oldFireHazards){
-            foreach($oldFireHazards as $oldFireHazard){
-                $newFireHazard = $oldFireHazard->replicate();
-                $newFireHazard->form_id = $newForm->id;
-                $newFireHazard->save();
-            }
-        }
-        
-        // Ijin Kerja Tambahan Yang Diperlukan
-        $oldAdditionalPermits = additionalWorkPermits_data::where('form_id', $formId)->get();
-        if($oldAdditionalPermits){
-            foreach($oldAdditionalPermits as $oldAdditionalPermit){
-                $newAdditionalPermit = $oldAdditionalPermit->replicate();
-                $newAdditionalPermit->form_id = $newForm->id;
-                $newAdditionalPermit->save();
-            }
-        }
-        
+                $sioFiles = uploadFile::where('form_id', $formId)
+                ->where('type', 'SIO')
+                ->get();
 
-        // Fit To Work
-        $oldWorkers = fitToWork::where('form_id', $formId)->get();
-        if($oldWorkers){
-            foreach($oldWorkers as $oldWorker){
-                $newWorker = $oldWorker->replicate();
-                $newWorker->form_id = $newForm->id;
-                $newWorker->save();
-            }
-        }
-        
-        
-        // JobSafetyAnalysis
-        $oldJsas = jobSafetyAnalysis::where('form_id', $formId)->get();
-        if($oldJsas){
-            foreach($oldJsas as $oldJsa){
-                $newJsa = $oldJsa->replicate();
-                $newJsa->form_id = $newForm->id;
-                $newJsa->save();
-            }
-        }
-
-        // Upload File
-        $oldFiles = uploadFile::where('form_id', $formId)->get();
-        if($oldFiles){
-            foreach($oldFiles as $oldFile){
-                $newFile = $oldFile->replicate();
-                $newFile->form_id = $newForm->id;
-                $newFile->file_location = "public/hseFile/".$newForm->id.'/'.$oldFile->type.'/'.$oldFile->file_name;
-                $filePath = "public/hseFile/".$oldFile->form_id.'/'.$oldFile->type.'/'.$oldFile->file_name;
-                
-                $newFile->save();
-                if (Storage::exists($filePath)) {
-                    if (!Storage::exists("public/hseFile/".$newForm->id.'/'.$oldFile->type)) {
-                        Storage::makeDirectory("public/hseFile/".$newForm->id.'/'.$oldFile->type);
+                if(!empty($sioFiles)){
+                    foreach($sioFiles as $file){
+                        $fileName = $file->file_name;
+                        $oldFileNames = $fileName;
                     }
-                    Storage::copy($filePath,$newFile->file_location);
                 }
+
+                foreach ($request->file('uploadSIO') as $file) {
+                    $fileName = time(). '_' .$file->getClientOriginalName();
+                    $file->storeAs("public/hseFile/".$formId."/SIO", $fileName);
+                    $newFileNames[] = $fileName;
+                }
+                
+                extendedFilesLog::Create([
+                    'extended_id' => $extendedForm->id,
+                    'form_id' => $formId,
+                    'type' => 'SIO',
+                    'file_location' => '/storage/hseFile/'.$formId.'/SIO/',
+                    'file_name_before' =>  empty($oldFileNames) ? null : json_encode($oldFileNames),
+                    'file_name_after' => json_encode($newFileNames)
+                ]);
             }
+    
+            if ($request->hasFile('uploadSILO')) {
+                $oldFileNames = [];
+                $newFileNames = [];
+                
+                $siloFiles = uploadFile::where('form_id', $formId)
+                ->where('type', 'SILO')
+                ->get();
+    
+                if(!empty($siloFiles)){
+                    foreach($siloFiles as $file){
+                        $fileName = $file->file_name;
+                        $oldFileNames = $fileName;
+                    }
+                }
+                
+                foreach ($request->file('uploadSILO') as $file) {
+                    $fileName = time(). '_' .$file->getClientOriginalName();
+                    $file->storeAs("public/hseFile/".$formId."/SILO", $fileName);
+                    $newFileNames[] = $fileName;
+                }
+
+                
+                extendedFilesLog::Create([
+                    'extended_id' => $extendedForm->id,
+                    'form_id' => $formId,
+                    'type' => 'SILO',
+                    'file_location' => '/storage/hseFile/'.$formId.'/SILO/',
+                    'file_name_before' =>  empty($oldFileNames) ? null : json_encode($oldFileNames),
+                    'file_name_after' => json_encode($newFileNames)
+                ]);
+            }
+
+            $this->extendFormNotif($formId);
         }
-
-
-        // Notification Review to hse
-        $this->reviewNotification();
-        $this->reviewEmail($newForm->id);
-
-        return redirect()->route('hse.dashboard');
+        
+        return redirect()->route('dashboard');
     }
 }

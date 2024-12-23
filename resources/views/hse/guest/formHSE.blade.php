@@ -1,9 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard HSE') }}
-        </h2>
-    </x-slot>
+    @section('title')
+        Form
+    @endsection
     @push('css')
     <style>
         [type="checkbox"]+label, [type="radio"]:not(:checked)+label, [type="radio"]:checked+label, [type="date"] {

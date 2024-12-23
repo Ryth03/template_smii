@@ -13,66 +13,60 @@ use App\Models\HSE\jobEvaluation;
 class JobEvaluationController extends Controller
 {
     public function viewJobEvaluation(){
-        $user = Auth::user();
-        $forms;
-        
-        if($user->hasRole("hse")){
-            $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-            ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
-            ->where('status', 'Approved')
-            ->select('forms.id as id', 'extend_from_form_id', 'company_department', 'supervisor', 'location', 'start_date', 'end_date', 'hse_rating')
-            ->orderBy('forms.id', 'asc')
-            ->get();
-        }else if($user->hasRole("engineering manager")){
-            $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-            ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
-            ->where('status', 'Approved')
-            ->whereNotNull('hse_rating')
-            ->select('forms.id as id', 'extend_from_form_id', 'company_department', 'supervisor', 'location', 'start_date', 'end_date', 'engineering_rating')
-            ->orderBy('forms.id', 'asc')
-            ->get();
-        }
-        
-        foreach($forms as $form){
-            if ($form->extend_from_form_id) {
-                // Temukan form yang memiliki ID yang sama dengan extend_from_form_id
-                $relatedForm = $forms->firstWhere('id', $form->extend_from_form_id);
-                
-                if ($relatedForm) {
-                    if (strtotime($relatedForm->end_date) < strtotime($form->end_date)) {
-                        // Jika form->end_date lebih lama, maka perbarui relatedForm->end_date
-                        $relatedForm->end_date = $form->end_date;
-                    }
-                }
-            }
-        }
 
+        $user = Auth::user();
+        $forms = Form::select('forms.id as id', 'company_department', 'location', 'start_date', 'end_date')
+        ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+        ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
+        ->where('status', 'In Evaluation')
+        ->orderBy('forms.id', 'asc');
+        
         if($user->hasRole("hse")){
-            $forms = $forms->filter(function($form) {
-                return $form->extend_from_form_id == null && $form->hse_rating == null; // Pilih yang supervisor tidak null
-            });
+            $forms = $forms->whereNull('hse_rating')->get();
         }else if($user->hasRole("engineering manager")){
-            
-            $forms = $forms->filter(function($form) {
-                return $form->extend_from_form_id == null && $form->engineering_rating == null; // Pilih yang supervisor tidak null
-            });
+            $forms = $forms->whereNull('engineering_rating')->get();
+        }else{
+            return redirect()->route('dashboard');
         }
+        
         confirmDelete();
         return view('hse.admin.table.jobEvaluationTable', compact('forms'));
     }
 
-    public function evaluateJob(Request $request){
-        $formId = $request->input('formId');
-        $form = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')->find($formId);
-        $extendedForm = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-        ->where('extend_from_form_id', $formId)
-        ->orderBy('end_date', 'desc')
-        ->select('end_date')
-        ->first();
-        if($extendedForm){
-            $form->end_date = $extendedForm->end_date;
+    public function evaluateForm(Request $request){
+        
+        $user = Auth::user();
+
+        $questions;
+        if($user->hasRole("hse")){
+            $questions = [
+                "Kepatuhan penggunaan APD",
+                "Kepatuhan terhadap rambu yang dipasang di area",
+                "Peralatan kerja / perlengkapan kerja yang digunakan",
+                "Kesesuaian pekerjaan dengan JSA",
+                "Kedisiplinan dalam menjaga area pekerjaan tetap bersih"
+            ];
+        }else if($user->hasRole("engineering manager")){
+            $questions = [
+                "Kualitas hasil pekerjaan",
+                "Kesesuaian waktu pekerjaan dengan time / work schedule",
+                "Keaktifan dalam menyampaikan informasi",
+                "Kemudahan dalam mengarahkan pekerjaan",
+                "Kompetensi / keahlian pekerja dan penanggung jawab lapangan"
+            ];
+        }else{
+            return redirect()->route('dashboard');
         }
-        return view('hse.admin.form.jobEvaluateForm', compact('form', 'formId'));
+
+
+        $formId = $request->input('formId');
+
+        $form = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+        ->where('forms.id', $formId)
+        ->select('forms.id', 'company_department', 'location', 'start_date', 'end_date', 'work_description')
+        ->first();
+
+        return view('hse.admin.form.jobEvaluateForm', compact('form', 'questions'));
     }
 
     public function evaluate(Request $request){
@@ -107,66 +101,37 @@ class JobEvaluationController extends Controller
         );
 
         $eval = jobEvaluation::where('form_id',$formId)->first();
-        
-        // Sementara
-        $eval->total_rating = $eval->hse_rating;
-        $eval->save();
-        $form = Form::find($formId);
-        $form->status = "Finished";
-        $form->save();
-        return redirect()->route('viewAll.table');
-        // Sementara
 
         if(!is_null($eval->hse_rating) && !is_null($eval->engineering_rating)){
             $eval->total_rating = ($eval->hse_rating + $eval->engineering_rating)/2;
             $eval->save();
+            
+            $form = Form::find($formId);
+            $form->status = "Finished";
+            $form->save();
         }
 
         return redirect()->route('jobEvaluation.table');
     }
 
-    public function viewJobEvaluationReport(){
-        $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-        ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
-        ->select('forms.id as id', 'extend_from_form_id', 'company_department', 'supervisor', 'location', 'start_date', 'end_date', 'total_rating')
-        // ->whereNotNull('total_rating')
+    public function viewJobEvaluationReport(){        
+        $forms = Form::select('forms.id as id', 'company_department', 'location', 'start_date', 'end_date')
+        ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+        ->where('status', 'Finished')
+        ->orderBy('forms.id', 'asc')
         ->get();
         
-        
-        foreach($forms as $form){
-            if ($form->extend_from_form_id) {
-                // Temukan form yang memiliki ID yang sama dengan extend_from_form_id
-                $relatedForm = $forms->firstWhere('id', $form->extend_from_form_id);
-                
-                if ($relatedForm) {
-                    if (strtotime($relatedForm->end_date) < strtotime($form->end_date)) {
-                        // Jika form->end_date lebih lama, maka perbarui relatedForm->end_date
-                        $relatedForm->end_date = $form->end_date;
-                    }
-                }
-            }
-        }
-
-        $forms = $forms->filter(function($form) {
-            return $form->extend_from_form_id == null && $form->total_rating != null; // Pilih yang supervisor tidak null
-        });
 
         return view('hse.admin.table.jobEvaluationReportTable', compact('forms'));
     }
 
     public function evaluateJobReport(Request $request){
         $formId = $request->input('formId');
-        $form = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+        $form = Form::select('forms.id as id', 'company_department', 'supervisor', 'location', 'work_description', 'total_rating')
+        ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
         ->find($formId);
-        $extendedForm = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-        ->where('extend_from_form_id', $formId)
-        ->orderBy('end_date', 'desc')
-        ->select('end_date')
-        ->first();
-        if($extendedForm){
-            $form->end_date = $extendedForm->end_date;
-        }
+        
         return view('hse.admin.form.jobEvaluateReportForm', compact('form', 'formId'));
     }
 }

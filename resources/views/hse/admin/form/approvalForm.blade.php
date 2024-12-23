@@ -1,9 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard HSE') }}
-        </h2>
-    </x-slot>
+    @section('title')
+        Approval Form
+    @endsection
     @push('css')
     <style>
         [type="checkbox"]+label, [type="radio"]:not(:checked)+label, [type="radio"]:checked+label, [type="date"] {
@@ -1068,7 +1066,7 @@ function sioSilo(){
                     <tr style="border-top: 1px solid black">
                         <th>{{$file->type}}</th>
                         <td>
-                            <a href="{{ asset('storage/hseFile/' . $file->form_id . '/' . $file->type . '/' . $file->file_name) }}" target="_blank">
+                            <a href="{{ asset($file->file_location) }}" target="_blank">
                             {{$file->file_name}}
                             </a>
                         </td>

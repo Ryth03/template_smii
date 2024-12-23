@@ -126,7 +126,7 @@ class DatabaseSeeder extends Seeder
         // Let's give few permissions to admin role.
         $hseRole->givePermissionTo($allPermissionNames);
         
-        $emRole->givePermissionTo(['approve form hse', 'job evaluation hse']);
+        $emRole->givePermissionTo(['approve form hse', 'job evaluation hse', 'view user dashboard hse', 'create form hse']);
         
         $aoRole->givePermissionTo(['approve form hse']);
         
@@ -144,7 +144,7 @@ class DatabaseSeeder extends Seeder
                     'username' => 'super',
                     'company_department' => 'PT Sinar Meadow International Indonesia',
                     'nik' => 'AG1111',
-                    'email' => 'superadmin@gmail.com',
+                    'email' => 'superadmin@gmail.com', // superadmin@gmail.com
                     'password' => Hash::make ('password'),
                     'email_verified_at' => now(),
                     'position_id' => 1,
@@ -160,7 +160,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'HSE Admin',
             'username' => 'HSE',
             'company_department' => 'PT Sinar Meadow International Indonesia',
-            'email' => 'hse@gmail.com',
+            'email' => ' ', //hse@gmail.com
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
             'position_id' => 1,
@@ -176,7 +176,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Engineering Manager',
             'username' => 'Engineering Manager',
             'company_department' => 'PT Sinar Meadow International Indonesia',
-            'email' => 'engineering.manager@gmail.com',
+            'email' => ' ', //engineering.manager@gmail.com 
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
             'position_id' => 1,
@@ -187,12 +187,12 @@ class DatabaseSeeder extends Seeder
 
 
         $aoUser = User::firstOrCreate([
-            'email' => 'area.owner@gmail.com',
+            'email' => 'pic.location@gmail.com',
         ], [
             'name' => 'PIC Location',
             'username' => 'PIC Location',
             'company_department' => 'PT Sinar Meadow International Indonesia',
-            'email' => 'pic.location@gmail.com',
+            'email' => ' ', // pic.location@gmail.com
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
             'position_id' => 1,
@@ -208,7 +208,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Security',
             'username' => 'Security',
             'company_department' => 'PT Sinar Meadow International Indonesia',
-            'email' => 'security@gmail.com',
+            'email' => ' ', //security@gmail.com
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
             'position_id' => 1,
@@ -224,7 +224,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'User',
             'username' => 'User',
             'company_department' => 'PT Sinar Meadow International Indonesia',
-            'email' => 'user@gmail.com',
+            'email' => ' ', //user@gmail.com
             'password' => Hash::make ('password'),
             'email_verified_at' => now(),
             'position_id' => 1,
@@ -261,7 +261,7 @@ class DatabaseSeeder extends Seeder
                 'username' => $name[0],
                 'nik' => $name[1],
                 'company_department' => 'PT Sinar Meadow International Indonesia',
-                'email' => strtolower(str_replace(' ', '.', $name[0]) . '@gmail.com'),
+                'email' => ' ',// strtolower(str_replace(' ', '.', $name[0]) . '@gmail.com')
                 'password' => Hash::make ('password'),
                 'email_verified_at' => now(),
                 'position_id' => 1,
