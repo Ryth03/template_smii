@@ -38,11 +38,11 @@
                 HSE Management
             </a>
             <ul>
-                @can('view all form hse')
+                <!-- @can('view all form hse')
                 <li><a href="{{ route('viewAll.table') }}" class="{{ request()->is('viewAll-table') ? 'current' : '' }}"><i
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>View All Work Permit</a>
                 </li>
-                @endcan
+                @endcan -->
                 @can('review form hse')
                 <li><a href="{{ route('review.table') }}"
                     class="{{ request()->is('reviews') ? 'current' : '' }}"><i class="icon-Commit"><span
@@ -63,7 +63,7 @@
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Approval Level</a>
                 </li>
                 @endcan
-                @can('job evaluation hse')
+                <!-- @can('job evaluation hse')
                 <li><a href="{{ route('jobEvaluation.table') }}" class="{{ request()->is('job-evaluation') ? 'current' : '' }}"><i
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Job Evaluation</a>
                 </li>
@@ -72,7 +72,7 @@
                 <li><a href="{{ route('jobEvaluationReport.table') }}" class="{{ request()->is('job-evaluation-report') ? 'current' : '' }}"><i
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Evaluation Report</a>
                 </li>
-                @endcan
+                @endcan -->
             </ul>
         </li>
         @endcan
