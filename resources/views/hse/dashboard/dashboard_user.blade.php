@@ -1,4 +1,7 @@
 @push('css')
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.8.1/css/searchBuilder.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.4/css/dataTables.dateTime.min.css">
 <style>
     table.dataTable thead .sorting:before, 
     table.dataTable thead .sorting:after, 
@@ -91,7 +94,16 @@
             </div>
         </div>
     </div>
+
+    <!-- Extended Modal -->
+    <div id="extendModal" tabindex="-1" aria-hidden="false"
+        class="hidden bg-modal bg-opacity-50 overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full flex" role="dialog">
+        <!-- Modal content SIO -->
+    </div>
 @push('scripts')
+<script src="https://cdn.datatables.net/searchbuilder/1.8.1/js/dataTables.searchBuilder.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.8.1/js/searchBuilder.dataTables.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.4/js/dataTables.dateTime.min.js"></script>
 <script>
     window.addEventListener('load', () => {
         getExtendForms();
@@ -100,18 +112,24 @@
         var userId = @json(auth()->user()->id);
         var userRole = @json(auth()->user()->roles->pluck('name')->toArray());
         $('#myTable').DataTable({
+            layout: {
+                top1: 'searchBuilder'
+            },
+            order: [7, 'desc'],
             responsive: true,
             processing: true,
             ajax: {
                 url: '{{ route("user.dashboard.data") }}', // Endpoint to fetch data
                 type: 'GET',
                 dataSrc: function (response) {
-                    console.log(response);
                     return response;
                 }
             },
             columns: [
-                { data: 'company_department', name: 'company_department' },
+                { data: 'company_department', name: 'company_department', render: function(data, type, row) {
+                        return `${row.company_department}`;
+                    }
+                },
                 { data: 'location', name: 'location' },
                 { data: null, name: 'date', render: function(data, type, row) {
                         return `${row.start_date} - ${row.end_date}`;
@@ -167,8 +185,9 @@
                         }
 
                         if(userRole.includes('hse')){
+                            let result = '';
                             if(row.status == "Rejected"){
-                                return `
+                                result += `
                                 <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
                                 @csrf
                                     <input type="hidden" name="value" value="${row.id}">
@@ -178,7 +197,6 @@
                                 </form>
                                 `;
                             }else if(row.status == "Approved"){
-                                let result = '';
                                 let tanggal = new Date(row.start_date);
                                 let now = new Date(); // Mendapatkan tanggal sekarang
                                 let diffInMs = now - tanggal; // Menghitung selisih dalam milidetik
@@ -204,9 +222,8 @@
                                     </button>
                                 </form>
                                 `;
-                                return result;
                             }else if(row.status == "In Evaluation"){
-                                return `
+                                result += `
                                     <form action="{{ route('jobEvaluate.form') }}" method="POST" style="display: inline;">
                                     @csrf
                                         <input type="hidden" name="formId" value="${row.id}">
@@ -216,7 +233,7 @@
                                     </form>
                                 `;
                             }else if(row.status == "Finished"){
-                                return `
+                                result += `
                                 <form action="{{ route('jobEvaluateReport.form') }}" method="POST" style="display: inline;">
                                 @csrf
                                     <input type="hidden" name="formId" value="${row.id}">
@@ -233,6 +250,15 @@
                                 </form>
                                 `;
                             }
+
+                            if( row.extendedCounts > 0 ){
+                                result += `
+                                    <label for="modal" style="cursor: pointer;" onClick="toggleModal(${row.id})">
+                                        <i class="fa fa-eye fa-lg"></i>
+                                    </label>
+                                `;
+                            }
+                            return result;
                         }
                         else if(userRole.includes('engineering manager')){
                             if(row.status == "In Evaluation"){
@@ -311,7 +337,6 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 button.parentNode.submit();
-                console.log(button.parentNode);
             }
         });
     }
@@ -330,9 +355,60 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 button.parentNode.submit();
-                console.log(button.parentNode);
             }
         });
+    }
+    
+    function toggleModal(id){
+        var modal = document.getElementById('extendModal');
+        $.ajax({
+            url: '{{ route('user.dashboard.extend.history') }}', // Route untuk mencari ide
+            type: 'GET',
+            data: { 
+                formId: id
+            },
+            success: function(response) {
+                modal.innerHTML = `
+                    <div class="relative  p-4 w-full max-w-lg max-h-full">
+                        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                            <div class="flex items-center justify-between  p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                    Extend Form History
+                                </h3>
+                                <button type="button"
+                                    class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                    onClick="closeModal()">
+                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewbox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
+                            </div>
+                            <div class="p-4 md:p-5">
+                                <ol class="p-2.5 space-y-4 list-decimal">
+                                    ${response.map((form) => {
+                                        return `
+                                        <li class="text-white">
+                                            (${form.start_date_before} - ${form.end_date_before}) - (${form.start_date_after} - ${form.end_date_after})
+                                        </li>
+                                        `;
+                                    }).join('')}
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                modal.classList.toggle('hidden');
+            }
+        });
+        
+    }
+
+    function closeModal(){
+        var modal = document.getElementById('extendModal');
+        modal.classList.toggle('hidden');
     }
 </script>
 @endpush

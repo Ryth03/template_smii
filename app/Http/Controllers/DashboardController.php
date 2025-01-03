@@ -13,6 +13,8 @@ use App\Models\HSE\approver;
 use App\Models\HSE\hseLocation;   
 use App\Models\HSE\uploadFile;
 use App\Models\HSE\extendedFormLog;  
+use App\Models\HSE\additionalWorkPermits_master;
+use App\Models\HSE\additionalWorkPermits_data;
 
 class DashboardController extends Controller
 {
@@ -77,7 +79,7 @@ class DashboardController extends Controller
                 $forms = Form::where('status', 'In Approval')
                 ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
                 ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
-                ->whereNotIn('id',$approvalDetail)
+                ->whereNotIn('forms.id',$approvalDetail)
                 ->get();
             }elseif($approver->level === 2){
                 $approvalDetail = approvalDetail::select('form_id')
@@ -139,22 +141,39 @@ class DashboardController extends Controller
         return response()->json($forms);
     }
 
+    public function getChartCategoryData(){
+        $category = additionalWorkPermits_master::where('name', '!=', 'Menggunakan Scaffolding')->get();
+        return response()->json($category);
+    }
+
     public function getChartData(Request $request){
         $year = $request->get('year', '');
+        $category = $request->get('category', '');
 
-        $formsCreated = Form::whereRaw('LOWER(status) != ?', ['draft']) // ambil semua form kecuali draft
-        ->whereRaw('YEAR(created_at) = ?', [$year])
-        ->select(DB::raw('DATE_FORMAT(created_at, "%b")  as month'))
-        ->orderBy('created_at', 'ASC')
+        $formsCreated = Form::whereRaw('LOWER(status) != ?', ['draft']); // ambil semua form kecuali draft
+        $formsDone = Form::whereRaw('LOWER(status) = ?', ['finished']); // ambil form yang sudah finished saja
+
+        if($category){
+            $formsCreated = $formsCreated->leftJoin('additionalworkpermits_data', 'additionalworkpermits_data.form_id', '=', 'forms.id')
+            ->where('additionalworkpermits_data.master_id', $category);
+            
+            $formsDone = $formsDone->leftJoin('additionalworkpermits_data', 'additionalworkpermits_data.form_id', '=', 'forms.id')
+            ->where('additionalworkpermits_data.master_id', $category);
+        }
+
+
+        $formsCreated = $formsCreated->whereRaw('YEAR(forms.created_at) = ?', [$year])
+        ->select(DB::raw('DATE_FORMAT(forms.created_at, "%b")  as month'))
+        ->orderBy('forms.created_at', 'ASC')
+        ->pluck('month')
+        ->toArray(); 
+        
+        $formsDone = $formsDone->whereRaw('YEAR(forms.created_at) = ?', [$year])
+        ->select(DB::raw('DATE_FORMAT(forms.created_at, "%b")  as month'))
+        ->orderBy('forms.created_at', 'ASC')
         ->pluck('month')
         ->toArray(); 
 
-        $formsDone = Form::whereRaw('LOWER(status) = ?', ['finished']) // ambil form yang sudah finished saja
-        ->whereRaw('YEAR(created_at) = ?', [$year])
-        ->select(DB::raw('DATE_FORMAT(created_at, "%b")  as month'))
-        ->orderBy('created_at', 'ASC')
-        ->pluck('month')
-        ->toArray(); 
 
         $monthCounts = [];
         foreach ($formsCreated as $month) {
@@ -180,9 +199,6 @@ class DashboardController extends Controller
     }
 
     public function getSecurityData(Request $request){
-
-        
-        // return response()->json("test");
 
         $today = Carbon::today();
 
@@ -212,11 +228,13 @@ class DashboardController extends Controller
         $forms;
         if($user){
             if ($user->hasRole('hse') || $user->hasRole('engineering manager')) {
-                $forms = Form::select('forms.id as id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"))
+                $forms = Form::select('forms.id as id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"), DB::raw("COUNT(CASE WHEN extended_form_logs.status = 'approved' THEN extended_form_logs.form_id END) as 'extendedCounts'"), 'forms.created_at as created_at')
                 ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
                 ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
-                ->groupBy('company_department', 'location', 'forms.status', 'forms.id', 'start_date', 'end_date')
-                ->orderBy('forms.id', 'asc')
+                ->leftJoin('extended_form_logs', 'extended_form_logs.form_id', '=', 'forms.id')
+                ->groupBy('company_department', 'location', 'forms.status', 'forms.id', 'start_date', 'end_date', 'created_at')
+                ->orderBy('forms.id', 'desc')
+                ->orderBy('company_department', 'desc')
                 ->get();
             }else{
                 $forms = Form::where('user_id', $user->id)
@@ -250,6 +268,36 @@ class DashboardController extends Controller
             ->get();
 
             return response()->json($forms);
+        }
+
+        return response()->json('test');
+    }
+
+    public function getExtendFormHistory(Request $request){
+        
+        $user = Auth::user();
+        if($user){
+
+            $form = Form::where('forms.id', $request->get('formId'))
+            ->leftJoin('extended_form_logs', 'extended_form_logs.form_id', '=', 'forms.id')
+            ->get();
+
+            $form->each(function($item) {
+                if ($item->start_date_before) {
+                    $item->start_date_before = Carbon::parse($item->start_date_before)->format('d M Y');
+                }
+                if ($item->start_date_after) {
+                    $item->start_date_after = Carbon::parse($item->start_date_after)->format('d M Y');
+                }
+                if ($item->end_date_before) {
+                    $item->end_date_before = Carbon::parse($item->end_date_before)->format('d M Y');
+                }
+                if ($item->end_date_after) {
+                    $item->end_date_after = Carbon::parse($item->end_date_after)->format('d M Y');
+                }
+            });
+
+            return response()->json($form);
         }
 
         return response()->json('test');

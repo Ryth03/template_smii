@@ -82,9 +82,11 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard/hse/leaderboard', [DashboardController::class, 'getLeaderboardData'])->name('leaderboard.dashboard.hse');
     Route::get('/dashboard/hse/chart', [DashboardController::class, 'getChartData'])->name('chart.dashboard.hse');
+    Route::get('/dashboard/hse/chart/category', [DashboardController::class, 'getChartCategoryData'])->name('chart.dashboard.category');
     Route::get('/dashboard/security', [DashboardController::class, 'getSecurityData'])->name('security.dashboard.data');
     Route::get('/dashboard/user/data', [DashboardController::class, 'getDashboardUser'])->name('user.dashboard.data');
     Route::get('/dashboard/user/extends', [DashboardController::class, 'getExtendForms'])->name('user.dashboard.extends');
+    Route::get('/dashboard/user/extend/history', [DashboardController::class, 'getExtendFormHistory'])->name('user.dashboard.extend.history');
     Route::get('/dashboard-hse', function(){
         confirmDelete();
         return view('hse.guest.dashboard');

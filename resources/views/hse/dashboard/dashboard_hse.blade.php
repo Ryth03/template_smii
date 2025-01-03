@@ -258,13 +258,19 @@
         <div class="card-body">
             <div class="flex justify-between">
                 <h4 class="card-title">Permit Form Bar Chart</h4>
-                <select id="yearFilterChart" class="form-select filter-select"
-                    aria-label="Filter by Year" onChange="getChartData()">
-                    <option value="" disabled>Select year</option>
-                    <!-- <option value="2023">2023</option> -->
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                </select>
+                <div id="selectDiv">
+                    <select name="" id="categoryFilterChart" class="form-select filter-select"
+                        aria-label="Filter by Category" onChange="getChartData()">
+                        <option value="">Select Category</option>
+                    </select>
+                    <select id="yearFilterChart" class="form-select filter-select"
+                        aria-label="Filter by Year" onChange="getChartData()">
+                        <option value="" disabled>Select year</option>
+                        <!-- <option value="2023">2023</option> -->
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
             </div>
             <div id="stackedBarChart"></div>
         </div>
@@ -282,6 +288,8 @@
         getLeaderboardData('evaluationTable');
         getLeaderboardData('ratingTable');
         getLeaderboardData('overdueTable');
+
+        categoryFilterChartData();
         getChartData();
     });
 
@@ -396,12 +404,15 @@
 
     function getChartData(){
         const yearSelect = document.getElementById('yearFilterChart').value;
+        const categorySelect = document.getElementById('categoryFilterChart').value;
         console.log("Year: ",yearSelect);
+        console.log("Category: ",categorySelect);
         $.ajax({
             url: '{{ route('chart.dashboard.hse') }}', // Route untuk mencari ide
             type: 'GET',
             data: { 
-                year: yearSelect
+                year: yearSelect,
+                category: categorySelect
             },
             success: function(response) {
                 console.log(response);
@@ -433,5 +444,21 @@
         });
     }
 
+
+    function categoryFilterChartData(){
+        const categorySelect = document.getElementById('categoryFilterChart');
+        $.ajax({
+            url: '{{ route('chart.dashboard.category') }}', // Route untuk mencari ide
+            type: 'GET',
+            success: function(response) {
+                console.log(response);
+                response.forEach(item => {
+                    categorySelect.innerHTML += `
+                        <option value="${item.id}">${item.name}</option>
+                    `;
+                });
+            }
+        });
+    }
 </script>
 @endpush

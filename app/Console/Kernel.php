@@ -12,8 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('reminders:send')->daily();
-        $schedule->command('fetch:inventory')->everyFiveMinutes();
+        $schedule->command('forms:update-status')->dailyAt('06:00');
     }
 
     /**

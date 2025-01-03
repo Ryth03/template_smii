@@ -86,12 +86,14 @@ class HSEController extends Controller
         ->first();
 
         $toUser = null;
-        $form = Form::find($formId);
+        $form = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+        ->where('forms.id', $formId)
+        ->first();
 
         if(strToLower($approver) === 'pic location'){
             
             
-            $nik = hseLocation::where('name', $form->location)->pluck('nik');
+            $nik = hseLocation::where('name', $form->location)->pluck('nik')->first();
             $toUser = User::role($approver)->where('nik', $nik)->pluck('email')->toArray();
             $this->areaOwnerNotification($nik); // send notification
         }else{
@@ -436,41 +438,42 @@ class HSEController extends Controller
         {
             if ($action === 'approve') 
             {
-                $extendedForm->status = "Approved";
-                $projectExecutor = projectExecutor::where('form_id', $formId)->first();
-                $projectExecutor->end_date = $extendedForm->end_date_after;
-
-                $projectExecutor->save();
-                $extendedForm->save();
-
-                $files = collect();
-                $extendedFiles = extendedFilesLog::where('extended_id', $extendedForm->id)->get();
-                
-                if($extendedFiles){ // Cek apakah ada file sio atau silo yang diupload pada extend form
-                    foreach($extendedFiles as $extendedFile){ 
-                        $extendedFileName = json_decode($extendedFile->file_name_after); //Mengubah json menjadi array
-                        foreach($extendedFileName as $fileName){
-                            $temp = uploadFile::create([
-                                'form_id' => $formId,
-                                'type' => $extendedFile->type,
-                                'file_name' => $fileName,
-                                'file_location' => "/storage/hseFile/" . $formId . "/" . $extendedFile->type . "/" . $fileName
-                            ]);
+                $form = Form::find($formId);
+                if($form->status === 'Approved'){
+                    $extendedForm->status = "Approved";
+                    $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                    $projectExecutor->end_date = $extendedForm->end_date_after;
+    
+                    $projectExecutor->save();
+                    $extendedForm->save();
+    
+                    $files = collect();
+                    $extendedFiles = extendedFilesLog::where('extended_id', $extendedForm->id)->get();
+                    
+                    if($extendedFiles){ // Cek apakah ada file sio atau silo yang diupload pada extend form
+                        foreach($extendedFiles as $extendedFile){ 
+                            $extendedFileName = json_decode($extendedFile->file_name_after); //Mengubah json menjadi array
+                            foreach($extendedFileName as $fileName){
+                                $temp = uploadFile::create([
+                                    'form_id' => $formId,
+                                    'type' => $extendedFile->type,
+                                    'file_name' => $fileName,
+                                    'file_location' => "/storage/hseFile/" . $formId . "/" . $extendedFile->type . "/" . $fileName
+                                ]);
+                            }
                         }
                     }
+    
+                    // Send Notification to user
+                    $this->userNotification($form->user_id,'Extended');
+    
+                    // Send Email to User
+                    $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                    $toUser = User::find($form->user_id);
+                    $newForm = collect();
+                    $newForm->status = "Extended";
+                    sendToUserJob::dispatch($toUser, $newForm, $projectExecutor, $comment); 
                 }
-                
-                $form = Form::find($formId);
-
-                // Send Notification to user
-                $this->userNotification($form->user_id,'Extended');
-
-                // Send Email to User
-                $projectExecutor = projectExecutor::where('form_id', $formId)->first();
-                $toUser = User::find($form->user_id);
-                $newForm = collect();
-                $newForm->status = "Extended";
-                sendToUserJob::dispatch($toUser, $newForm, $projectExecutor, $comment); 
             }
             else if($action === 'reject')
             {

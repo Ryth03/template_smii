@@ -75,10 +75,13 @@
 
 
 
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="{{ asset('assets') }}/ajax/libs/jQuery-slimScroll/1.3.8/jquery-3.7.1.min.js">
     </script>
     <script type="text/javascript" src="{{ asset('assets') }}/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js">
     </script>
+    
     <!-- Vendor JS -->
     <script src="{{ asset('assets') }}/src/js/vendors.min.js"></script>
     <script src="{{ asset('assets') }}/icons/feather-icons/feather.min.js"></script>
@@ -90,7 +93,8 @@
     <script src="{{ asset('assets') }}/vendor_components/Flot/jquery.flot.resize.js"></script>
     <script src="{{ asset('assets') }}/vendor_components/Flot/jquery.flot.pie.js"></script>
     <script src="{{ asset('assets') }}/vendor_components/Flot/jquery.flot.categories.js"></script>
-    <script src="{{ asset('assets') }}/vendor_components/datatable/datatables.min.js"></script>
+    <!-- <script src="{{ asset('assets') }}/vendor_components/datatable/datatables.min.js"></script> -->
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script src="{{ asset('assets') }}/vendor_components/echarts/dist/echarts-en.min.js"></script>
     <script src="{{ asset('assets') }}/vendor_components/apexcharts-bundle/dist/apexcharts.js"></script>
     <script src="{{ asset('assets') }}/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
@@ -105,6 +109,7 @@
 
 
     <!-- Warehouse App -->
+     
     <script src="{{ asset('assets') }}/src/js/demo.js"></script>
     <script src="{{ asset('assets') }}/src/js/jquery.smartmenus.js"></script>
     <script src="{{ asset('assets') }}/src/js/menus.js"></script>
