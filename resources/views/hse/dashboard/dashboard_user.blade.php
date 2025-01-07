@@ -369,7 +369,7 @@
             },
             success: function(response) {
                 modal.innerHTML = `
-                    <div class="relative  p-4 w-full max-w-lg max-h-full">
+                    <div class="relative  p-4 w-full max-w-4xl max-h-full">
                         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                             <div class="flex items-center justify-between  p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
@@ -391,7 +391,7 @@
                                     ${response.map((form) => {
                                         return `
                                         <li class="text-white">
-                                            (${form.start_date_before} - ${form.end_date_before}) - (${form.start_date_after} - ${form.end_date_after})
+                                           Start Date: ${form.start_date_before} - ${form.end_date_before}, End Date: ${form.start_date_after} - ${form.end_date_after}
                                         </li>
                                         `;
                                     }).join('')}
