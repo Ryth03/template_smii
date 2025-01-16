@@ -46,10 +46,14 @@ class DashboardController extends Controller
             $forms = $forms->limit(10)->get();
         }
         elseif($category === 'ratingTable'){
+            $year = $request->get('year', '');
             $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
             ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
-            ->orderBy('total_rating','DESC')
-            ->select("company_department", 'total_rating as extra')
+            ->whereNotNull('total_rating')
+            ->whereYear('start_date', $year)
+            ->groupBy('company_department')
+            ->select("company_department", DB::raw('SUM(total_rating) / COUNT(company_department) AS extra'))
+            ->orderBy('extra','DESC')
             ->limit(10)
             ->get();
         }
@@ -228,11 +232,12 @@ class DashboardController extends Controller
         $forms;
         if($user){
             if ($user->hasRole('hse') || $user->hasRole('engineering manager')) {
-                $forms = Form::select('forms.id as id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"), DB::raw("COUNT(CASE WHEN extended_form_logs.status = 'approved' THEN extended_form_logs.form_id END) as 'extendedCounts'"), 'forms.created_at as created_at')
+                $forms = Form::select('forms.id as id', 'forms.user_id as user_id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"), DB::raw("COUNT(CASE WHEN extended_form_logs.status = 'approved' THEN extended_form_logs.form_id END) as 'extendedCounts'"), DB::raw('COUNT(CASE WHEN hse_rating IS NOT NULL THEN 1 END) + COUNT(CASE WHEN engineering_rating IS NOT NULL THEN 1 END) AS count_rating'))
                 ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
                 ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
                 ->leftJoin('extended_form_logs', 'extended_form_logs.form_id', '=', 'forms.id')
-                ->groupBy('company_department', 'location', 'forms.status', 'forms.id', 'start_date', 'end_date', 'created_at')
+                ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
+                ->groupBy('company_department', 'location', 'forms.status', 'forms.id', 'user_id', 'start_date', 'end_date')
                 ->orderBy('forms.id', 'desc')
                 ->orderBy('company_department', 'desc')
                 ->get();

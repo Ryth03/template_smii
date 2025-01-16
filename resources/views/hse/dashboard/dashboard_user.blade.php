@@ -157,6 +157,8 @@
 
                         if (data === 'In Approval') {
                             return `<span class="${statusClass}">${statusText} ${row.count}/3</span>`;
+                        }else if (data === 'In Evaluation') {
+                            return `<span class="${statusClass}">${statusText} ${row.count_rating}/2</span>`;
                         } else {
                             return `<span class="${statusClass}">${statusText}</span>`;
                         }

@@ -66,7 +66,8 @@ class JobEvaluationController extends Controller
         ->select('forms.id', 'company_department', 'location', 'start_date', 'end_date', 'work_description')
         ->first();
 
-        return view('hse.admin.form.jobEvaluateForm', compact('form', 'questions'));
+        $ratings = jobEvaluation::where('form_id', $formId)->first();
+        return view('hse.admin.form.jobEvaluateForm', compact('form', 'questions', 'ratings'));
     }
 
     public function evaluate(Request $request){
@@ -111,7 +112,7 @@ class JobEvaluationController extends Controller
             $form->save();
         }
 
-        return redirect()->route('jobEvaluation.table');
+        return redirect()->route('dashboard');
     }
 
     public function viewJobEvaluationReport(){        
