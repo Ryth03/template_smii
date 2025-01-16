@@ -225,14 +225,14 @@
                                 </form>
                                 `;
                             }else if(row.status == "In Evaluation"){
+                                const route = "{{ route('jobEvaluate.form', ':formId') }}";
+                                const url = route.replace(':formId', row.id);
                                 result += `
-                                    <form action="{{ route('jobEvaluate.form') }}" method="POST" style="display: inline;">
-                                    @csrf
-                                        <input type="hidden" name="formId" value="${row.id}">
-                                        <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-                                            <div>Evaluate</div>
+                                    <a href="${url}">
+                                        <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                            Evaluate ${row.id}
                                         </button>
-                                    </form>
+                                    </a>
                                 `;
                             }else if(row.status == "Finished"){
                                 result += `
@@ -264,14 +264,14 @@
                         }
                         else if(userRole.includes('engineering manager')){
                             if(row.status == "In Evaluation"){
-                                return `
-                                    <form action="{{ route('jobEvaluate.form') }}" method="POST" style="display: inline;">
-                                    @csrf
-                                        <input type="hidden" name="formId" value="${row.id}">
-                                        <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-                                            <div>Evaluate</div>
+                                const route = "{{ route('jobEvaluate.form', ':formId') }}";
+                                const url = route.replace(':formId', row.id);
+                                result += `
+                                    <a href="${url}">
+                                        <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                            Evaluate ${row.id}
                                         </button>
-                                    </form>
+                                    </a>
                                 `;
                             }else if(row.status == "Finished"){
                                 return `

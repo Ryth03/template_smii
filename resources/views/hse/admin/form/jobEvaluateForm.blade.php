@@ -34,27 +34,27 @@
             <table class="table table-responsive table-bordered">
                 <tbody>
                     <tr>
-                        <th class="bg-gray-50 dark:bg-gray-500">Perusahaan / Departemen</th>
+                        <th class="text-medium">Perusahaan / Departemen</th>
                         <td style="white-space: normal;">{{$form->company_department}}</td>
                     </tr>
                     <tr>
-                        <th class="bg-gray-50 dark:bg-gray-500">Lokasi</th>
+                        <th class="text-medium">Lokasi</th>
                         <td style="white-space: normal;">{{$form->location}}</td>
                     </tr>
                     <tr>
-                        <th class="bg-gray-50 dark:bg-gray-500">Tanggal Kerja:</th>
+                        <th class="text-medium">Tanggal Kerja:</th>
                         <td style="white-space: normal;">{{$form->start_date}} - {{$form->end_date}}</td>
                     </tr>
                     <tr>
-                        <th class="bg-gray-50 dark:bg-gray-500">Penjelasan Pekerjaan</th>
+                        <th class="text-medium">Penjelasan Pekerjaan</th>
                         <td style="white-space: normal;">{{$form->work_description}}</td>
                     </tr>
                     <tr>
-                        <th class="bg-gray-50 dark:bg-gray-500">HSE Rating</th>
+                        <th class="text-medium">HSE Rating</th>
                         <td style="white-space: normal;">{{$ratings->hse_rating}}</td>
                     </tr>
                     <tr>
-                        <th class="bg-gray-50 dark:bg-gray-500">Engineering Rating</th>
+                        <th class="text-medium">Engineering Rating</th>
                         <td style="white-space: normal;">{{$ratings->engineering_rating}}</td>
                     </tr>
                 </tbody>

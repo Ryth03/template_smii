@@ -233,18 +233,18 @@ class HSEController extends Controller
         return view('hse.admin.table.approvalTable', compact('forms','approver'));
     }
 
-    public function reviewForm(Request $request)
+    public function reviewForm($formId)
     {
         $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-        ->where('forms.id', $request->input('value'))
+        ->where('forms.id', $formId)
         ->first();
 
         $workers = Form::leftJoin('fitToWork', 'forms.id', '=', 'fitToWork.form_id')
-        ->where('forms.id', $request->input('value'))
+        ->where('forms.id', $formId)
         ->get();
 
         $permits = Form::leftJoin('additionalWorkPermits_data', 'forms.id', '=', 'additionalWorkPermits_data.form_id')
-        ->where('forms.id', $request->input('value'))
+        ->where('forms.id', $formId)
         ->select('master_id')
         ->get();
 
@@ -254,10 +254,8 @@ class HSEController extends Controller
         return view('hse.admin.form.reviewForm', compact('form','workers','permits','scaffs'));
     }
 
-    public function approvalForm(Request $request)
+    public function approvalForm($formId)
     {
-        $formId = $request->input('value'); 
-
         $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->where('forms.id', $formId)
         ->first();

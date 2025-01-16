@@ -103,13 +103,10 @@ Route::middleware('auth')->group(function () {
     Route::POST('/send-reminder', [HSEController::class, 'sendReminderToUser'])->name('reminder.send');
     Route::POST('/finished-work', [FormStateController::class, 'finishedWork'])->name('finished.work');
     Route::POST('/job-evaluate-report-form', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
-    Route::POST('/job-evaluate-form', [JobEvaluationController::class, 'evaluateForm'])->name('jobEvaluate.form');
+    Route::GET('/job-evaluate-form/{formId}', [JobEvaluationController::class, 'evaluateForm'])->name('jobEvaluate.form');
     Route::POST('/job-evaluate', [JobEvaluationController::class, 'evaluate'])->name('evaluate');
-    Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
-    Route::POST('/approve', [HSEController::class, 'approvalForm'])->name('approval.form');
-    Route::get('/approve', function () {
-        return view('hse.admin.form.approveForm');
-    });
+    Route::GET('/review/{formId}', [HSEController::class, 'reviewForm'])->name('review.form');
+    Route::GET('/approve/{formId}', [HSEController::class,   'approvalForm'])->name('approval.form');
 
     // USER HSE
     Route::get('/hse', [HSEFormController::class, 'viewNewForm'])->name('permit.form');

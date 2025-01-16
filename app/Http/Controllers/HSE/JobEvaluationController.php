@@ -33,7 +33,7 @@ class JobEvaluationController extends Controller
         return view('hse.admin.table.jobEvaluationTable', compact('forms'));
     }
 
-    public function evaluateForm(Request $request){
+    public function evaluateForm($formId){
         
         $user = Auth::user();
 
@@ -57,9 +57,6 @@ class JobEvaluationController extends Controller
         }else{
             return redirect()->route('dashboard');
         }
-
-
-        $formId = $request->input('formId');
 
         $form = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->where('forms.id', $formId)

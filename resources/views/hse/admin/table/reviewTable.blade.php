@@ -49,13 +49,11 @@
                     <td>{{$form->start_time}} - {{$form->end_time}}</td>
                     <td>{{$form->workers_count}}</td>
                     <td>
-                        <form action="{{ route('review.form') }}" method="POST" style="display: inline;">
-                            @csrf
-                            <input type="hidden" name="value" value="{{ $form->form_id }}">
-                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                        <a href="{{ route('review.form', $form->id ) }}">
+                            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                                 Awaiting Review
                             </button>
-                        </form>
+                        </a>
                     </td>
                 </tr>
                 @endforeach
