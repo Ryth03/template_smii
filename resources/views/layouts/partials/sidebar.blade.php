@@ -78,7 +78,7 @@
         @endcan
         @can('edit location hse')
         <li
-            class="{{ request()->is('users*') || request()->is('department*') || request()->is('position*') || request()->is('level*') || request()->is('roles*') || request()->is('permissions*') || request()->is('get.master*') ? 'current' : '' }}">
+            class="{{ request()->is('users*') || request()->is('vendors*') || request()->is('department*') || request()->is('position*') || request()->is('level*') || request()->is('roles*') || request()->is('permissions*') || request()->is('get.master*') ? 'current' : '' }}">
             <a href="#" style="font-size: 18px;">
                 <i data-feather="users" style="width: 18px; height: 18px;"></i>
                 User Management
@@ -89,6 +89,9 @@
                                 class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Users</a>
                     </li>
 
+                    <li><a href="{{ route('vendors.index') }}" class="{{ request()->is('vendors*') ? 'current' : '' }}"><i
+                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Vendors</a>
+                    </li>
 
                     <li><a href="{{ route('department.index') }}"
                             class="{{ request()->is('department*') ? 'current' : '' }}"><i class="icon-Commit"><span

@@ -55,6 +55,7 @@ use App\Http\Controllers\HSE\HSEApproverLevelController;
 use App\Http\Controllers\HSE\JobEvaluationController;
 use App\Http\Controllers\HSE\FormStateController;
 use App\Http\Controllers\HSE\Dashboard\DashboardHSE;
+use App\Http\Controllers\VendorController;
 
 
 
@@ -171,6 +172,8 @@ Route::group(['middleware' => ['role:super-admin|admin|hse']], function () {
 
     Route::resource('users', UserController::class);
     Route::delete('users/{userId}/delete', [UserController::class, 'destroy']);
+
+    Route::resource('vendors', VendorController::class);
 
     Route::get('departments', [DepartmentController::class, 'index'])->name('department.index');
     Route::post('departments', [DepartmentController::class, 'store'])->name('department.store');

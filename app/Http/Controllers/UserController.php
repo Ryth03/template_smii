@@ -30,7 +30,7 @@ class UserController extends Controller
 
     public function index(User $user)
     {
-        $users = User::get();
+        $users = User::whereNotNull('nik')->get();
         $positions = Position::all();
         $departments = Department::all();
         $roles = Role::pluck('name', 'name')->all();
