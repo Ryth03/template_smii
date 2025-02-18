@@ -195,14 +195,17 @@ class HSEFormController extends Controller
             }
         }
         if ($request->filled('namaTenagaKerja')){
-            foreach($request->input('namaTenagaKerja') as $name){
+            foreach($request->input('namaTenagaKerja') as $index => $name){
                 if (trim($name) !== ''){
-                    fitToWork::create([
+                    $file = $request->file('ktpTenagaKerja')[$index];
+                    $file->storeAs("public/hseFile/".$formId."/KTP", $index+1 . '_' . $name . '.' . $file->getClientOriginalExtension());
+                    fitToWork::firstOrCreate([
                         'form_id' => $formId,
                         'worker_name'=> $name,
                         'ok' => False,
                         'not_ok' => False,
-                        'clinic_check' => False
+                        'clinic_check' => False,
+                        'file_path' => "/storage/hseFile/".$formId."/KTP/". $index+1 . '_' . $name . '.' . $file->getClientOriginalExtension()
                     ]);
                 } 
             }
@@ -340,7 +343,11 @@ class HSEFormController extends Controller
 
     public function insertForm(Request $request)
     {   
-
+        // $tempFile = null;
+        // if(isset($request->file('ktpTenagaKerja')[1])){
+        //     $tempFile = $request->file('ktpTenagaKerja')[1];
+        // }
+        // dd($tempFile, $request, $request->input('ktpTenagaKerja'));
         $request->validate([
             'formId' => 'required',
             'potentialHazards' => 'array',
@@ -521,15 +528,31 @@ class HSEFormController extends Controller
             }
         }
         if ($request->filled('namaTenagaKerja')){
-            foreach($request->input('namaTenagaKerja') as $name){
+            foreach($request->input('namaTenagaKerja') as $index => $name){
                 if (trim($name) !== ''){
-                    fitToWork::firstOrCreate([
-                        'form_id' => $formId,
-                        'worker_name'=> $name,
-                        'ok' => False,
-                        'not_ok' => False,
-                        'clinic_check' => False
-                    ]);
+                    if(isset($request->file('ktpTenagaKerja')[$index])){
+                        $file = $request->file('ktpTenagaKerja')[$index];
+                        $file->storeAs("public/hseFile/".$formId."/KTP", $index+1 . '_' . $name . '.' . $file->getClientOriginalExtension());
+                        fitToWork::updateOrCreate([
+                            'form_id' => $formId,
+                            'worker_name'=> $name
+                        ],[
+                            'ok' => False,
+                            'not_ok' => False,
+                            'clinic_check' => False,
+                            'file_path' => "/storage/hseFile/".$formId."/KTP/". $index+1 . '_' . $name . '.' . $file->getClientOriginalExtension()
+                        ]);
+                    }else{
+                        fitToWork::updateOrCreate([
+                            'form_id' => $formId,
+                            'worker_name'=> $name
+                        ],[
+                            'ok' => False,
+                            'not_ok' => False,
+                            'clinic_check' => False,
+                            'file_path' => $request->input('ktpTenagaKerja')[$index]
+                        ]);
+                    }
                 } 
             }
         }
@@ -775,5 +798,15 @@ class HSEFormController extends Controller
         }
         
         return redirect()->route('dashboard');
+    }
+
+    public function destroyFile($id)
+    {
+        $file = fitToWork::findOrFail($id);
+        Storage::delete('public/' . $file->file_path);
+        $file->file_path = null;
+        $file->save();
+
+        return response()->json(['message' => 'File deleted successfully']);
     }
 }

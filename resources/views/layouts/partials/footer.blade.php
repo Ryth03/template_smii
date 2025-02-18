@@ -8,8 +8,12 @@
         </ul>
     </div>
     &copy;
+    <span id="currentYear"></span> INTRA SMII | SINARMEADOW | MIS. All Rights Reserved.
+
     <script>
-        document.write(new Date().getFullYear())
-    </script> INTRA SMII | SINARMEADOW | MIS.  All Rights Reserved.
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        });
+    </script>
 
 </footer>

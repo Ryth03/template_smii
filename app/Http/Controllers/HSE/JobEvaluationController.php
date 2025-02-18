@@ -20,7 +20,7 @@ class JobEvaluationController extends Controller
         ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
         ->where('status', 'In Evaluation')
         ->orderBy('forms.id', 'asc');
-        
+
         if($user->hasRole("hse")){
             $forms = $forms->whereNull('hse_rating')->get();
         }else if($user->hasRole("engineering manager")){
@@ -28,16 +28,14 @@ class JobEvaluationController extends Controller
         }else{
             return redirect()->route('dashboard');
         }
-        
+
         confirmDelete();
         return view('hse.admin.table.jobEvaluationTable', compact('forms'));
     }
 
     public function evaluateForm($formId){
-        
-        $user = Auth::user();
 
-        $questions;
+        $user = Auth::user();
         if($user->hasRole("hse")){
             $questions = [
                 "Kepatuhan penggunaan APD",
@@ -84,13 +82,13 @@ class JobEvaluationController extends Controller
             }
         }
         $total = $total/($index-1);
-        
+
         if($user->hasRole('hse')){
             $column = 'hse_rating';
         }elseif($user->hasRole('engineering manager')){
             $column = 'engineering_rating';
         }
-        
+
         jobEvaluation::updateOrCreate(
             ['form_id' => $formId],
             [
@@ -103,7 +101,7 @@ class JobEvaluationController extends Controller
         if(!is_null($eval->hse_rating) && !is_null($eval->engineering_rating)){
             $eval->total_rating = ($eval->hse_rating + $eval->engineering_rating)/2;
             $eval->save();
-            
+
             $form = Form::find($formId);
             $form->status = "Finished";
             $form->save();
@@ -112,13 +110,13 @@ class JobEvaluationController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function viewJobEvaluationReport(){        
+    public function viewJobEvaluationReport(){
         $forms = Form::select('forms.id as id', 'company_department', 'location', 'start_date', 'end_date')
         ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->where('status', 'Finished')
         ->orderBy('forms.id', 'asc')
         ->get();
-        
+
 
         return view('hse.admin.table.jobEvaluationReportTable', compact('forms'));
     }
@@ -129,7 +127,7 @@ class JobEvaluationController extends Controller
         ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
         ->find($formId);
-        
+
         return view('hse.admin.form.jobEvaluateReportForm', compact('form', 'formId'));
     }
 }

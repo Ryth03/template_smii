@@ -265,7 +265,7 @@
                             <span class="sr-only">Close</span>
                         </button>
                     </div>
-                    <div class="p-4 md:p-5 overflow-y-auto max-h-96">
+                    <div class="p-4 md:p-5 overflow-y-auto">
                         <form action="{{ route('vendors.update', $user->id) }}" method="POST" class="space-y-4" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')

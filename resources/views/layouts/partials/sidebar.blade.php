@@ -10,8 +10,8 @@
     <ul id="main-menu" class="sm sm-blue">
         <li
             class="{{ request()->is('dashboard*')  ? 'current' : '' }}">
-            <a href="{{ route('dashboard') }}" style="font-size: 18px;">
-                <i data-feather="home" style="width: 18px; height: 18px;"></i>
+            <a href="{{ route('dashboard') }}" style="font-size: 12px;">
+                <i data-feather="home" style="width: 12px; height: 12px;"></i>
                 Dashboard
             </a>
             @if(auth()->user()->hasRole('hse') || auth()->user()->hasRole('engineering manager'))
@@ -29,12 +29,12 @@
                 </ul>
             @endif
         </li>
-        
+
         @canany(['view all form hse', 'job evaluation hse', 'approve form hse'])
         <li
             class="{{ request()->is('viewAll-table') || request()->is('reviews') || request()->is('approvals') || request()->is('location') || request()->is('approver') || request()->is('job-eval*')  ? 'current' : '' }}">
-            <a href="#" style="font-size: 18px;">
-                <i data-feather="check-circle" style="width: 18px; height: 18px;"></i>
+            <a href="#" style="font-size: 12px;">
+                <i data-feather="check-circle" style="width: 12px; height: 12px;"></i>
                 HSE Management
             </a>
             <ul>
@@ -57,7 +57,7 @@
                 <li><a href="{{ route('location.hse') }}" class="{{ request()->is('location') ? 'current' : '' }}"><i
                         class="icon-Commit"><span class="path1"></span><span class="path2"></span></i> HSE Location </a>
                     </li>
-                @endcan 
+                @endcan
                 @can('edit approver hse')
                 <li><a href="{{ route('approver.view.hse') }}" class="{{ request()->is('approver') ? 'current' : '' }}"><i
                             class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Approval Level</a>
@@ -78,20 +78,22 @@
         @endcan
         @can('edit location hse')
         <li
-            class="{{ request()->is('users*') || request()->is('vendors*') || request()->is('department*') || request()->is('position*') || request()->is('level*') || request()->is('roles*') || request()->is('permissions*') || request()->is('get.master*') ? 'current' : '' }}">
-            <a href="#" style="font-size: 18px;">
-                <i data-feather="users" style="width: 18px; height: 18px;"></i>
+            class="{{ request()->is('users*') || request()->is('department*') || request()->is('position*') || request()->is('level*') || request()->is('roles*') || request()->is('permissions*') || request()->is('get.master*') ? 'current' : '' }}">
+            <a href="#" style="font-size: 12px;">
+                <i data-feather="users" style="width: 12px; height: 12px;"></i>
                 User Management
             </a>
             <ul>
 
-                    <li><a href="{{ route('users.index') }}" class="{{ request()->is('users*') ? 'current' : '' }}"><i
-                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Users</a>
-                    </li>
+                     @can('view user')
+                        <li><a href="{{ route('users.index') }}" class="{{ request()->is('users*') ? 'current' : '' }}"><i
+                                    class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Employee</a>
+                        </li>
+                        <li><a href="{{ route('vendors.index') }}" class="{{ request()->is('vendors*') ? 'current' : '' }}"><i
+                            class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Vendors</a>
+                         </li>
+                    @endcan
 
-                    <li><a href="{{ route('vendors.index') }}" class="{{ request()->is('vendors*') ? 'current' : '' }}"><i
-                                class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Vendors</a>
-                    </li>
 
                     <li><a href="{{ route('department.index') }}"
                             class="{{ request()->is('department*') ? 'current' : '' }}"><i class="icon-Commit"><span
@@ -113,10 +115,10 @@
                     <li><a href="{{ route('permissions.index') }}"
                             class="{{ request()->is('permissions*') ? 'current' : '' }}"><i class="icon-Commit"><span
                                     class="path1"></span><span class="path2"></span></i>Permission</a></li>
-                    
+
             </ul>
         </li>
         @endcan
-            
+
     </ul>
 </nav>

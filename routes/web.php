@@ -1,61 +1,25 @@
 <?php
 
 use App\Http\Controllers\Auth\LockScreenController;
-use App\Http\Controllers\Auth\UnlockableController;
-use App\Http\Controllers\COA\AnalyticalDataController;
-use App\Http\Controllers\COA\CustomerController;
-use App\Http\Controllers\COA\ProductAnalystController;
-use App\Http\Controllers\COA\ProductController as COAProductController;
-use App\Http\Controllers\COA\TemplateController;
-use App\Http\Controllers\COA\TestController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\DOC\CategoryController;
-use App\Http\Controllers\DOC\DocumentController;
-use App\Http\Controllers\DOC\EventController;
-use App\Http\Controllers\DOC\FileController;
-use App\Http\Controllers\DOC\ReminderController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PCR\InitiatorController;
-use App\Http\Controllers\PCR\NatureOfChangeController;
-use App\Http\Controllers\PCR\PCCController;
-use App\Http\Controllers\PCR\PCRController;
-use App\Http\Controllers\PCR\ProductController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\QAD\AccountController;
-use App\Http\Controllers\QAD\ApproverController;
-use App\Http\Controllers\QAD\CostCenterController;
-use App\Http\Controllers\QAD\CustomerInvoiceController;
-use App\Http\Controllers\QAD\EmployeeController;
-use App\Http\Controllers\QAD\InventoryController;
-use App\Http\Controllers\QAD\ItemController;
-use App\Http\Controllers\QAD\ProductionController;
-use App\Http\Controllers\QAD\PurchaseOrderDetailController;
-use App\Http\Controllers\QAD\PurchaseOrderMasterController;
-use App\Http\Controllers\QAD\RequisitionApprovalDetailController;
-use App\Http\Controllers\QAD\RequisitionMasterController;
-use App\Http\Controllers\QAD\SalesController;
-use App\Http\Controllers\QAD\SubAccountController;
-use App\Http\Controllers\QAD\SupplierController;
 use App\Http\Controllers\Role\PermissionController;
 use App\Http\Controllers\Role\RoleController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\WSA\RQMController;
-use App\Models\PCR\InitiatorApproval;
-use App\Models\QAD\RequisitionMaster;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\Route;
-use Spatie\LaravelIgnition\Http\Requests\UpdateConfigRequest;
 use App\Http\Controllers\HSE\HSEController;
 use App\Http\Controllers\HSE\HSEFormController;
 use App\Http\Controllers\HSE\HSELocationController;
 use App\Http\Controllers\HSE\HSEApproverLevelController;
 use App\Http\Controllers\HSE\JobEvaluationController;
 use App\Http\Controllers\HSE\FormStateController;
-use App\Http\Controllers\HSE\Dashboard\DashboardHSE;
 use App\Http\Controllers\VendorController;
+
 
 
 
@@ -100,14 +64,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard-security', [HSEController::class, 'viewSecurityTable'])->name('securityPost.table');
     Route::get('/job-evaluation', [JobEvaluationController::class, 'viewJobEvaluation'])->name('jobEvaluation.table');
     Route::get('/job-evaluation-report', [JobEvaluationController::class, 'viewJobEvaluationReport'])->name('jobEvaluationReport.table');
-    
+
     Route::POST('/send-reminder', [HSEController::class, 'sendReminderToUser'])->name('reminder.send');
     Route::POST('/finished-work', [FormStateController::class, 'finishedWork'])->name('finished.work');
     Route::POST('/job-evaluate-report-form', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
     Route::GET('/job-evaluate-form/{formId}', [JobEvaluationController::class, 'evaluateForm'])->name('jobEvaluate.form');
     Route::POST('/job-evaluate', [JobEvaluationController::class, 'evaluate'])->name('evaluate');
-    Route::GET('/review/{formId}', [HSEController::class, 'reviewForm'])->name('review.form');
+    Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
     Route::GET('/approve/{formId}', [HSEController::class,   'approvalForm'])->name('approval.form');
+    Route::GET('/review/{formId}', [HSEController::class, 'reviewForm'])->name('review.form');
+    Route::get('/approve', function () {
+        return view('hse.admin.form.approveForm');
+    });
 
     // USER HSE
     Route::get('/hse', [HSEFormController::class, 'viewNewForm'])->name('permit.form');
@@ -115,6 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/insert-form-hse', [HSEFormController::class, 'insertNewForm'])->name('hse.form.insert');
     Route::post('/insert-extend-form-hse', [HSEFormController::class, 'insertExtendForm'])->name('hse.form.extend');
     Route::post('/view-form-hse', [HSEFormController::class, 'viewDraftForm'])->name('view.form.hse');
+    Route::delete('/destroy-file-hse/{id}', [HSEFormController::class, 'destroyFile'])->name('destroy.file.hse');
     Route::post('/submit-form-hse', [HSEFormController::class, 'insertForm'])->name('submit.form.hse');
     Route::post('/update-form-hse', [HSEController::class, 'updateForm'])->name('update.form.hse');
     Route::delete('/delete-form-hse', [HSEFormController::class, 'deleteForm'])->name('delete.form.hse');
@@ -124,7 +93,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/location/{locationId}/edit', [HSELocationController::class, 'locationUpdate'])->name('location.update');
     Route::delete('/location/{locationId}/delete', [HSELocationController::class, 'locationDelete'])->name('location.destroy');
     Route::post('/location/store', [HSELocationController::class, 'locationStore'])->name('location.store');
-    
+
     Route::get('/approver', [HSEApproverLevelController::class, 'index'])->name('approver.view.hse');
     Route::put('/approver/{approverId}', [HSEApproverLevelController::class, 'update'])->name('approver.update.hse');
 
@@ -155,6 +124,8 @@ Route::middleware('auth')->group(function () {
         return response()->json(['count' => auth()->user()->unreadNotifications->count()]);
     })->name('notifications.count');
 
+    Route::get('/rating', [DashboardController::class, 'getRatingData'])->name('rating.data');
+    Route::get('/rating/export', [DashboardController::class, 'exportRatingToExcel'])->name('rating.export');
 
 });
 
@@ -171,9 +142,9 @@ Route::group(['middleware' => ['role:super-admin|admin|hse']], function () {
     Route::put('roles/{roleId}/give-permissions', [RoleController::class, 'givePermissionToRole']);
 
     Route::resource('users', UserController::class);
-    Route::delete('users/{userId}/delete', [UserController::class, 'destroy']);
-
     Route::resource('vendors', VendorController::class);
+
+    Route::delete('users/{userId}/delete', [UserController::class, 'destroy']);
 
     Route::get('departments', [DepartmentController::class, 'index'])->name('department.index');
     Route::post('departments', [DepartmentController::class, 'store'])->name('department.store');

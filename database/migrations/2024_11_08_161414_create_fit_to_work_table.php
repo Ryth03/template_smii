@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('not_ok');
             $table->boolean('clinic_check');
             $table->string('clinic_recomendation')->nullable();
+            $table->string('file_path')->nullable();
             $table->timestamps();  
             $table->foreign('form_id')->references('id')->on('forms')->onDelete('cascade');       
         });

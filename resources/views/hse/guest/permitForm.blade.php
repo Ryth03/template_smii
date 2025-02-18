@@ -477,6 +477,7 @@
                                     </div>
                                     <div class="col-span-3">
                                         <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+                                        <input type="file" id="ktpTenagaKerja1" name="ktpTenagaKerja[]" accept=".jpeg, .png, .jpg" class="form-control w-full" required/>
                                     </div>
                                 </div>
                             </div>
@@ -1272,7 +1273,8 @@ addButtonTenagaKerja.addEventListener('click', () => {
             <label for="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="font-medium">Nama Tenaga Kerja :</label>
         </div>
         <div class="col-span-3">
-            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data">
+            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+            <input type="file" id="ktpTenagaKerja${rowCountTenagaKerjaGrid}" name="ktpTenagaKerja[]"  accept=".jpeg, .png, .jpg" class="form-control w-full" required>
         </div>
     </div>
     `;

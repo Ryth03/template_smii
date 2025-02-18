@@ -51,11 +51,11 @@
                     </tr>
                     <tr>
                         <th class="text-medium">HSE Rating</th>
-                        <td style="white-space: normal;">{{$ratings->hse_rating}}</td>
+                        <td style="white-space: normal text-lg;">{{ $ratings->hse_rating ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="text-medium">Engineering Rating</th>
-                        <td style="white-space: normal;">{{$ratings->engineering_rating}}</td>
+                        <td style="white-space: normal text-lg;">{{$ratings->engineering_rating ?? ''}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -87,7 +87,7 @@
             <div class="flex justify-end">
                 <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 type="submit">Submit</button>
-                <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 ml-3" onClick="window.history.back()">Back</button>
+                <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 ml-3" onClick="window.history.back()">Back</button>
             </div>
         </form>
     </div>

@@ -12,5 +12,14 @@ class Form extends Model
         'user_id',
         'status'
     ];
-    
+
+    public function projectExecutor()
+    {
+        return $this->hasOne(projectExecutor::class);
+    }
+
+    public function additionalWorkPermitsData()
+    {
+        return $this->hasMany(additionalWorkPermits_data::class);
+    }
 }

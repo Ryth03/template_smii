@@ -10,11 +10,14 @@ use App\Models\HSE\Form;
 use App\Models\HSE\projectExecutor;
 use App\Models\HSE\approvalDetail;
 use App\Models\HSE\approver;
-use App\Models\HSE\hseLocation;   
+use App\Models\HSE\hseLocation;
 use App\Models\HSE\uploadFile;
-use App\Models\HSE\extendedFormLog;  
+use App\Models\HSE\extendedFormLog;
+use App\Models\HSE\fitToWork;
 use App\Models\HSE\additionalWorkPermits_master;
 use App\Models\HSE\additionalWorkPermits_data;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RatingExport;
 
 class DashboardController extends Controller
 {
@@ -25,10 +28,9 @@ class DashboardController extends Controller
     }
 
     public function getLeaderboardData(Request $request){
-        
+
         $today = Carbon::today();
         $category = $request->get('category', '');
-        $forms;
         if($category === 'activeTable')
         {
             $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
@@ -45,18 +47,14 @@ class DashboardController extends Controller
 
             $forms = $forms->limit(10)->get();
         }
-        elseif($category === 'ratingTable'){
-            $year = $request->get('year', '');
-            $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-            ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
-            ->whereNotNull('total_rating')
-            ->whereYear('start_date', $year)
-            ->groupBy('company_department')
-            ->select("company_department", DB::raw('SUM(total_rating) / COUNT(company_department) AS extra'))
-            ->orderBy('extra','DESC')
-            ->limit(10)
-            ->get();
-        }
+        // elseif($category === 'ratingTable'){
+        //     $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+        //     ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
+        //     ->orderBy('total_rating','DESC')
+        //     ->select("company_department", 'total_rating as extra')
+        //     ->limit(10)
+        //     ->get();
+        // }
         elseif($category === 'reviewTable'){
             $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
             ->whereRaw('LOWER(status) = ?', ['in review'])
@@ -67,15 +65,15 @@ class DashboardController extends Controller
         elseif($category === 'approvalTable'){
             $user = Auth::user();
             $userRole =  strToLower($user->getRoleNames()->first());
-    
+
             $approver = approver::where('role_name', $userRole)
             ->select('name', 'level')
             ->first();
-            
+
             if(!$approver){
                 return redirect()->route("dashboard");
             }
-    
+
             $forms = [];
             $approvalDetail = null;
             if($approver->level === 1){
@@ -117,7 +115,7 @@ class DashboardController extends Controller
             }
         }
         elseif($category === 'evaluationTable'){
-            
+
             $user = Auth::user();
             $forms= Form::select("company_department", "forms.status as extra")
             ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
@@ -132,7 +130,7 @@ class DashboardController extends Controller
             }else{
                 return redirect()->route('dashboard');
             }
-        
+
         }elseif($category === 'overdueTable'){
             $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
             ->where('end_date', '<', $today)
@@ -141,7 +139,7 @@ class DashboardController extends Controller
             ->select("company_department", DB::raw("'Overdue' as extra"))
             ->get();
         }
-        
+
         return response()->json($forms);
     }
 
@@ -154,46 +152,45 @@ class DashboardController extends Controller
         $year = $request->get('year', '');
         $category = $request->get('category', '');
 
-        $formsCreated = Form::whereRaw('LOWER(status) != ?', ['draft']); // ambil semua form kecuali draft
-        $formsDone = Form::whereRaw('LOWER(status) = ?', ['finished']); // ambil form yang sudah finished saja
+        $formsCreatedQuery = Form::whereRaw('LOWER(status) != ?', ['draft']);
+        $formsDoneQuery = Form::whereRaw('LOWER(status) = ?', ['finished']);
 
-        if($category){
-            $formsCreated = $formsCreated->leftJoin('additionalworkpermits_data', 'additionalworkpermits_data.form_id', '=', 'forms.id')
-            ->where('additionalworkpermits_data.master_id', $category);
-            
-            $formsDone = $formsDone->leftJoin('additionalworkpermits_data', 'additionalworkpermits_data.form_id', '=', 'forms.id')
-            ->where('additionalworkpermits_data.master_id', $category);
+        if ($category) {
+            $formsCreatedQuery = $formsCreatedQuery->whereHas('additionalWorkPermitsData', function($query) use ($category) {
+                $query->where('master_id', $category);
+            });
+
+            $formsDoneQuery = $formsDoneQuery->whereHas('additionalWorkPermitsData', function($query) use ($category) {
+                $query->where('master_id', $category);
+            });
         }
 
+        $formsCreated = $formsCreatedQuery->whereYear('created_at', $year)
+            ->select(DB::raw('DATE_FORMAT(created_at, "%b") as month'))
+            ->orderBy('created_at', 'ASC')
+            ->pluck('month')
+            ->toArray();
 
-        $formsCreated = $formsCreated->whereRaw('YEAR(forms.created_at) = ?', [$year])
-        ->select(DB::raw('DATE_FORMAT(forms.created_at, "%b")  as month'))
-        ->orderBy('forms.created_at', 'ASC')
-        ->pluck('month')
-        ->toArray(); 
-        
-        $formsDone = $formsDone->whereRaw('YEAR(forms.created_at) = ?', [$year])
-        ->select(DB::raw('DATE_FORMAT(forms.created_at, "%b")  as month'))
-        ->orderBy('forms.created_at', 'ASC')
-        ->pluck('month')
-        ->toArray(); 
-
+        $formsDone = $formsDoneQuery->whereYear('created_at', $year)
+            ->select(DB::raw('DATE_FORMAT(created_at, "%b") as month'))
+            ->orderBy('created_at', 'ASC')
+            ->pluck('month')
+            ->toArray();
 
         $monthCounts = [];
         foreach ($formsCreated as $month) {
-            // Inisialisasi data
             if (!isset($monthCounts[$month])) {
                 $monthCounts[$month] = ['created' => 0, 'finished' => 0];
             }
-            $monthCounts[$month]['created']++; // Increment form created
+            $monthCounts[$month]['created']++;
         }
         foreach ($formsDone as $month) {
-            $monthCounts[$month]['finished']++; // Increment form finished
+            $monthCounts[$month]['finished']++;
         }
 
-        $months = array_keys($monthCounts);  // Nama bulan
-        $createdData = array_column($monthCounts, 'created'); // Data jumlah 'created'
-        $doneData = array_column($monthCounts, 'finished');     // Data jumlah 'done'
+        $months = array_keys($monthCounts);
+        $createdData = array_column($monthCounts, 'created');
+        $doneData = array_column($monthCounts, 'finished');
 
         return response()->json([
             'formsCreated' => $createdData,
@@ -202,27 +199,37 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function getSecurityData(Request $request){
+    public function getSecurityData(){
 
         $today = Carbon::today();
 
-        $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-        ->where('start_date', '<=', $today)
-        ->where('end_date', '>=', $today)
+        // Mendapatkan tanggal hari ini
+        $today = Carbon::today();
+
+        $forms = Form::whereHas('projectExecutor', function($query) use ($today) {
+            $query->where('start_date', '<=', $today)
+                  ->where('end_date', '>=', $today);
+        })
         ->where('status', "Approved")
+        ->with('projectExecutor') // Asumsi relasi sudah didefinisikan
         ->get();
 
-        $files = uploadFile::leftJoin('forms', 'forms.id', '=', 'uploadfiles.form_id')
-        ->where('status', "Approved")
-        ->get();
+        $files = uploadFile::whereHas('form', function($query) {
+            $query->where('status', "Approved");
+        })->get();
 
-        $hasFileList = uploadFile::leftJoin('forms', 'forms.id', '=', 'uploadfiles.form_id')
-        ->where('status', "Approved")
-        ->pluck('uploadfiles.form_id');
+        $ktps = fitToWork:: whereHas('form', function($query) {
+            $query->where('status', "Approved");
+        })->get();
+
+        $hasFileList = uploadFile::whereHas('form', function($query) {
+            $query->where('status', "Approved");
+        })->pluck('form_id');
 
         return response()->json([
             'forms' => $forms,
             'files' => $files,
+            'ktps' => $ktps,
             'hasFileList' => $hasFileList
         ]);
     }
@@ -233,14 +240,14 @@ class DashboardController extends Controller
         if($user){
             if ($user->hasRole('hse') || $user->hasRole('engineering manager')) {
                 $forms = Form::select('forms.id as id', 'forms.user_id as user_id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"), DB::raw("COUNT(CASE WHEN extended_form_logs.status = 'approved' THEN extended_form_logs.form_id END) as 'extendedCounts'"), DB::raw('COUNT(CASE WHEN hse_rating IS NOT NULL THEN 1 END) + COUNT(CASE WHEN engineering_rating IS NOT NULL THEN 1 END) AS count_rating'))
-                ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-                ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
-                ->leftJoin('extended_form_logs', 'extended_form_logs.form_id', '=', 'forms.id')
-                ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
-                ->groupBy('company_department', 'location', 'forms.status', 'forms.id', 'user_id', 'start_date', 'end_date')
-                ->orderBy('forms.id', 'desc')
-                ->orderBy('company_department', 'desc')
-                ->get();
+                    ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+                    ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
+                    ->leftJoin('extended_form_logs', 'extended_form_logs.form_id', '=', 'forms.id')
+                    ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
+                    ->groupBy('company_department', 'location', 'forms.status', 'forms.id', 'user_id', 'start_date', 'end_date')
+                    ->orderBy('forms.id', 'desc')
+                    ->orderBy('company_department', 'desc')
+                    ->get();
             }else{
                 $forms = Form::where('user_id', $user->id)
                 ->select('company_department','location','start_date', 'end_date','forms.id as id', 'forms.user_id as user_id', 'forms.created_at as created_at', 'forms.updated_at as updated_at', 'forms.status as status' , DB::raw("COUNT(approval_details.form_id) as 'count'"))
@@ -248,9 +255,9 @@ class DashboardController extends Controller
                 ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
                 ->groupBy( 'forms.id','company_department','user_id','location','start_date', 'end_date','forms.created_at', 'forms.updated_at', 'forms.status')
                 ->orderBy('forms.id', 'desc')
-                ->get(); 
+                ->get();
             }
-            
+
 
             return response()->json($forms);
         }
@@ -258,7 +265,7 @@ class DashboardController extends Controller
     }
 
     public function getExtendForms(Request $request){
-        
+
         $today = Carbon::today();
         $user = Auth::user();
         if($user){
@@ -279,7 +286,7 @@ class DashboardController extends Controller
     }
 
     public function getExtendFormHistory(Request $request){
-        
+
         $user = Auth::user();
         if($user){
 
@@ -306,5 +313,37 @@ class DashboardController extends Controller
         }
 
         return response()->json('test');
+    }
+    
+     public function getRatingData(Request $request)
+    {
+        $year = $request->get('year', date('Y')); // Default ke tahun saat ini jika tidak ada yang disediakan
+
+        $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+            ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
+            ->whereYear('forms.created_at', $year)
+            ->groupBy('company_department')
+            ->orderBy(DB::raw('AVG(total_rating)'), 'DESC')
+            ->select("company_department", DB::raw('AVG(IFNULL(total_rating, 0.00)) as average_rating'))
+            ->limit(10)
+            ->get();
+
+        // Mendapatkan daftar tahun yang tersedia
+        $availableYears = Form::selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderBy('year', 'DESC')
+            ->pluck('year');
+
+        return response()->json([
+            'forms' => $forms,
+            'availableYears' => $availableYears
+        ]);
+    }
+
+    public function exportRatingToExcel(Request $request)
+    {
+        $year = $request->get('year', date('Y'));
+
+        return Excel::download(new RatingExport($year), 'Rating-' . $year . '.xlsx');
     }
 }

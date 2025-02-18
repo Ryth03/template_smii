@@ -15,6 +15,12 @@ class fitToWork extends Model
         "ok",
         "not_ok",
         "clinic_check",
-        "clinic_recomendation"
+        "clinic_recomendation",
+        "file_path"
     ];
+
+    public function form()
+    {
+        return $this->belongsTo(Form::class);
+    }
 }

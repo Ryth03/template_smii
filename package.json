@@ -16,6 +16,7 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "turbolinks": "^5.2.0",
         "vite-plugin-require": "^1.2.14"
     }
 }

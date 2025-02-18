@@ -19,3 +19,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Tambahkan aturan untuk menampilkan PDF di browser
+<FilesMatch "\.(pdf)$">
+    Header set Content-Disposition inline
+</FilesMatch>

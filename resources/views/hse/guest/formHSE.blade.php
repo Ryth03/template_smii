@@ -556,6 +556,7 @@
                                     </div>
                                     <div class="col-span-3">
                                         <input type="text" id="namaTenagaKerja1" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+                                        <input type="file" id="ktpTenagaKerja1" name="ktpTenagaKerja[0]" accept=".jpeg, .png, .jpg" class="form-control w-full" required/>
                                     </div>
                                 </div>
                             </div>
@@ -683,7 +684,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
     var files = @json($files);
-    console.log(files);
 
     var sioSiloButton = document.getElementById("sioSiloCheck");
     sioSilo(sioSiloButton);
@@ -711,7 +711,6 @@ document.addEventListener('DOMContentLoaded', function() {
         sistemProteksiKebakaran(fireHazardButton);
     }
 
-
     const workers = @json($workers);
     if(workers){
         var addTenagaKerjaButton = document.getElementById("addButtonTenagaKerja");
@@ -719,8 +718,40 @@ document.addEventListener('DOMContentLoaded', function() {
             if(index>=1){
                 addTenagaKerjaButton.click();
             }
-            var textbox = document.getElementById("namaTenagaKerja"+(index+1))
+            var textbox = document.getElementById("namaTenagaKerja"+(index+1));
             textbox.value = worker.worker_name;
+            var inputKtp = document.getElementById("ktpTenagaKerja"+(index+1));
+            if(worker.file_path){
+                var parent = inputKtp.parentNode;
+                var div = document.createElement('div');
+                div.classList.add('d-flex');
+
+                inputKtp.remove();
+
+                inputKtp = document.createElement('a');
+                inputKtp.href = `${worker.file_path}`;       
+                inputKtp.id = "ktpTenagaKerja"+(index+1);                       
+                inputKtp.name = "ktpTenagaKerja[]";                   
+                inputKtp.target = "_blank";                 
+                inputKtp.innerHTML = "KTP";
+
+                var inputHiddenKtp = document.createElement('input');
+                inputHiddenKtp.setAttribute('type', 'hidden');
+                inputHiddenKtp.setAttribute('name', `ktpTenagaKerja[${index}]`);
+                inputHiddenKtp.setAttribute('value', `${worker.file_path}`);
+                inputHiddenKtp.setAttribute('required', '');
+                
+                var icon = document.createElement('i');
+                icon.classList.add('fa', 'fa-times', 'cursor-pointer', 'ms-4');
+                icon.style.color = 'red';
+                icon.setAttribute('onclick', `removeFile(this ,${index}, ${worker.id})`);
+
+
+                parent.appendChild(div);
+                div.appendChild(inputKtp);
+                div.appendChild(icon);
+                div.appendChild(inputHiddenKtp);
+            } 
         });
     }
 
@@ -730,7 +761,6 @@ document.addEventListener('DOMContentLoaded', function() {
     ubahTanggal();
 
     const jsas = @json($jsas);
-    console.log(jsas);
     if(jsas){
         jsas.forEach(function(jsa, index) {
             var addPotentialDangerButton = document.getElementById("addButtonPotentialDanger");
@@ -797,7 +827,7 @@ $(".validation-hse").steps({
     , bodyTag: "section"
     , transitionEffect: "none"
     , titleTemplate: '#title#'
-    , enableAllSteps: false
+    , enableAllSteps: true
     , labels: {
         next: "Lanjut",
         previous: "Sebelumnya",
@@ -1485,7 +1515,8 @@ addButtonTenagaKerja.addEventListener('click', () => {
             <label for="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="font-medium">Nama Tenaga Kerja :</label>
         </div>
         <div class="col-span-3">
-            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data">
+            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+            <input type="file" id="ktpTenagaKerja${rowCountTenagaKerjaGrid}" name="ktpTenagaKerja[${rowCountTenagaKerjaGrid-1}]"  accept=".jpeg, .png, .jpg" class="form-control w-full" required>
         </div>
     </div>
     `;
@@ -1645,6 +1676,48 @@ function fileChange(input, tipe) {
     }
 };
 
+function removeFile(button, index, id){
+
+    Swal.fire({
+            title: 'Apakah anda yakin ingin menghapus file?',
+            text: "Anda tidak akan bisa membatalkan ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#26D639',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya!',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/destroy-file-hse/${id}`, // Route untuk mencari ide
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    },
+                    success: function(response) {
+                        var inputElement = document.createElement('input');
+
+                        inputElement.setAttribute('type', 'file');
+                        inputElement.setAttribute('id', `ktpTenagaKerja${index+1}`);
+                        inputElement.setAttribute('name', `ktpTenagaKerja[${index}]`);
+                        inputElement.setAttribute('accept', '.jpeg, .png, .jpg');
+                        inputElement.setAttribute('class', 'form-control w-full');
+                        inputElement.setAttribute('required', '');
+
+                        button.parentNode.parentNode.appendChild(inputElement);
+                        button.parentNode.remove()
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Error: ", error);
+                    }
+                });
+                
+            }
+        });
+    
+}
 
 </script>
 @endpush

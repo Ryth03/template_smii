@@ -25,7 +25,8 @@ class sendReminderToUser extends Mailable
     }
 
     public function build(){
-        return $this->view('emails.sendReminderToUser')
+        return $this->from(config('mail.from.address'), 'PT Sinar Meadow - HSE')
+                    ->view('emails.sendReminderToUser')
                     ->subject("Reminder of your Work Permit")
                     ->with([
                         'form' => $this->form, 

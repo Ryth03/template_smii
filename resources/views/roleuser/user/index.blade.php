@@ -55,7 +55,7 @@
                                     <td class="px-6 py-4 text-lg">{{ $user->username }}</td>
                                     <td class="px-6 py-4 text-lg">{{ $user->name }}</td>
                                     <td class="px-6 py-4 text-lg">{{ $user->email }}</td>
-                                    <td class="px-6 py-4 text-lg">{{ $user->position->position_name }}</td>
+                                    <td class="px-6 py-4 text-lg">{{ $user->position->position_name ?? '-' }}</td>
                                     <td class="px-6 py-4 text-lg">{{ $user->department->department_name }}
                                     <td class="px-6 py-4 text-lg">
                                         @foreach ($user->roles as $role)
@@ -162,9 +162,9 @@
     @endpush
     {{-- {-- Create User Modal --} --}}
     <div id="createUserModal" tabindex="-1" aria-hidden="true"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full" style='z-index:1002'>
         <div class="relative p-4 w-full max-w-4xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="margin-top: 10%;">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-3xl font-semibold text-white">Create User</h3>
                     <button type="button"
@@ -192,11 +192,12 @@
                         @csrf
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
-                                <label class="form-label text-white text-xl">NIK</label>
+                                <label class="form-label text-white text-xl">NIK<span
+                                        class="text-danger">*</span></label>
                                 <div class="controls">
-                                    <input type="text" name="nik" id="nik"
+                                    <input type="text" name="nik"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        placeholder="NIK">
+                                        required placeholder="NIK">
                                     <div class="help-block"></div>
                                 </div>
                             </div>
@@ -204,7 +205,7 @@
                                 <label class="form-label text-white text-xl">Username<span
                                         class="text-danger">*</span></label>
                                 <div class="controls">
-                                    <input type="text" name="username" id="username"
+                                    <input type="text" name="username"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         required placeholder="Username">
                                     <div class="help-block"></div>
@@ -214,17 +215,27 @@
                                 <label class="form-label text-white text-xl">Name<span
                                         class="text-danger">*</span></label>
                                 <div class="controls">
-                                    <input type="text" name="name" id="name"
+                                    <input type="text" name="name"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         required placeholder="User Name">
                                     <div class="help-block"></div>
                                 </div>
                             </div>
+                             <div class="form-group">
+                                    <label class="form-label text-white text-xl">Company Department <span
+                                            class="text-danger">*</span></label>
+                                    <div class="controls">
+                                        <input type="text" name="company_department"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            required placeholder="Company Department">
+                                        <div class="help-block"></div>
+                                    </div>
+                                </div>
                             <div class="form-group">
                                 <label class="form-label text-white text-xl">Email <span
                                         class="text-danger">*</span></label>
                                 <div class="controls">
-                                    <input type="email" name="email" id="email"
+                                    <input type="email" name="email"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         required placeholder="Email">
                                     <div class="help-block"></div>
@@ -233,7 +244,7 @@
                             <div class="form-group">
                                 <label class="form-label text-white text-xl">Password</label>
                                 <div class="controls">
-                                    <input type="password" name="password"
+                                    <input type="password" name="password" autocomplete="off"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         placeholder="Password">
                                     <div class="help-block"></div>
@@ -243,7 +254,7 @@
                                 <label class="form-label text-white text-xl">Position <span
                                         class="text-danger">*</span></label>
                                 <div class="controls">
-                                    <select name="position_id" id="position_id" required=""
+                                    <select name="position_id"  required=""
                                         class="form-select w-full text-xl" aria-invalid="false"
                                         placeholder="Position">
                                         @foreach ($positions as $position)
@@ -258,7 +269,7 @@
                                 <label class="form-label text-white text-xl">Department <span
                                         class="text-danger">*</span></label>
                                 <div class="controls">
-                                    <select name="department_id" id="department_id" required=""
+                                    <select name="department_id"  required=""
                                         class="form-select w-full text-xl" aria-invalid="false"
                                         placeholder="Department">
                                         @foreach ($departments as $department)
@@ -293,9 +304,9 @@
 
     @foreach ($users as $user)
         <div id="editUserModal-{{ $user->id }}" tabindex="-1" aria-hidden="true"
-            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full" style='z-index:1002'>
             <div class="relative p-4 w-full max-w-4xl max-h-full">
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="margin-top: 13%;">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-3xl font-semibold text-white">Edit User</h3>
                         <button type="button"
@@ -309,8 +320,9 @@
                             <span class="sr-only">Close</span>
                         </button>
                     </div>
-                    <div class="p-4 md:p-5 overflow-y-auto max-h-96">
-                        <form action="{{ route('users.update', $user) }}" method="POST" class="space-y-4" enctype="multipart/form-data">
+                    <div class="p-4 md:p-5 overflow-y-auto">
+                        <form action="{{ route('users.update', $user) }}" method="POST" class="space-y-4"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="grid grid-cols-2 gap-4">
@@ -319,7 +331,7 @@
                                             class="text-danger">*</span></label>
                                     <div class="controls">
                                         <input type="text" name="nik" value="{{ $user->nik }}"
-                                            id="nik"
+
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                             required placeholder="NIK">
                                         <div class="help-block"></div>
@@ -330,7 +342,7 @@
                                             class="text-danger">*</span></label>
                                     <div class="controls">
                                         <input type="text" name="username" value="{{ $user->username }}"
-                                            id="username"
+
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                             required placeholder="Username">
                                         <div class="help-block"></div>
@@ -341,9 +353,19 @@
                                             class="text-danger">*</span></label>
                                     <div class="controls">
                                         <input type="text" name="name" value="{{ $user->name }}"
-                                            id="name"
+
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                             required placeholder="User Name">
+                                        <div class="help-block"></div>
+                                    </div>
+                                </div>
+                                 <div class="form-group">
+                                    <label class="form-label text-white text-xl">Company Department <span
+                                            class="text-danger">*</span></label>
+                                    <div class="controls">
+                                        <input type="text" name="company_department" value="{{ $user->company_department }}"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            required placeholder="Company Department">
                                         <div class="help-block"></div>
                                     </div>
                                 </div>
@@ -352,7 +374,7 @@
                                             class="text-danger">*</span></label>
                                     <div class="controls">
                                         <input type="email" name="email" value="{{ $user->email }}"
-                                            id="email"
+
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                             required placeholder="Email">
                                         <div class="help-block"></div>
@@ -361,7 +383,7 @@
                                 <div class="form-group">
                                     <label class="form-label text-white text-xl">Password</label>
                                     <div class="controls">
-                                        <input type="password" name="password"
+                                        <input type="password" autocomplete="off" name="password"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                             placeholder="Password">
                                         <div class="help-block"></div>
@@ -371,7 +393,7 @@
                                     <label class="form-label text-white text-xl">Position <span
                                             class="text-danger">*</span></label>
                                     <div class="controls">
-                                        <select name="position_id" id="position_id" required=""
+                                        <select name="position_id" required=""
                                             class="form-select w-full text-xl" aria-invalid="false"
                                             placeholder="Posisi">
                                             @foreach ($positions as $position)
@@ -388,7 +410,7 @@
                                     <label class="form-label text-white text-xl">Department <span
                                             class="text-danger">*</span></label>
                                     <div class="controls">
-                                        <select name="department_id" id="department_id" required=""
+                                        <select name="department_id"  required=""
                                             class="form-select w-full text-xl" aria-invalid="false"
                                             placeholder="Department">
                                             @foreach ($departments as $department)
@@ -420,9 +442,13 @@
                                     <label class="form-label text-white text-xl">Avatar</label>
                                     <div class="controls">
                                         @if ($user->avatar)
-                                            <img id="avatar-preview-{{ $user->id }}" src="{{ Storage::url('public/user_avatars/' . $user->avatar) }}" alt="Avatar" class="mb-4" style="width: 100px; height: 100px;">
+                                            <img id="avatar-preview-{{ $user->id }}"
+                                                src="{{ Storage::url('public/user_avatars/' . $user->avatar) }}"
+                                                alt="Avatar" class="mb-4" style="width: 100px; height: 100px;">
                                         @else
-                                            <img id="avatar-preview-{{ $user->id }}" src="#" alt="Avatar" class="mb-4 hidden" style="width: 100px; height: 100px;">
+                                            <img id="avatar-preview-{{ $user->id }}" src="#"
+                                                alt="Avatar" class="mb-4 hidden"
+                                                style="width: 100px; height: 100px;">
                                         @endif
                                         <input type="file" name="avatar" id="avatar-{{ $user->id }}"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -434,11 +460,14 @@
                                     <label class="form-label text-white text-xl">Status <span
                                             class="text-danger">*</span></label>
                                     <div class="controls">
-                                        <select name="status" id="status" required=""
+                                        <select name="status"  required=""
                                             class="form-select w-full text-xl" aria-invalid="false"
                                             placeholder="Status">
-                                            <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Active</option>
-                                            <option value="non active" {{ $user->status == 'non active' ? 'selected' : '' }}>Non Active</option>
+                                            <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="non active"
+                                                {{ $user->status == 'non active' ? 'selected' : '' }}>Non Active
+                                            </option>
                                         </select>
                                         <div class="help-block"></div>
                                     </div>
@@ -449,9 +478,6 @@
                                             placeholder="Password Sim">
                                         <div class="help-block"></div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-
                                 </div>
                             </div>
                             <div class="w-full mt-4">
@@ -472,7 +498,7 @@
             var file = fileInput.files[0];
             var reader = new FileReader();
 
-            reader.onloadend = function () {
+            reader.onloadend = function() {
                 var img = document.getElementById('avatar-preview-' + userId);
                 img.src = reader.result;
                 img.classList.remove('hidden');

@@ -862,7 +862,14 @@
                                 </div>
                                 <div class="md:col-span-15 grid md:grid-cols-4 gap-x-4">
                                     <div class="flex md:justify-center">
-                                        <label for="namaTenagaKerja1" class="font-medium">{{$worker->worker_name}}</label>
+                                        <label for="namaTenagaKerja1" class="font-medium">
+                                            {{$worker->worker_name}}
+                                            <span>
+                                                <a href="{{ asset($worker->file_path) }}" target="_blank">
+                                                    <i class="fa-solid fa-file"></i>
+                                                </a>
+                                            </span>
+                                        </label>
                                     </div>
                                     <div class="col-span-3 grid md:grid-cols-5">
 

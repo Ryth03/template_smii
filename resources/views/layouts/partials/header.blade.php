@@ -137,14 +137,14 @@
                                     <p
                                         class="items-center m-0 text-base flex px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                         <i class="fa fa-user-circle-o me-3 text-xl" aria-hidden="true"> </i>
-                                        {{ Auth::user()->name }} - {{ Auth::user()->position->position_name }}
+                                        {{ Auth::user()->name }}
                                     </p>
                                 </li>
                                 <li>
                                     <p
                                         class="items-center m-0 text-base flex px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                         <i class="fa fa-briefcase me-3 text-xl" aria-hidden="true"> </i>
-                                        Department {{ Auth::user()->department->department_name }}
+                                         {{ Auth::user()->company_department }}
                                     </p>
                                 </li>
                                 {{-- <li>
@@ -299,11 +299,13 @@
             // Check local storage for dark mode preference
             const darkModeStorage = localStorage.getItem('darkMode');
             const body = document.body;
+            const html = document.documentElement;
 
             // Function to set dark mode
             const setDarkMode = (darkModeOn) => {
                 body.classList.toggle('dark-skin', darkModeOn);
                 body.classList.toggle('light-skin', !darkModeOn);
+                html.classList.toggle('dark', darkModeOn);
                 localStorage.setItem('darkMode', darkModeOn ? 'enabled' : 'disabled');
             };
 

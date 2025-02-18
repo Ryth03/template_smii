@@ -16,7 +16,7 @@
             <div class="col-12 p-0">
                 <div class="login-card login-dark">
                     <div>
-                    <div class="bg-white rounded10 shadow-lg">
+                    <div class="bg-white rounded10 shadow-lg" style="background: rgba(255, 255, 255, 0.527); backdrop-filter: blur(10px); border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); max-width: 450px; width:100%;">
                         <div class="content-top-agile px-20 pt-20 pb-0">
                             <h2 class="mb-10 text-2xl font-semibold text-primary">Reset Password ?</h2>
                             <p class="mb-0 text-fade">Enter your email to reset your password.</p>

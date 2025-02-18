@@ -27,7 +27,8 @@ class sendToUser extends Mailable
     }
 
     public function build(){
-        return $this->view('emails.sendToUser')
+        return $this->from(config('mail.from.address'), 'PT Sinar Meadow - HSE')
+                    ->view('emails.sendToUser')
                     ->subject("Your form has been ".$this->form->status)
                     ->with([
                         'form' => $this->form, 
