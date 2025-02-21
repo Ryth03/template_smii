@@ -888,6 +888,14 @@ $(".validation-hse").steps({
     , rules: {
         email: {
             email: !0
+        },
+        'fireHazardControls[]': {
+            required: true
+        }
+    },
+    messages: {
+        'fireHazardControls[]': {
+            required: "Pilih minimal satu proteksi"
         }
     }
 });
@@ -927,7 +935,7 @@ function nextClass(currContent,nextContent) {
 
     inputsCheckbox.forEach(input => {
     
-        const tempElement = document.getElementById(inputsCheckbox.id + '-error');
+        const tempElement = document.getElementById(inputs.id + '-error');
         // Kondisi ketika element yang required tidak diisi
         if (!input.checked) {
             allFilled = false;
@@ -948,6 +956,44 @@ function nextClass(currContent,nextContent) {
         }
     });
 
+    if(currContent == "potensiBahayaContent" || currContent == "apdContent" || currContent == "daftarPeralatanContent"){
+        const inputsCheckbox = document.querySelectorAll(`#${currContent} input[type="checkbox"]`); 
+        checkInput = false;
+        inputsCheckbox.forEach(input => {
+            if (input.checked) {
+                checkInput = true;
+                return;
+            }
+        });
+        
+        if(checkInput){
+            inputsCheckbox.forEach(input => {
+                const tempElement = document.getElementById(input.id + '-error');
+                if(tempElement){
+                    tempElement.style.display='none';
+                }
+            });
+        }else{
+            allFilled = false;
+            inputsCheckbox.forEach(input => {
+                const tempElement = document.getElementById(input.id + '-error');
+                // Kondisi ketika element yang required tidak diisi
+                if (!input.checked) {
+                    // Membuat label baru untuk error
+                    if(tempElement){
+                        tempElement.removeAttribute('style');
+                    }else{
+                        const newLabel = document.createElement('label');
+                        newLabel.id = input.id + '-error'; // Set ID
+                        newLabel.textContent = 'This field is required'; // Isi teks
+                        newLabel.classList.add('text-danger'); 
+                        input.parentNode.appendChild(newLabel);
+                    }
+                }
+            });
+        }
+        
+    }
 
     if(allFilled){
         const currElement = document.getElementById(currContent);
@@ -998,11 +1044,11 @@ function previousClass(currContent,previousContent) {
     // Jika berada pada bagian terakhir, akan ditampilkan tombol next
     if (currContent === "pengendaliBahayaContent"){
         $("a[href$='next']").hide();
-        $("a[href$='previous']").hide()
+        $("a[href$='previous']").hide();
     }else if(childCurrDiv){
         if(currContent === childCurrDiv.attr("id") ){
             $("a[href$='next']").hide();
-            $("a[href$='previous']").hide()
+            $("a[href$='previous']").hide();
         }
     }
 }
@@ -1163,9 +1209,28 @@ function hotWorkPermit(button){
                     </div>
                 </div>
             </div>`
-         });
-        
+        });
+
+        var fireHazardButton = document.getElementById("fireHazardControlCheck");
+        if(fireHazardButton.checked){
+            $("#fireHazardControlCheck").prop("disabled", true);
+        }else{
+            $("#fireHazardControlCheck").prop("checked", true);
+            $("#fireHazardControlCheck").prop("disabled", true);
+            sistemProteksiKebakaran(fireHazardButton);
+        }
     }else{
+        
+        var fireHazardButton = document.getElementById("fireHazardControlCheck");
+        if(fireHazardButton.checked){
+            $("#fireHazardControlCheck").prop("checked", false);
+            $("#fireHazardControlCheck").prop("disabled", false);
+            sistemProteksiKebakaran(fireHazardButton);
+        }else{
+            $("#fireHazardControlCheck").prop("checked", false);
+            $("#fireHazardControlCheck").prop("disabled", false);
+        }
+
         var steps = 4;
         for (var i = 0; i < steps; i++) {
             var stepTitle = $('.validation-hse').steps('getStep', i);
@@ -1177,6 +1242,7 @@ function hotWorkPermit(button){
             }
         }
         alert('Step not found.');
+        
     }
 }
 
@@ -1515,7 +1581,7 @@ addButtonTenagaKerja.addEventListener('click', () => {
             <label for="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="font-medium">Nama Tenaga Kerja :</label>
         </div>
         <div class="col-span-3">
-            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[${rowCountTenagaKerjaGrid-1}]" class="form-control rounded-lg w-full" placeholder="Input data" required>
             <input type="file" id="ktpTenagaKerja${rowCountTenagaKerjaGrid}" name="ktpTenagaKerja[${rowCountTenagaKerjaGrid-1}]"  accept=".jpeg, .png, .jpg" class="form-control w-full" required>
         </div>
     </div>

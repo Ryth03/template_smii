@@ -803,7 +803,7 @@ class HSEFormController extends Controller
     public function destroyFile($id)
     {
         $file = fitToWork::findOrFail($id);
-        Storage::delete('public/' . $file->file_path);
+        Storage::delete(str_replace('/storage', 'public', $file->file_path));
         $file->file_path = null;
         $file->save();
 

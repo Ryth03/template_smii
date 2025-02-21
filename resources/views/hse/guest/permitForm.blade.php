@@ -435,7 +435,7 @@
                         <div>
                             <label class="inline-flex items-center cursor-pointer">
                                 <span class="ms-3 text-sm font-medium mr-3">Tidak</span>
-                                <input type="checkbox" value="" id="" class="sr-only peer" onclick="sistemProteksiKebakaran(this)">
+                                <input type="checkbox" value="" id="fireHazardControlCheck" class="sr-only peer" onclick="sistemProteksiKebakaran(this)">
                                 <div class="relative w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                                 <span class="ms-3 text-sm font-medium ">Ya</span>
                             </label>
@@ -706,6 +706,14 @@ $(".validation-hse").steps({
     , rules: {
         email: {
             email: !0
+        },
+        'fireHazardControls[]': {
+            required: true
+        }
+    },
+    messages: {
+        'fireHazardControls[]': {
+            required: "Pilih minimal satu proteksi"
         }
     }
 });
@@ -766,6 +774,44 @@ function nextClass(currContent,nextContent) {
         }
     });
 
+    if(currContent == "potensiBahayaContent" || currContent == "apdContent" || currContent == "daftarPeralatanContent"){
+        const inputsCheckbox = document.querySelectorAll(`#${currContent} input[type="checkbox"]`); 
+        checkInput = false;
+        inputsCheckbox.forEach(input => {
+            if (input.checked) {
+                checkInput = true;
+                return;
+            }
+        });
+        
+        if(checkInput){
+            inputsCheckbox.forEach(input => {
+                const tempElement = document.getElementById(input.id + '-error');
+                if(tempElement){
+                    tempElement.style.display='none';
+                }
+            });
+        }else{
+            allFilled = false;
+            inputsCheckbox.forEach(input => {
+                const tempElement = document.getElementById(input.id + '-error');
+                // Kondisi ketika element yang required tidak diisi
+                if (!input.checked) {
+                    // Membuat label baru untuk error
+                    if(tempElement){
+                        tempElement.removeAttribute('style');
+                    }else{
+                        const newLabel = document.createElement('label');
+                        newLabel.id = input.id + '-error'; // Set ID
+                        newLabel.textContent = 'This field is required'; // Isi teks
+                        newLabel.classList.add('text-danger'); 
+                        input.parentNode.appendChild(newLabel);
+                    }
+                }
+            });
+        }
+        
+    }
 
     if(allFilled){
         const currElement = document.getElementById(currContent);
@@ -947,7 +993,27 @@ function hotWorkPermit(button){
             </div>`
          });
         
+        var fireHazardButton = document.getElementById("fireHazardControlCheck");
+        if(fireHazardButton.checked){
+            $("#fireHazardControlCheck").prop("disabled", true);
+        }else{
+            $("#fireHazardControlCheck").prop("checked", true);
+            $("#fireHazardControlCheck").prop("disabled", true);
+            sistemProteksiKebakaran(fireHazardButton);
+        }
+
     }else{
+
+        var fireHazardButton = document.getElementById("fireHazardControlCheck");
+        if(fireHazardButton.checked){
+            $("#fireHazardControlCheck").prop("checked", false);
+            $("#fireHazardControlCheck").prop("disabled", false);
+            sistemProteksiKebakaran(fireHazardButton);
+        }else{
+            $("#fireHazardControlCheck").prop("checked", false);
+            $("#fireHazardControlCheck").prop("disabled", false);
+        }
+
         var steps = 4;
         for (var i = 0; i < steps; i++) {
             var stepTitle = $('.validation-hse').steps('getStep', i);
@@ -1273,8 +1339,8 @@ addButtonTenagaKerja.addEventListener('click', () => {
             <label for="namaTenagaKerja${rowCountTenagaKerjaGrid}" class="font-medium">Nama Tenaga Kerja :</label>
         </div>
         <div class="col-span-3">
-            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[]" class="form-control rounded-lg w-full" placeholder="Input data" required>
-            <input type="file" id="ktpTenagaKerja${rowCountTenagaKerjaGrid}" name="ktpTenagaKerja[]"  accept=".jpeg, .png, .jpg" class="form-control w-full" required>
+            <input type="text" id="namaTenagaKerja${rowCountTenagaKerjaGrid}" name="namaTenagaKerja[${rowCountTenagaKerjaGrid-1}]" class="form-control rounded-lg w-full" placeholder="Input data" required>
+            <input type="file" id="ktpTenagaKerja${rowCountTenagaKerjaGrid}" name="ktpTenagaKerja[${rowCountTenagaKerjaGrid-1}]"  accept=".jpeg, .png, .jpg" class="form-control w-full" required>
         </div>
     </div>
     `;
