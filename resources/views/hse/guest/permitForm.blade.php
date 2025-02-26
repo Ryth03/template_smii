@@ -203,6 +203,9 @@
                                 <input type="text" id="newHazardItem" name="newHazardItem" class="form-control rounded-lg w-3/4" style="height:100%;">
                             </label>
                         </div>
+                        
+                        <div class="form-check flex items-center" id="errorpotensiBahayaContent">
+                        </div>
                     </div>
                     
                     <div class="flex justify-end mt-5">
@@ -317,6 +320,9 @@
                                 @endif
                             @endforeach
                         </div>
+                        
+                        <div class="form-check flex items-center" id="errorapdContent">
+                        </div>
                     </div>
                 
                     <div class=" flex justify-end mt-5">
@@ -364,7 +370,9 @@
                                 <input type="text" id="newEquipmentText" name="newEquipmentText" class="form-control rounded-lg w-3/4" style="height:100%;">
                             </label>
                         </div>
-                            
+                        
+                        <div class="form-check flex items-center" id="errordaftarPeralatanContent">
+                        </div>
                     </div>
                     
                     <div class=" flex justify-end mt-5">
@@ -785,30 +793,27 @@ function nextClass(currContent,nextContent) {
         });
         
         if(checkInput){
-            inputsCheckbox.forEach(input => {
-                const tempElement = document.getElementById(input.id + '-error');
-                if(tempElement){
-                    tempElement.style.display='none';
-                }
-            });
+            const errorElement = document.getElementById('error-' + currContent) ;
+            if(errorElement){
+                errorElement.style.display='none';
+            }
         }else{
             allFilled = false;
-            inputsCheckbox.forEach(input => {
-                const tempElement = document.getElementById(input.id + '-error');
-                // Kondisi ketika element yang required tidak diisi
-                if (!input.checked) {
-                    // Membuat label baru untuk error
-                    if(tempElement){
-                        tempElement.removeAttribute('style');
-                    }else{
-                        const newLabel = document.createElement('label');
-                        newLabel.id = input.id + '-error'; // Set ID
-                        newLabel.textContent = 'This field is required'; // Isi teks
-                        newLabel.classList.add('text-danger'); 
-                        input.parentNode.appendChild(newLabel);
-                    }
+            const errorDiv = document.getElementById('error' + currContent);
+            const errorElement = document.getElementById('error-' + currContent) ;
+            // Kondisi ketika element yang required tidak diisi
+            if (errorDiv) {
+                // Membuat label baru untuk error
+                if(errorElement){
+                    errorElement.removeAttribute('style');
+                }else{
+                    const newLabel = document.createElement('label');
+                    newLabel.id = 'error-' + currContent; // Set ID
+                    newLabel.textContent = 'Pilih salah satu'; // Isi teks
+                    newLabel.classList.add('text-danger'); 
+                    errorDiv.appendChild(newLabel);
                 }
-            });
+            }
         }
         
     }
