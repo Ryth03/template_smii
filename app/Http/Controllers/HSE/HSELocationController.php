@@ -30,24 +30,28 @@ class HSELocationController extends Controller
     }
 
     public function locationUpdate(Request $request, $locationId){
-        
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:hse_locations,name,'. $locationId,
-            'pic' => 'required|string|max:255',
-            'nik' => 'required|string|max:255'
+            'pic' => 'required'
         ]);
+
+
+        $selectedValue = json_decode($request->input('pic'), true);
+        $pic = $selectedValue['name'];
+        $nik = $selectedValue['nik'];
 
         $location = hseLocation::findOrFail($locationId);
         $location->name = $validatedData['name'];
-        $location->pic = $validatedData['pic'];
-        $location->nik = $validatedData['nik'];
+        $location->pic = $pic;
+        $location->nik = $nik;
         $location->save();
         
         Alert::toast('Location updated successfully!', 'success');
         return redirect('location')->with('status', 'Location updated successfully!');
     }
 
-    public function locationDelete(Request $request, $locationId){
+    public function locationDelete(Request $request, $locationId)
+    {
 
         $location = hseLocation::findOrFail($locationId);
         
@@ -62,7 +66,8 @@ class HSELocationController extends Controller
         return redirect('location')->with('status', 'Location delete failed!');
     }
 
-    public function locationStore(Request $request){
+    public function locationStore(Request $request)
+    {
 
         $selectedValue = json_decode($request->input('pic'), true);
         $nik = $selectedValue['nik'];

@@ -67,7 +67,7 @@ Route::middleware('auth')->group(function () {
 
     Route::POST('/send-reminder', [HSEController::class, 'sendReminderToUser'])->name('reminder.send');
     Route::POST('/finished-work', [FormStateController::class, 'finishedWork'])->name('finished.work');
-    Route::POST('/job-evaluate-report-form', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
+    Route::GET('/job-evaluate-report-form/{formId}', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
     Route::GET('/job-evaluate-form/{formId}', [JobEvaluationController::class, 'evaluateForm'])->name('jobEvaluate.form');
     Route::POST('/job-evaluate', [JobEvaluationController::class, 'evaluate'])->name('evaluate');
     Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/extend-form-hse', [HSEFormController::class, 'viewExtendForm'])->name('extend.form');
     Route::post('/insert-form-hse', [HSEFormController::class, 'insertNewForm'])->name('hse.form.insert');
     Route::post('/insert-extend-form-hse', [HSEFormController::class, 'insertExtendForm'])->name('hse.form.extend');
-    Route::post('/view-form-hse', [HSEFormController::class, 'viewDraftForm'])->name('view.form.hse');
+    Route::GET('/view-form-hse/{formId}', [HSEFormController::class, 'viewDraftForm'])->name('view.form.hse');
     Route::delete('/destroy-file-hse/{id}', [HSEFormController::class, 'destroyFile'])->name('destroy.file.hse');
     Route::post('/submit-form-hse', [HSEFormController::class, 'insertForm'])->name('submit.form.hse');
     Route::post('/update-form-hse', [HSEController::class, 'updateForm'])->name('update.form.hse');

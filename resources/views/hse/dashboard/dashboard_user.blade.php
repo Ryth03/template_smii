@@ -214,14 +214,12 @@
                         name: 'delete',
                         render: function(data, type, row, meta) {
                             if (row.status === "Draft" && row.user_id === userId) {
+                                const route = "{{ route('view.form.hse', ':formId') }}";
+                                const url = route.replace(':formId', row.id);
                                 return `
-                            <form action="{{ route('view.form.hse') }}" method="POST" style="display: inline;">
-                                @csrf
-                                <input type="hidden" name="value" value="${row.id}">
-                                <button type="submit" class="btn btn-sm btn-primary tooltip" title="Look and Edit Draft">
+                                <a href="${url}" class="btn btn-sm btn-primary tooltip" title="Look and Edit Draft"> 
                                     <i class="fas fa-eye"></i>
-                                </button>
-                            </form>
+                                </a>
                             <form id="deleteForm${row.id}" action="{{ route('delete.form.hse') }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
@@ -291,22 +289,20 @@
                                 `;
 
                                 } else if (row.status == "Finished") {
+                                    const route = "{{ route('jobEvaluateReport.form', ':formId') }}";
+                                    const url = route.replace(':formId', row.id);
                                     result += `
-                                <form action="{{ route('jobEvaluateReport.form') }}" method="POST" style="display: inline;">
-                                @csrf
-                                    <input type="hidden" name="formId" value="${row.id}">
-                                    <button class="btn btn-sm btn-primary tooltip" title="View Report Evaluation">
+                                    <a href="${url}" class="btn btn-sm btn-primary tooltip" title="View Report">
                                         <i class="fas fa-file-alt"></i>
-                                    </button>
-                                </form>
-                                <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
-                                @csrf
-                                    <input type="hidden" name="value" value="${row.id}">
-                                    <button class="btn btn-sm btn-secondary tooltip" title="Download Report">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                </form>
-                                `;
+                                    </a>
+                                    <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
+                                    @csrf
+                                        <input type="hidden" name="value" value="${row.id}">
+                                        <button class="btn btn-sm btn-secondary tooltip" title="Download Report">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </form>
+                                    `;
                                 }
 
                                 if (row.extendedCounts > 0) {
@@ -334,15 +330,13 @@
                                     </div>
                                 `;
                                 } else if (row.status == "Finished") {
+                                    const route = "{{ route('jobEvaluateReport.form', ':formId') }}";
+                                    const url = route.replace(':formId', row.id);
                                     return `
-                                <form action="{{ route('jobEvaluateReport.form') }}" method="POST" style="display: inline;">
-                                @csrf
-                                    <input type="hidden" name="formId" value="${row.id}">
-                                    <button class="btn btn-sm btn-primary tooltip" title="View Report">
+                                    <a href="${url}" class="btn btn-sm btn-primary tooltip" title="View Report">
                                         <i class="fas fa-file-alt"></i>
-                                    </button>
-                                </form>
-                                `;
+                                    </a>
+                                    `;
                                 }
                             }
                             return ``;

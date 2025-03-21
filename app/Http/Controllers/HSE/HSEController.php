@@ -186,60 +186,68 @@ class HSEController extends Controller
     public function approvalTable()
     {
         $user = Auth::user();
-        $userRole =  strToLower($user->getRoleNames()->first());
-
-        $approver = approver::where('role_name', $userRole)
+        $userRole =  $user->getRoleNames();
+        // dump($userRole);
+        // dd();
+        $approvers = approver::whereIn('role_name', $userRole)
         ->select('name', 'level')
-        ->first();
+        ->get();
 
-        if(!$approver){
+        if(!$approvers){
             return redirect()->route("dashboard");
         }
-
+        
+        $allForm = collect();
         $forms = [];
         $approvalDetail = null;
-        if($approver->level === 1){
-            $approvalDetail = approvalDetail::pluck('form_id');
-            $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-            ->leftJoin('extended_form_logs', 'forms.id', '=', 'extended_form_logs.form_id')
-            ->select('forms.id as id', 'company_department', 'supervisor', 'location',
-                'hp_number','start_date', 'end_date', 'start_time', 'end_time', 'workers_count')
-            ->where(function($query) {
-                $query->where('forms.status', 'In Approval')
-                      ->orWhere('extended_form_logs.status', 'In Approval');
-            })
-            ->whereNotIn('forms.id',$approvalDetail)
-            ->get();
-
-        }elseif($approver->level === 2){
-            $approvalDetail = approvalDetail::select('form_id')
-            ->groupBy('form_id')
-            ->havingRaw('COUNT(form_id) = 1')
-            ->pluck('form_id');
-            $forms = Form::where('status', 'In Approval')
-            ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-            ->whereIn('forms.id',$approvalDetail)
-            ->get();
-        }elseif($approver->level === 3){
-            $approvalDetail = approvalDetail::select('form_id')
-            ->groupBy('form_id')
-            ->havingRaw('COUNT(form_id) = 2')
-            ->pluck('form_id');
-            $forms = Form::where('status', 'In Approval')
-            ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-            ->whereIn('forms.id',$approvalDetail)
-            ->get();
+        foreach($approvers as $approver){
+            if($approver->level === 1){
+                $approvalDetail = approvalDetail::pluck('form_id');
+                $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                ->leftJoin('extended_form_logs', 'forms.id', '=', 'extended_form_logs.form_id')
+                ->select('forms.id as id', 'company_department', 'supervisor', 'location',
+                    'hp_number','start_date', 'end_date', 'start_time', 'end_time', 'workers_count')
+                ->where(function($query) {
+                    $query->where('forms.status', 'In Approval')
+                          ->orWhere('extended_form_logs.status', 'In Approval');
+                })
+                ->whereNotIn('forms.id',$approvalDetail)
+                ->get();
+    
+            }elseif($approver->level === 2){
+                $approvalDetail = approvalDetail::select('form_id')
+                ->groupBy('form_id')
+                ->havingRaw('COUNT(form_id) = 1')
+                ->pluck('form_id');
+                $forms = Form::where('status', 'In Approval')
+                ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                ->whereIn('forms.id',$approvalDetail)
+                ->get();
+            }elseif($approver->level === 3){
+                $approvalDetail = approvalDetail::select('form_id')
+                ->groupBy('form_id')
+                ->havingRaw('COUNT(form_id) = 2')
+                ->pluck('form_id');
+                $forms = Form::where('status', 'In Approval')
+                ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                ->whereIn('forms.id',$approvalDetail)
+                ->get();
+            }
+            if($userRole === 'pic location'){
+                $location = hseLocation::where('nik', $user->nik)->get()->pluck('name');
+                $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                ->where('status', 'In Approval')
+                ->whereIn('forms.id',$approvalDetail)
+                ->whereIn('location', $location)
+                ->get();
+            }
+            $allForm = $allForm->merge($forms);
         }
-        if($userRole === 'pic location'){
-            $location = hseLocation::where('nik', $user->nik)->get()->pluck('name');
-            $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-            ->where('status', 'In Approval')
-            ->whereIn('forms.id',$approvalDetail)
-            ->whereIn('location', $location)
-            ->get();
-        }
-
-        return view('hse.admin.table.approvalTable', compact('forms','approver'));
+        // dd('test', $allForm, $forms);
+        return view('hse.admin.table.approvalTable', [
+            'forms' => $allForm,
+            'approver' => $approvers[0]
+        ]);
     }
 
     public function reviewForm($formId)
@@ -430,10 +438,12 @@ class HSEController extends Controller
     {
         $user = Auth::user();
 
-        $userRole =  strToLower($user->getRoleNames()->first());
-        $approver = approver::where('role_name', $userRole)
-        ->first();
-
+        $userRole =  $user->getRoleNames();
+        // dd($userRole);
+        $approvers = approver::whereIn('role_name', $userRole)
+        ->orderBy('level', 'ASC')
+        ->get();
+        
         $formId = $request->input('value');
         $comment = $request->input('comment');
         $action = $request->input('action'); // Ambil nilai action
@@ -442,151 +452,158 @@ class HSEController extends Controller
         ->where('status', 'In Approval')
         ->first();
 
-        if($extendedForm)
+        foreach($approvers as $approver)
         {
-            if ($action === 'approve')
-            {
-                $form = Form::find($formId);
-                if($form->status === 'Approved'){
-                    $extendedForm->status = "Approved";
-                    $projectExecutor = projectExecutor::where('form_id', $formId)->first();
-                    $projectExecutor->end_date = $extendedForm->end_date_after;
-
-                    $projectExecutor->save();
-                    $extendedForm->save();
-
-                    $files = collect();
-                    $extendedFiles = extendedFilesLog::where('extended_id', $extendedForm->id)->get();
-
-                    if($extendedFiles){ // Cek apakah ada file sio atau silo yang diupload pada extend form
-                        foreach($extendedFiles as $extendedFile){
-                            $extendedFileName = json_decode($extendedFile->file_name_after); //Mengubah json menjadi array
-                            foreach($extendedFileName as $fileName){
-                                $temp = uploadFile::create([
-                                    'form_id' => $formId,
-                                    'type' => $extendedFile->type,
-                                    'file_name' => $fileName,
-                                    'file_location' => "/storage/hseFile/" . $formId . "/" . $extendedFile->type . "/" . $fileName
-                                ]);
+            $check = approvalDetail::where('form_id', $formId)
+            ->where('approver_id', $approver->id)
+            ->first();
+            if(!$check){ // cari yang belum approve
+                if($extendedForm)
+                {
+                    if ($action === 'approve')
+                    {
+                        $form = Form::find($formId);
+                        if($form->status === 'Approved'){
+                            $extendedForm->status = "Approved";
+                            $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                            $projectExecutor->end_date = $extendedForm->end_date_after;
+        
+                            $projectExecutor->save();
+                            $extendedForm->save();
+        
+                            $files = collect();
+                            $extendedFiles = extendedFilesLog::where('extended_id', $extendedForm->id)->get();
+        
+                            if($extendedFiles){ // Cek apakah ada file sio atau silo yang diupload pada extend form
+                                foreach($extendedFiles as $extendedFile){
+                                    $extendedFileName = json_decode($extendedFile->file_name_after); //Mengubah json menjadi array
+                                    foreach($extendedFileName as $fileName){
+                                        $temp = uploadFile::create([
+                                            'form_id' => $formId,
+                                            'type' => $extendedFile->type,
+                                            'file_name' => $fileName,
+                                            'file_location' => "/storage/hseFile/" . $formId . "/" . $extendedFile->type . "/" . $fileName
+                                        ]);
+                                    }
+                                }
                             }
+        
+                            // Send Notification to user
+                            $this->userNotification($form->user_id,'Extended');
+        
+                            // Send Email to User
+                            $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                            $toUser = User::find($form->user_id);
+                            $newForm = collect();
+                            $newForm->status = "Extended";
+                            sendToUserJob::dispatch($toUser, $newForm, $projectExecutor, $comment);
                         }
                     }
-
-                    // Send Notification to user
-                    $this->userNotification($form->user_id,'Extended');
-
-                    // Send Email to User
-                    $projectExecutor = projectExecutor::where('form_id', $formId)->first();
-                    $toUser = User::find($form->user_id);
-                    $newForm = collect();
-                    $newForm->status = "Extended";
-                    sendToUserJob::dispatch($toUser, $newForm, $projectExecutor, $comment);
+                    else if($action === 'reject')
+                    {
+                        $extendedForm->status = "Rejected";
+                        $extendedForm->save();
+        
+        
+                        $form = Form::find($formId);
+        
+                        // Send Notification to user
+                        $this->userNotification($form->user_id,'Rejected (Extend Request)');
+        
+                        // Send Email to User
+                        $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                        $toUser = User::find($form->user_id);
+                        $newForm = collect();
+                        $newForm->status = "Rejected";
+                        sendToUserJob::dispatch($toUser, $newForm, $projectExecutor, $comment);
+                    }
                 }
-            }
-            else if($action === 'reject')
-            {
-                $extendedForm->status = "Rejected";
-                $extendedForm->save();
-
-
-                $form = Form::find($formId);
-
-                // Send Notification to user
-                $this->userNotification($form->user_id,'Rejected (Extend Request)');
-
-                // Send Email to User
-                $projectExecutor = projectExecutor::where('form_id', $formId)->first();
-                $toUser = User::find($form->user_id);
-                $newForm = collect();
-                $newForm->status = "Rejected";
-                sendToUserJob::dispatch($toUser, $newForm, $projectExecutor, $comment);
+                else
+                {
+                    if ($action === 'approve')
+                    {
+                        if (trim($comment) !== '') {
+                            approvalDetail::updateOrCreate([
+                                'form_id' => $formId,
+                                'approver_id' => $approver->id
+                            ],[
+                                'status' => "Approved",
+                                'comment' => $comment
+                            ]);
+                        }else{
+                            approvalDetail::updateOrCreate([
+                                'form_id' => $formId,
+                                'approver_id' => $approver->id
+                            ],[
+                                'status' => "Approved"
+                            ]);
+                        }
+        
+        
+        
+                        $approvalDetail = approvalDetail::select(DB::raw("COUNT(form_id) as 'count'"))
+                        ->where('form_id', $formId)
+                        ->groupBy('form_id')
+                        ->first();
+                        if($approvalDetail->count == 3){
+                            $form = Form::find($formId);
+                            $form->status = 'Approved';
+                            $form->save();
+        
+                            $user = User::find($form->user_id);
+        
+                            // Send Notification to user
+                            $this->userNotification($form->user_id,'Approved');
+        
+                            // Send Email to User
+                            $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                            $toUser = User::find($form->user_id);
+                            sendToUserJob::dispatch($toUser, $form, $projectExecutor, $comment);
+        
+                        }else if($approvalDetail->count == 2){
+        
+                            // Send Notification and Email to level 3
+                            $this->sendNotifAndEmailToApprover($formId, 3);
+        
+                        }else if($approvalDetail->count == 1){
+        
+                            // Send Notification and Email to level 2
+                            $this->sendNotifAndEmailToApprover($formId, 2);
+                        }
+                    }
+                    else if($action === 'reject')
+                    {
+                        if (trim($comment) == '') {
+                            return redirect()->back()->with("error", "Data tidak berhasil. Komentar tidak boleh kosong atau hanya spasi.");
+                        }else{
+                            $formId = $request->input('value');
+                            approvalDetail::updateOrCreate([
+                                'form_id' => $formId,
+                                'approver_id' => $approver->id
+                            ],[
+                                'status' => "Rejected",
+                                'comment' => $request->input('comment')
+                            ]);
+                            $form = Form::find($formId);
+                            $form->status = 'Rejected';
+                            $form->save();
+        
+        
+                            // Send Notification to user
+                            $this->userNotification($form->user_id,'Rejected');
+        
+        
+                            // Send Email to User
+                            $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+                            $toUser = User::find($form->user_id);
+                            sendToUserJob::dispatch($toUser, $form, $projectExecutor, $comment);
+                        }
+        
+                    }
+                }
             }
         }
-        else
-        {
-            if ($action === 'approve')
-            {
-                if (trim($comment) !== '') {
-                    approvalDetail::updateOrCreate([
-                        'form_id' => $formId,
-                        'approver_id' => $approver->id
-                    ],[
-                        'status' => "Approved",
-                        'comment' => $comment
-                    ]);
-                }else{
-                    approvalDetail::updateOrCreate([
-                        'form_id' => $formId,
-                        'approver_id' => $approver->id
-                    ],[
-                        'status' => "Approved"
-                    ]);
-                }
-
-
-
-                $approvalDetail = approvalDetail::select(DB::raw("COUNT(form_id) as 'count'"))
-                ->where('form_id', $formId)
-                ->groupBy('form_id')
-                ->first();
-                if($approvalDetail->count == 3){
-                    $form = Form::find($formId);
-                    $form->status = 'Approved';
-                    $form->save();
-
-                    $user = User::find($form->user_id);
-
-                    // Send Notification to user
-                    $this->userNotification($form->user_id,'Approved');
-
-                    // Send Email to User
-                    $projectExecutor = projectExecutor::where('form_id', $formId)->first();
-                    $toUser = User::find($form->user_id);
-                    sendToUserJob::dispatch($toUser, $form, $projectExecutor, $comment);
-
-                }else if($approvalDetail->count == 2){
-
-                    // Send Notification and Email to level 3
-                    $this->sendNotifAndEmailToApprover($formId, 3);
-
-                }else if($approvalDetail->count == 1){
-
-                    // Send Notification and Email to level 2
-                    $this->sendNotifAndEmailToApprover($formId, 2);
-                }
-            }
-            else if($action === 'reject')
-            {
-                if (trim($comment) == '') {
-                    return redirect()->back()->with("error", "Data tidak berhasil. Komentar tidak boleh kosong atau hanya spasi.");
-                }else{
-                    $formId = $request->input('value');
-                    approvalDetail::updateOrCreate([
-                        'form_id' => $formId,
-                        'approver_id' => $approver->id
-                    ],[
-                        'status' => "Rejected",
-                        'comment' => $request->input('comment')
-                    ]);
-                    $form = Form::find($formId);
-                    $form->status = 'Rejected';
-                    $form->save();
-
-
-                    // Send Notification to user
-                    $this->userNotification($form->user_id,'Rejected');
-
-
-                    // Send Email to User
-                    $projectExecutor = projectExecutor::where('form_id', $formId)->first();
-                    $toUser = User::find($form->user_id);
-                    sendToUserJob::dispatch($toUser, $form, $projectExecutor, $comment);
-                }
-
-            }
-        }
-
-
+        
         return redirect()->route('approval.table');
 
     }

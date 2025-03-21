@@ -11,12 +11,12 @@
         @include('hse.dashboard.dashboard_em')
     @endif
 
-    @if(auth()->user()->hasRole('security'))
-        @include('hse.dashboard.dashboard_security')
-    @endif
-
     @if(auth()->user()->hasRole('pic location'))
         @include('hse.dashboard.dashboard_pic_location')
+    @endif
+
+    @if(auth()->user()->hasRole('security'))
+        @include('hse.dashboard.dashboard_security')
     @endif
 
     @if(auth()->user()->hasRole('user'))

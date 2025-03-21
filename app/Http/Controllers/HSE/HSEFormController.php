@@ -272,11 +272,9 @@ class HSEFormController extends Controller
         ,"additionalWorkPermits","fireHazardControls", "locations"));
     }
 
-    public function viewDraftForm(Request $request)
+    public function viewDraftForm($formId)
     {
         $user = Auth::user();
-
-        $formId = $request->input('value'); 
 
         $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->where('forms.id', $formId)

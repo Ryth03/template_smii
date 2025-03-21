@@ -121,8 +121,7 @@ class JobEvaluationController extends Controller
         return view('hse.admin.table.jobEvaluationReportTable', compact('forms'));
     }
 
-    public function evaluateJobReport(Request $request){
-        $formId = $request->input('formId');
+    public function evaluateJobReport($formId){
         $form = Form::select('forms.id as id', 'company_department', 'supervisor', 'location', 'work_description', 'total_rating')
         ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
         ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
