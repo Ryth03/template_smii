@@ -97,7 +97,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/approver', [HSEApproverLevelController::class, 'index'])->name('approver.view.hse');
     Route::put('/approver/{approverId}', [HSEApproverLevelController::class, 'update'])->name('approver.update.hse');
 
-    Route::post('/report', [HSEController::class, 'printReport'])->name('report.hse');
+    Route::GET('/report/{formId}', [HSEController::class, 'printReport'])->name('report.hse');
 
     /* Dashboard */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

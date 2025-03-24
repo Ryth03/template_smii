@@ -87,7 +87,7 @@
             <div class="flex justify-end">
                 <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 type="submit">Submit</button>
-                <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 ml-3" onClick="window.history.back()">Back</button>
+                <button type="button" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 ml-3" onClick="window.history.back()">Back</button>
             </div>
         </form>
     </div>

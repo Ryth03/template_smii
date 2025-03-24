@@ -237,10 +237,13 @@
                             }
 
                             if (userRole.includes('hse')) {
+                                const route = "{{ route('report.hse', ':formId') }}";
+                                const url = route.replace(':formId', row.id);
                                 let result = '';
+                                
                                 if (row.status == "Rejected") {
                                     result += `
-                                <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
+                                <form action="${url}" method="POST" style="display: inline;">
                                 @csrf
                                     <input type="hidden" name="value" value="${row.id}">
                                     <button class="btn btn-sm btn-danger tooltip" title="Download Report">
@@ -291,11 +294,15 @@
                                 } else if (row.status == "Finished") {
                                     const route = "{{ route('jobEvaluateReport.form', ':formId') }}";
                                     const url = route.replace(':formId', row.id);
+                                    
+                                    const route2 = "{{ route('report.hse', ':formId') }}";
+                                    const url2 = route2.replace(':formId', row.id);
+
                                     result += `
                                     <a href="${url}" class="btn btn-sm btn-primary tooltip" title="View Report">
                                         <i class="fas fa-file-alt"></i>
                                     </a>
-                                    <form action="{{ route('report.hse') }}" method="POST" style="display: inline;">
+                                    <form action="${url2}" method="POST" style="display: inline;">
                                     @csrf
                                         <input type="hidden" name="value" value="${row.id}">
                                         <button class="btn btn-sm btn-secondary tooltip" title="Download Report">
@@ -317,9 +324,8 @@
                                 if (row.status == "In Evaluation") {
                                     const route = "{{ route('jobEvaluate.form', ':formId') }}";
                                     const url = route.replace(':formId', row.id);
-                                    let result = '';
 
-                                    result += `
+                                    return `
                                     <div class="flex items-center ">
                                         <span class="badge bg-yellow-600 text-white text-lg tooltip items-center justify-center" title="Evaluation Tracking ${row.count_rating}/2" style="pointer-events: none;">${row.count_rating}/2</span>
                                         <a href="${url}">

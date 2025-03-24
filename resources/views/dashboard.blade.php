@@ -5,21 +5,13 @@
     @endsection
     @if(auth()->user()->hasRole('hse'))
         @include('hse.dashboard.dashboard_hse')
-    @endif
-    
-    @if(auth()->user()->hasRole('engineering manager'))
+    @elseif(auth()->user()->hasRole('engineering manager'))
         @include('hse.dashboard.dashboard_em')
-    @endif
-
-    @if(auth()->user()->hasRole('pic location'))
+    @elseif(auth()->user()->hasRole('pic location'))
         @include('hse.dashboard.dashboard_pic_location')
-    @endif
-
-    @if(auth()->user()->hasRole('security'))
+    @elseif(auth()->user()->hasRole('security'))
         @include('hse.dashboard.dashboard_security')
-    @endif
-
-    @if(auth()->user()->hasRole('user'))
+    @elseif(auth()->user()->hasRole('user'))
         @include('hse.dashboard.dashboard_user')
     @endif
     {{-- @include('hse.guest.dashboard')

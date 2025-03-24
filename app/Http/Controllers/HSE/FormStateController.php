@@ -24,6 +24,6 @@ class FormStateController extends Controller
                 'total_rating' => null
             ]
         );
-        return redirect()->route('viewAll.table');
+        return redirect()->route('hse.dashboard');
     }
 }

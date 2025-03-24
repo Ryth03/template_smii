@@ -239,7 +239,7 @@ class DashboardController extends Controller
         $forms;
         if($user){
             if ($user->hasRole('hse') || $user->hasRole('engineering manager')) {
-                $forms = Form::select('forms.id as id', 'forms.user_id as user_id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"), DB::raw("COUNT(CASE WHEN extended_form_logs.status = 'approved' THEN extended_form_logs.form_id END) as 'extendedCounts'"), DB::raw('COUNT(CASE WHEN hse_rating IS NOT NULL THEN 1 END) + COUNT(CASE WHEN engineering_rating IS NOT NULL THEN 1 END) AS count_rating'))
+                $forms = Form::select('forms.id as id', 'forms.user_id as user_id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"), DB::raw("COUNT(CASE WHEN extended_form_logs.status = 'approved' THEN extended_form_logs.form_id END) as 'extendedCounts'"), DB::raw('COUNT(DISTINCT CASE WHEN hse_rating IS NOT NULL THEN 1 END) + COUNT(DISTINCT CASE WHEN engineering_rating IS NOT NULL THEN 1 END) AS count_rating'))
                     ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
                     ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')
                     ->leftJoin('extended_form_logs', 'extended_form_logs.form_id', '=', 'forms.id')

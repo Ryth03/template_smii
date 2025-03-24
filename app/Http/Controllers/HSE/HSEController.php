@@ -187,7 +187,6 @@ class HSEController extends Controller
     {
         $user = Auth::user();
         $userRole =  $user->getRoleNames();
-        // dump($userRole);
         // dd();
         $approvers = approver::whereIn('role_name', $userRole)
         ->select('name', 'level')
@@ -233,17 +232,17 @@ class HSEController extends Controller
                 ->whereIn('forms.id',$approvalDetail)
                 ->get();
             }
-            if($userRole === 'pic location'){
+            if(strtolower($approver->name) === 'pic location'){
                 $location = hseLocation::where('nik', $user->nik)->get()->pluck('name');
                 $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
                 ->where('status', 'In Approval')
                 ->whereIn('forms.id',$approvalDetail)
                 ->whereIn('location', $location)
-                ->get();
+                ->get();                
             }
             $allForm = $allForm->merge($forms);
         }
-        // dd('test', $allForm, $forms);
+
         return view('hse.admin.table.approvalTable', [
             'forms' => $allForm,
             'approver' => $approvers[0]
@@ -601,6 +600,7 @@ class HSEController extends Controller
         
                     }
                 }
+                break;
             }
         }
         
@@ -608,10 +608,8 @@ class HSEController extends Controller
 
     }
 
-    public function printReport(Request $request)
+    public function printReport($formId)
     {
-        $formId = $request->input('value');
-
         $form = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
         ->where('forms.id', $formId)
         ->first();
@@ -714,6 +712,6 @@ class HSEController extends Controller
         $toUser = User::find($form->user_id);
         sendReminderToUserJob::dispatch($toUser, $form, $projectExecutor);
 
-        return redirect()->route('viewAll.table');
+        return redirect()->route('hse.dashboard');
     }
 }
