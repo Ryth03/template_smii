@@ -14,7 +14,7 @@
                 <i data-feather="home" style="width: 12px; height: 12px;"></i>
                 Dashboard
             </a>
-            @if(auth()->user()->hasRole('hse') || auth()->user()->hasRole('engineering manager'))
+            @if(auth()->user()->hasRole('super-admin') || auth()->user()->hasRole('hse') || auth()->user()->hasRole('engineering manager'))
                 <ul>
                 @can('view user dashboard hse')
                 <li><a href="{{ route('hse.dashboard') }}"

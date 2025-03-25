@@ -3,7 +3,7 @@
     @section('title')
         Dashboard
     @endsection
-    @if(auth()->user()->hasRole('hse'))
+    @if(auth()->user()->hasRole('hse') || auth()->user()->hasRole('super-admin'))
         @include('hse.dashboard.dashboard_hse')
     @elseif(auth()->user()->hasRole('engineering manager'))
         @include('hse.dashboard.dashboard_em')
@@ -14,18 +14,6 @@
     @elseif(auth()->user()->hasRole('user'))
         @include('hse.dashboard.dashboard_user')
     @endif
-    {{-- @include('hse.guest.dashboard')
-    @can('view dashboard Finance')
-        @include('dashboard.dashboardInventory')
-    @endcan
-
-    @can('view dashboard Sales & Marketing')
-        @include('dashboard.dashboardSales')
-    @endcan
-
-    @can('view dashboard R&D')
-        @include('dashboard.dashboardProduction')
-    @endcan --}}
 
 
 

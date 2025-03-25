@@ -47,14 +47,6 @@ class DashboardController extends Controller
 
             $forms = $forms->limit(10)->get();
         }
-        // elseif($category === 'ratingTable'){
-        //     $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
-        //     ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
-        //     ->orderBy('total_rating','DESC')
-        //     ->select("company_department", 'total_rating as extra')
-        //     ->limit(10)
-        //     ->get();
-        // }
         elseif($category === 'reviewTable'){
             $forms = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
             ->whereRaw('LOWER(status) = ?', ['in review'])
@@ -65,54 +57,72 @@ class DashboardController extends Controller
         elseif($category === 'approvalTable'){
             $user = Auth::user();
             $userRole =  strToLower($user->getRoleNames()->first());
-
-            $approver = approver::where('role_name', $userRole)
-            ->select('name', 'level')
-            ->first();
-
-            if(!$approver){
-                return redirect()->route("dashboard");
-            }
-
             $forms = [];
+            $allForm = collect();
             $approvalDetail = null;
-            if($approver->level === 1){
-                $approvalDetail = approvalDetail::pluck('form_id');
+
+            $approvers = approver::where('role_name', $userRole)
+            ->select('name', 'level')
+            ->get();
+
+            if($user->hasRole('super-admin'))
+            {
                 $forms = Form::where('status', 'In Approval')
                 ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
                 ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
-                ->whereNotIn('forms.id',$approvalDetail)
                 ->get();
-            }elseif($approver->level === 2){
-                $approvalDetail = approvalDetail::select('form_id')
-                ->groupBy('form_id')
-                ->havingRaw('COUNT(form_id) = 1')
-                ->pluck('form_id');
-                $forms = Form::where('status', 'In Approval')
-                ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-                ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
-                ->whereIn('forms.id',$approvalDetail)
-                ->get();
-            }elseif($approver->level === 3){
-                $approvalDetail = approvalDetail::select('form_id')
-                ->groupBy('form_id')
-                ->havingRaw('COUNT(form_id) = 2')
-                ->pluck('form_id');
-                $forms = Form::where('status', 'In Approval')
-                ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-                ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
-                ->whereIn('forms.id',$approvalDetail)
-                ->get();
+                return response()->json($forms);
             }
-            if($userRole === 'pic location'){
-                $location = hseLocation::where('nik', $user->nik)->get()->pluck('name');
-                $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
-                ->where('status', 'In Approval')
-                ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
-                ->whereIn('forms.id',$approvalDetail)
-                ->whereIn('location', $location)
-                ->get();
+            else
+            {
+                if($approvers->isEmpty()){
+                    return redirect()->route("dashboard");
+                }
+    
+                foreach($approvers as $approver){
+                    if($approver->level === 1){
+                        $approvalDetail = approvalDetail::pluck('form_id');
+                        $forms = Form::where('status', 'In Approval')
+                        ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                        ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
+                        ->whereNotIn('forms.id',$approvalDetail)
+                        ->get();
+                    }elseif($approver->level === 2){
+                        $approvalDetail = approvalDetail::select('form_id')
+                        ->groupBy('form_id')
+                        ->havingRaw('COUNT(form_id) = 1')
+                        ->pluck('form_id');
+                        $forms = Form::where('status', 'In Approval')
+                        ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                        ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
+                        ->whereIn('forms.id',$approvalDetail)
+                        ->get();
+                    }elseif($approver->level === 3){
+                        $approvalDetail = approvalDetail::select('form_id')
+                        ->groupBy('form_id')
+                        ->havingRaw('COUNT(form_id) = 2')
+                        ->pluck('form_id');
+                        $forms = Form::where('status', 'In Approval')
+                        ->leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                        ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
+                        ->whereIn('forms.id',$approvalDetail)
+                        ->get();
+                    }
+                    if($userRole === 'pic location'){
+                        $location = hseLocation::where('nik', $user->nik)->get()->pluck('name');
+                        $forms = Form::leftJoin('project_executors', 'forms.id', '=', 'project_executors.form_id')
+                        ->where('status', 'In Approval')
+                        ->select('forms.id as id', 'project_executors.company_department as company_department', 'forms.status as extra')
+                        ->whereIn('forms.id',$approvalDetail)
+                        ->whereIn('location', $location)
+                        ->get();
+                    }
+                    $allForm = $allForm->merge($forms);
+                }
             }
+
+            
+            return response()->json($allForm);
         }
         elseif($category === 'evaluationTable'){
 
@@ -122,8 +132,9 @@ class DashboardController extends Controller
             ->leftJoin('job_evaluations', 'job_evaluations.form_id', '=', 'forms.id')
             ->whereRaw('LOWER(status) = ?', ['in evaluation'])
             ->orderBy('forms.created_at', 'asc');
-
-            if($user->hasRole("hse")){
+            if($user->hasRole("super-admin")){
+                $forms = $forms->get();
+            }else if($user->hasRole("hse")){
                 $forms = $forms->whereNull('hse_rating')->get();
             }else if($user->hasRole("engineering manager")){
                 $forms = $forms->whereNull('engineering_rating')->get();
@@ -234,11 +245,12 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function getDashboardUser(Request $request){
+    public function getDashboardUser(Request $request)
+    {
         $user = Auth::user();
         $forms;
         if($user){
-            if ($user->hasRole('hse') || $user->hasRole('engineering manager')) {
+            if ($user->hasRole('super-admin') || $user->hasRole('hse') || $user->hasRole('engineering manager')) {
                 $forms = Form::select('forms.id as id', 'forms.user_id as user_id', 'company_department', 'location', 'forms.status as status', 'start_date', 'end_date', DB::raw("COUNT(approval_details.form_id) as 'count'"), DB::raw("COUNT(CASE WHEN extended_form_logs.status = 'approved' THEN extended_form_logs.form_id END) as 'extendedCounts'"), DB::raw('COUNT(DISTINCT CASE WHEN hse_rating IS NOT NULL THEN 1 END) + COUNT(DISTINCT CASE WHEN engineering_rating IS NOT NULL THEN 1 END) AS count_rating'))
                     ->leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
                     ->leftJoin('approval_details', 'approval_details.form_id', '=', 'forms.id')

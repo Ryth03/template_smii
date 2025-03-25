@@ -236,7 +236,7 @@
                                 return `<span class="btn btn-sm bg-blue-600 text-white text-lg tooltip" title="Approval Tracking ${row.count}/3" style="pointer-events: none;">${row.count}/3</span>`;
                             }
 
-                            if (userRole.includes('hse')) {
+                            if (userRole.includes('hse') || userRole.includes('super-admin')) {
                                 const route = "{{ route('report.hse', ':formId') }}";
                                 const url = route.replace(':formId', row.id);
                                 let result = '';

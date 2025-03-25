@@ -19,9 +19,8 @@ use App\Http\Controllers\HSE\HSEApproverLevelController;
 use App\Http\Controllers\HSE\JobEvaluationController;
 use App\Http\Controllers\HSE\FormStateController;
 use App\Http\Controllers\VendorController;
-
-
-
+use App\Models\HSE\Form;
+use App\Models\HSE\projectExecutor;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +55,19 @@ Route::middleware('auth')->group(function () {
         confirmDelete();
         return view('hse.guest.dashboard');
     })->name('hse.dashboard');
+    Route::get('/test2', function(){
+        $formId = 190;
+        $role = "tester";
+        $form = Form::leftJoin('project_executors', 'project_executors.form_id', '=', 'forms.id')
+        ->where('forms.id', $formId)
+        ->first();
+        $projectExecutor = projectExecutor::where('form_id', $formId)->first();
+        return view('emails.sendToApprover',[
+            'form' => $form,
+            'detail' => $projectExecutor,
+            'role' => $role
+        ]);
+    })->name('test2');
 
     // Admin HSE
     Route::get('/reviews', [HSEController::class, 'reviewTable'])->name('review.table');
@@ -70,7 +82,6 @@ Route::middleware('auth')->group(function () {
     Route::GET('/job-evaluate-report-form/{formId}', [JobEvaluationController::class, 'evaluateJobReport'])->name('jobEvaluateReport.form');
     Route::GET('/job-evaluate-form/{formId}', [JobEvaluationController::class, 'evaluateForm'])->name('jobEvaluate.form');
     Route::POST('/job-evaluate', [JobEvaluationController::class, 'evaluate'])->name('evaluate');
-    Route::POST('/review', [HSEController::class, 'reviewForm'])->name('review.form');
     Route::GET('/approve/{formId}', [HSEController::class,   'approvalForm'])->name('approval.form');
     Route::GET('/review/{formId}', [HSEController::class, 'reviewForm'])->name('review.form');
     Route::get('/approve', function () {
